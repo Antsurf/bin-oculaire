@@ -57,21 +57,21 @@ app/
   
 
 Ce qui se passe après un upload:
-Formulaire web
-     ↓
-Flask reçoit le fichier
-     ↓
-Renommage avec UUID (pour éviter les doublons)
-     ↓
-Sauvegarde dans static/uploads/
-     ↓
-Extraction des features (Pillow)
-     ↓
-Classification (if/else)
-     ↓
-Enregistrement en BDD SQLite
-     ↓
-Redirection vers la page résultat
+Formulaire web  
+     ↓  
+Flask reçoit le fichier  
+     ↓  
+Renommage avec UUID (pour éviter les doublons)  
+     ↓  
+Sauvegarde dans static/uploads/  
+     ↓  
+Extraction des features (Pillow)  
+     ↓  
+Classification (if/else)  
+     ↓  
+Enregistrement en BDD SQLite  
+     ↓  
+Redirection vers la page résultat  
 
 D’un point de vue technique, ce projet intègre l’IA afin de mettre en place une plateforme web capable de :
     <p align="justify">
