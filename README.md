@@ -40,21 +40,21 @@ Une plateforme web capable de :
 ## Structure du projet :
 
 app/
-├── app.py          <- Routes Flask (upload, résultat, annotation, galerie, dashboard)
-├── features.py     <- Extraction Pillow (7 features)
-├── classifier.py   <- Classification par règles if/else (système de score)
-├── database.py     <- SQLite (init, insert, update, stats)
-├── requirements.txt
-├── static/
-│   ├── css/style.css
-│   └── uploads/        <- images stockées ici
-└── templates/
-    ├── base.html
-    ├── index.html      <- upload avec drag & drop
-    ├── result.html     <- features + règles + annotation manuelle
-    ├── gallery.html    <- grille de toutes les images
-    └── dashboard.html  <- stats + 3 graphiques matplotlib
-
+├── app.py          <- Routes Flask (upload, résultat, annotation, galerie, dashboard)  
+├── features.py     <- Extraction Pillow (7 features)  
+├── classifier.py   <- Classification par règles if/else (système de score)  
+├── database.py     <- SQLite (init, insert, update, stats)  
+├── requirements.txt  
+├── static/  
+│   ├── css/style.css  
+│   └── uploads/        <- images stockées ici  
+└── templates/  
+    ├── base.html  
+    ├── index.html      <- upload avec drag & drop  
+    ├── result.html     <- features + règles + annotation manuelle  
+    ├── gallery.html    <- grille de toutes les images  
+    └── dashboard.html  <- stats + 3 graphiques matplotlib  
+  
 
 Ce qui se passe après un upload:
 Formulaire web
