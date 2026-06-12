@@ -39,6 +39,40 @@ Une plateforme web capable de :
 
 ## Structure du projet :
 
+app/
+├── app.py          <- Routes Flask (upload, résultat, annotation, galerie, dashboard)
+├── features.py     <- Extraction Pillow (7 features)
+├── classifier.py   <- Classification par règles if/else (système de score)
+├── database.py     <- SQLite (init, insert, update, stats)
+├── requirements.txt
+├── static/
+│   ├── css/style.css
+│   └── uploads/        <- images stockées ici
+└── templates/
+    ├── base.html
+    ├── index.html      <- upload avec drag & drop
+    ├── result.html     <- features + règles + annotation manuelle
+    ├── gallery.html    <- grille de toutes les images
+    └── dashboard.html  <- stats + 3 graphiques matplotlib
+
+
+Ce qui se passe après un upload:
+Formulaire web
+     ↓
+Flask reçoit le fichier
+     ↓
+Renommage avec UUID (pour éviter les doublons)
+     ↓
+Sauvegarde dans static/uploads/
+     ↓
+Extraction des features (Pillow)
+     ↓
+Classification (if/else)
+     ↓
+Enregistrement en BDD SQLite
+     ↓
+Redirection vers la page résultat
+
 D’un point de vue technique, ce projet intègre l’IA afin de mettre en place une plateforme web capable de :
     <p align="justify">
 - Collecter des images de poubelles (via upload et stockage),  
