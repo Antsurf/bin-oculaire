@@ -7,7 +7,11 @@ def extract_features(file_path: str) -> dict:
     Taille de l'image : en ko
     Dimension de l'image: width x height en pixels
     Moyenne RGB : 3 canaux
-    :param path: uploads/...
+    Luminosité RGB: basé sur le calcul REC601 (voir discord)
+    Contraste de couleur: max(pixel) - min(pixel)
+    Saturation : saturation moyenne HSV (0–255)
+
+    :param file_path: uploads/...
     :return: dictionary with features of a specific image
     """
     features = dict()
@@ -19,11 +23,25 @@ def extract_features(file_path: str) -> dict:
     img = Image.open(file_path).convert("RGB")
     features["image_width"], features["image_height"] = img.size
 
-    # RGB
+    # RGB, Couleur moyenne
     stat = ImageStat.Stat(img)
     features["moyenne_r"] = round(stat.mean[0], 2)
     features["moyenne_g"] = round(stat.mean[1], 2)
     features["moyenne_b"] = round(stat.mean[2], 2)
+
+    # Luminosité, valeur entre 0 et 255
+    features["luminosity"] = features["moyenne_r"] * 0.299 + features["moyenne_g"] * 0.587 + features["moyenne_b"] * 0.114
+
+    # gray image 
+    gray = img.convert("L")
+    extrema = gray.getextrema()
+    # Niveau de contraste 
+    features["contraste"] = extrema[1] - extrema[0]
+
+    # Saturation moyenne
+    img_hsv = img.convert("HSV")
+    stat_hsv = ImageStat.Stat(img_hsv)
+    features["saturation"] = round(stat_hsv.mean[1], 2)
 
     return features
 
@@ -34,4 +52,7 @@ def features_summary(features: dict) -> str:
     return (f"Taille:{features["file_size"]}"
             f"Dimensions: width {features["image_width"]}, height {features["image_height"]}"
             f"Moyenne RGB: rouge {features["moyenne_r"]}; vert {features["moyenne_g"]}; bleu {features["moyenne_b"]}"
+            f"Luminosité: {features["luminosity"]}"
+            f"Contraste: {features["contraste"]}"
+            f"Saturation: {features["saturation"]}"
         )
