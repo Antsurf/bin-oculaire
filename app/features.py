@@ -61,10 +61,7 @@ def extract_features(file_path: str) -> dict:
         "blue":  b_histo,
     })
 
-    # Histogramme gray
-    features["hist_gray"] = json.dumps(gray.histogram())
-
-    # histogramme luminance 
+    # Histogramme luminance
     features["hist_luminance"] = json.dumps(gray.histogram())
 
 
@@ -78,7 +75,7 @@ def extract_features(file_path: str) -> dict:
     return features
 
 
-def show_histo(features:dict)-> None:
+def show_histo(features: dict) -> None:
     """
     Montre le graphiques des histogrammes RGB
     :param features: dict retourné par extract_features() 
