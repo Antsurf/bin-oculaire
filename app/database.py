@@ -12,6 +12,8 @@ def get_connection() -> dict:
     Plus d'infos ici:
     https://sqlite.org/foreignkeys.html
     https://www.youtube.com/watch?v=FrTQSPSbVC0
+
+    :return: un dico avec les colonnes comme clés 
     """
     conn = sqlite3.connect(db_name)
     conn.execute("PRAGMA foreign_keys = ON")
