@@ -11,8 +11,9 @@ CREATE TABLE images(
    id                INTEGER PRIMARY KEY AUTOINCREMENT,
    file_path         VARCHAR(255) NOT NULL,
    upload_date       TEXT NOT NULL,                     
-   id_localisation   INTEGER,                           
-   FOREIGN KEY(id_localisation) REFERENCES localisation(id_localisation)
+   id_localisation   INTEGER,         
+   -- Si la localisation disparait, l'image reste mais perd le paramètre géographique                   
+   FOREIGN KEY(id_localisation) REFERENCES localisation(id_localisation) ON DELETE SET NULL
 );
 
 -- Table Classification 
@@ -21,7 +22,7 @@ CREATE TABLE images_classification(
    annotation        VARCHAR(50),
    auto_label        VARCHAR(50),
    confidence        VARCHAR(50),
-   FOREIGN KEY(image_id) REFERENCES images(id)          -- image_id est à la fois clé primaire et étrangère car directe lié à Images(id)
+   FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE         -- image_id est à la fois clé primaire et étrangère car directe lié à Images(id)
 );
 
 -- 4. Table Features (Relation 1-à-1 optimisée)
@@ -36,5 +37,5 @@ CREATE TABLE images_features(
    luminosite        DECIMAL(5,2),                     
    contraste         DECIMAL(5,2),
    saturation        DECIMAL(5,2),
-   FOREIGN KEY(image_id) REFERENCES images(id)          -- image_id est à la fois clé primaire et étrangère car directe lié à Images(id)
+   FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE         -- image_id est à la fois clé primaire et étrangère car directe lié à Images(id)
 );
