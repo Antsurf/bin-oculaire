@@ -1,0 +1,16 @@
+# Bases de données
+*.db
+*.sqlite3
+
+# Dossiers d'environnement virtuel
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Fichiers de configuration VS Code 
+.vscode/
+
+# images d'uploads
+static/uploads/*
+!static/uploads/.gitkeep
