@@ -1,0 +1,40 @@
+-- Table Localisation
+CREATE TABLE localisation(
+   id_localisation   INTEGER PRIMARY KEY AUTOINCREMENT, 
+   latitude          REAL NOT NULL,                    
+   longitude         REAL NOT NULL,                     
+   localisation_nom  VARCHAR(100)
+);
+
+-- Table Images
+CREATE TABLE images(
+   id                INTEGER PRIMARY KEY AUTOINCREMENT,
+   file_path         VARCHAR(255) NOT NULL,
+   upload_date       TEXT NOT NULL,                     
+   id_localisation   INTEGER,                           
+   FOREIGN KEY(id_localisation) REFERENCES localisation(id_localisation)
+);
+
+-- Table Classification 
+CREATE TABLE images_classification(
+   image_id          INTEGER PRIMARY KEY,               
+   annotation        VARCHAR(50),
+   auto_label        VARCHAR(50),
+   confidence        VARCHAR(50),
+   FOREIGN KEY(image_id) REFERENCES images(id)          -- image_id est à la fois clé primaire et étrangère car directe lié à Images(id)
+);
+
+-- 4. Table Features (Relation 1-à-1 optimisée)
+CREATE TABLE images_features(
+   image_id          INTEGER PRIMARY KEY,               
+   file_size         DECIMAL(10,2),
+   width             INT,                               -- un pixel est un entier
+   height            INT,                               -- pareil ici
+   mean_r            DECIMAL(5,2),
+   mean_g            DECIMAL(5,2),
+   mean_b            DECIMAL(5,2),
+   luminosite        DECIMAL(5,2),                     
+   contraste         DECIMAL(5,2),
+   saturation        DECIMAL(5,2),
+   FOREIGN KEY(image_id) REFERENCES images(id)          -- image_id est à la fois clé primaire et étrangère car directe lié à Images(id)
+);
