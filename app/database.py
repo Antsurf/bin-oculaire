@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import datetime
 
 db_name = "database.db"
 
@@ -83,6 +84,7 @@ def init_db():
        luminosite        DECIMAL(5,2),
        contraste         DECIMAL(5,2),
        saturation        DECIMAL(5,2),
+       edge_density      DECIMAL(5,4),
        FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE
     );""")
 
@@ -93,6 +95,65 @@ def init_db():
 
     print(f"Base de donnée initialisée, chemin: {os.path.abspath(db_name)}")
 
+
+def insert_image(file_path: str, id_localisation: int = None) -> int:
+    """
+    Ajoute une image à la base de donnée (table images) et renvoie son ID 
+
+    On renvoie l'id grâce à cursor.lastrowid qui récupère les ID générés par auto_increment
+    https://dev.mysql.com/doc/connector-python/en/connector-python-api-mysqlcursor-lastrowid.html
+
+    :file_path: chemin du fichier en local
+    :id_localisation: id de l'emplacement 
+
+    :return: l'id de l'image qu'on vient d'insérer
+
+    Pour un code plus clean, l'insertion des features etc... se fait dans les fonctions plus bas 
+    on récupère l'id uniquement pour ça pour pouvoir insérer dans les autres tables
+    """
+    conn = get_connection()
+    cursor = conn.cursor
+
+    # récupération de l'upload date (on considère qu'une fois que la photo est prise c'est directement upload)
+    upload_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    cursor.execute("""INSERT INTO images (file_path, upload_date, id_localisation) VALUES (?,?,?)""", (file_path,upload_date,id_localisation))
+
+    image_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    return image_id
+
+
+def add_features(image_id : int, features: dict): 
+    """
+    Insère le dictionnaire de features pour une image donnée (grâce à features.py) dans la tables images_features
+    :image_id: id de l'image pour laquelle on ajoute les features extraites
+    :features: dico contenant les features en question 
+    """
+    conn = get_connection()
+    cursor = conn.cursor
+
+    cursor.execute("""INSERT INTO images_features 
+                   (image_id, file_size, width, height, mean_r, mean_g, mean_b, luminosite, contraste, saturation, edge_density)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                   """, (
+                       image_id,
+                       features["file_size"],
+                       features["image_width"],
+                       features["image_height"],
+                       features["mean_r"],
+                       features["mean_g"],
+                       features["mean_b"],
+                       features["brightness"],
+                       features["contraste"],
+                       features["saturation"],
+                       features["edge_density"]
+                   ))
+
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
     init_db()

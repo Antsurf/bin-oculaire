@@ -37,5 +37,6 @@ CREATE TABLE images_features(
    luminosite        DECIMAL(5,2),                     
    contraste         DECIMAL(5,2),
    saturation        DECIMAL(5,2),
+   edge_density      DECIMAL(5,4),
    FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE         -- image_id est à la fois clé primaire et étrangère car directe lié à Images(id)
 );
