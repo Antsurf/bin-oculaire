@@ -155,5 +155,96 @@ def add_features(image_id : int, features: dict):
     conn.commit()
     conn.close()
 
+def get_all_images() -> list:
+    """
+    Ramène toutes les images de la BDD
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT 
+            i.id, 
+            i.file_path, 
+            i.upload_date,
+            f.luminosite,
+            f.contraste,
+            f.edge_density,
+            c.auto_label,
+            c.confidence
+        FROM images i
+        LEFT JOIN images_features f ON i.id = f.image_id
+        LEFT JOIN images_classification c ON i.id = c.image_id
+        ORDER BY i.upload_date DESC
+    """)
+
+    images = cursor.fetchall()
+    conn.close()
+
+    return images
+
+def get_luminosite()->list:
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT luminosite 
+        FROM images_features 
+        WHERE luminosite IS NOT NULL
+    """)
+    
+    rows = cursor.fetchall()
+    conn.close()
+    
+    return [row["luminosite"] for row in rows]
+
+def get_stats():
+    """Statistiques pour le dashboard."""
+    conn = get_connection()
+    
+    total = conn.execute("SELECT COUNT(*) AS n FROM images").fetchone()["n"]
+
+    auto_counts = conn.execute(
+        "SELECT auto_label, COUNT(*) AS n FROM images_classification GROUP BY auto_label"
+    ).fetchall()
+
+    manual_counts = conn.execute(
+        """
+        SELECT annotation AS label, COUNT(*) AS n
+        FROM images_classification
+        WHERE annotation IS NOT NULL
+        GROUP BY annotation
+        """
+    ).fetchall()
+
+    file_sizes = [
+        row["file_size"]
+        for row in conn.execute("SELECT file_size FROM images_features").fetchall()
+    ]
+
+    conn.close() 
+
+    return {
+        "total_images": total,
+        "automatic_labels": {r["auto_label"]: r["n"] for r in auto_counts if r["auto_label"] is not None}, # Corrigé
+        "manual_annotations": {r["label"]: r["n"] for r in manual_counts},
+        "file_sizes": file_sizes,
+    }
+
+def update_annotation(image_id, annotation):
+    """
+    Définit l’annotation d’une image (‘pleine’ ou ‘vide’),
+    ou l’annule en passant annotation=None.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if annotation not in ("pleine", "vide", None):
+        print("annotation doit être ‘pleine’ ou ‘vide’ ou 'None'")
+    cur = conn.execute(
+    f"UPDATE images_classification SET annotation = {annotation} WHERE image_id = {image_id}")
+
+
 if __name__ == "__main__":
     init_db()
