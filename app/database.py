@@ -245,6 +245,9 @@ def update_annotation(image_id, annotation):
     cur = conn.execute(
     f"UPDATE images_classification SET annotation = {annotation} WHERE image_id = {image_id}")
 
+    conn.close()
+
+
 
 if __name__ == "__main__":
     init_db()
