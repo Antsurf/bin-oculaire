@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="bin-input">
+    <input type="file" id="imageInput" accept="image/*" class="sr-only">
+    <div class="preview-container">
+        <img id="imagePreview" src="#" alt="Aperçu de l'image" style="display: none;">
+    </div>
+    <button type="button">Soumettre</button>
+</div>
+{% endblock %}

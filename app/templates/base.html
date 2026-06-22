@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <nav>
+        <img src="../static/logo.svg" alt="Logo">
+        <a href="{{ url_for('base') }}">Base</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('gallery') }}">Gallery</a>
+        <a href="{{ url_for('index') }}">Index</a>
+        <a href="{{ url_for('result') }}">Result</a>
+    </nav>
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
