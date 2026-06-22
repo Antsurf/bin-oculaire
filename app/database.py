@@ -112,7 +112,7 @@ def insert_image(file_path: str, id_localisation: int = None) -> int:
     on récupère l'id uniquement pour ça pour pouvoir insérer dans les autres tables
     """
     conn = get_connection()
-    cursor = conn.cursor
+    cursor = conn.cursor()
 
     # récupération de l'upload date (on considère qu'une fois que la photo est prise c'est directement upload)
     upload_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -133,7 +133,7 @@ def add_features(image_id : int, features: dict):
     :features: dico contenant les features en question 
     """
     conn = get_connection()
-    cursor = conn.cursor
+    cursor = conn.cursor()
 
     cursor.execute("""INSERT INTO images_features 
                    (image_id, file_size, width, height, mean_r, mean_g, mean_b, luminosite, contraste, saturation, edge_density)
