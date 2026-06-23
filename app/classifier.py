@@ -1,34 +1,15 @@
-from features import *
-import pandas as pd
-import os
+"""
 
-def get_dataframe() -> dict:
-    dict_dataframe = {}
+Features found we could explore :
 
-    path_clean = "../Data/train/with_label/clean"
-    for e in os.scandir(path_clean):
-        if e.is_file():
-            dict_dataframe[e.name] = {}
-            dict_dataframe[e.name]['name'] = e.name
-            path = e.path
-            features_img = extract_features(path)
-            for key in features_img.keys():
-                dict_dataframe[e.name][key] = features_img[key]
-            dict_dataframe[e.name]['class'] = 'clean'
+Computation of the whites in the picture with the histogramme + if above 175 then more chances to be full (maybe extra full)
 
-    path_dirty = "../Data/train/with_label/dirty"
-    for e in os.scandir(path_dirty):
-        if e.is_file():
-            dict_dataframe[e.name] = {}
-            dict_dataframe[e.name]['name'] = e.name
-            path = e.path
-            features_img = extract_features(path)
-            for key in features_img.keys():
-                dict_dataframe[e.name][key] = features_img[key]
-            dict_dataframe[e.name]['class'] = 'dirty'
+Use the same logic for the mean of their color : above 25 then probably dirty, less than 20 then probably clean
 
-    return dict_dataframe
 
-if __name__ == "__main__":
-    dict_df = get_dataframe()
-    print(dict_df)
+Features we don't think we should use :
+- file_size, image_width, image_height : After study, it does not seem that this parameter is useful. Moreover, in the real project, it would lead to problems since the same camera will be used for every bin. So every file will be of the same size, heigh and width
+
+
+
+"""
