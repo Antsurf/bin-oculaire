@@ -12,4 +12,18 @@ Features we don't think we should use :
 
 
 
+
+
+Récupérer
+- max rouge, vert, bleu
+- max luminance
+- sum des des avg
+- diff des avg
+
+faire correlation
+corr = image_data.corr ()
+sns.heatmap(corr, cmap='coolwarm', annot = True, linewidth =0.9)
+plt.show()
+
+faire de l'hypertunning sur nos règles de classification
 """

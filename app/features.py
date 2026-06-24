@@ -123,10 +123,10 @@ if __name__ == "__main__":
     path = input("Chemin de l'image : ").replace("\\", "/")
     features = extract_features(path)
     print(features_summary(features))
- 
+
     # Sauvegarde JSON dans le même dossier que l'image
     # json_out = path.rsplit(".", 1)[0] + "_features.json"
     # enregistrement_json(features, json_out)
- 
+
     # Affiche les histogrammes
     show_histo(features)
