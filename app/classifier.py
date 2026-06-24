@@ -19,11 +19,14 @@ Récupérer
 - max luminance
 - sum des des avg
 - diff des avg
+- index des max des couleurs (est-ce que le max est plutôt sombre, clair ou foncé )
+
 
 faire correlation
 corr = image_data.corr ()
 sns.heatmap(corr, cmap='coolwarm', annot = True, linewidth =0.9)
 plt.show()
+
 
 faire de l'hypertunning sur nos règles de classification
 """

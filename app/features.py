@@ -2,7 +2,8 @@ from PIL import Image, ImageStat, ImageFilter
 import matplotlib.pyplot as plt
 import os
 import json
-
+import numpy as np
+import cv2
 
 def extract_features(file_path: str) -> dict:
     """
@@ -43,7 +44,8 @@ def extract_features(file_path: str) -> dict:
     gray = img.convert("L")
     extrema = gray.getextrema()
     # Niveau de contraste 
-    features["contraste"] = extrema[1] - extrema[0]
+    features["contraste_maximal"] = extrema[1] - extrema[0]
+    features['contraste_global'] = float(np.std(gray))
 
     # Saturation moyenne
     img_hsv = img.convert("HSV")
@@ -71,6 +73,7 @@ def extract_features(file_path: str) -> dict:
     edge_img = gray.filter(ImageFilter.FIND_EDGES)
     stat_edge = ImageStat.Stat(edge_img)
     features["edge_density"] = round(stat_edge.mean[0] / 255.0, 4)
+    features['edge_density_V2'] = np.sum(cv2.Canny(np.array(gray), 50, 150)>0)
 
     return features
 
