@@ -1,0 +1,253 @@
+import sqlite3
+import os
+import datetime
+
+db_name = "database.db"
+
+def get_connection() -> dict:
+    """
+    Créer une connexion à la base SQLite 
+
+    On doit obligatoirement activer les clés étrangères (foreign key constraints) en Python pour que cela fonctionne, d'où la ligne conn.execute("PRAGMA...")
+    Si on ne l'active pas, on peut supprimer des éléments liés à des clés étrangers + ON DELETE CASCADE fonctionne pas
+    Plus d'infos ici:
+    https://sqlite.org/foreignkeys.html
+    https://www.youtube.com/watch?v=FrTQSPSbVC0
+
+    :return: un dico avec les colonnes comme clés 
+    """
+    conn = sqlite3.connect(db_name)
+    conn.execute("PRAGMA foreign_keys = ON")
+
+    # permet de convertir la conn en dictionnaire avec comme clé le nom de la colonne. 
+    # ça évite d'avoir un tuple de l'enfer où il faut mémoriser l'index des colonnes 
+    conn.row_factory = sqlite3.Row 
+    return conn
+
+
+
+def init_db():
+    """
+    Créer les tables sql si elles n'existent pas déjà 
+
+    Important: avec sqlite, on doit obligatoire utiliser un curseur (cursor) pour faire des querys 
+    On doit aussi faire conn.commit() et conn.close() pour appliquer les changements
+
+    On pourrait activer l'autocommit mais pour l'instant si y'a un bug pendant la transaction, au moins rien n'est inséré
+
+    Doc cursor: 
+    https://docs.python.org/3/library/sqlite3.html
+
+    execute() -> n'execute qu'une seule query 
+    executescript() -> on peut executer plusieurs query (;)
+
+    Important, executescript() ne prends pas les paramètres ? (ex: "INSERT INTO data VALUES(?)",rows)
+    
+    Ici on fait un gros execute script mais on aurait pu faire 4 execute
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.executescript(""" 
+    CREATE TABLE IF NOT EXISTS localisation(
+       id_localisation   INTEGER PRIMARY KEY AUTOINCREMENT,
+       latitude          REAL NOT NULL,
+       longitude         REAL NOT NULL,
+       localisation_nom  VARCHAR(100)
+    );
+
+    CREATE TABLE IF NOT EXISTS images(
+       id                INTEGER PRIMARY KEY AUTOINCREMENT,
+       file_path         VARCHAR(255) NOT NULL,
+       upload_date       TEXT NOT NULL,
+       id_localisation   INTEGER,
+       FOREIGN KEY(id_localisation) REFERENCES localisation(id_localisation) ON DELETE SET NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS images_classification(
+       image_id          INTEGER PRIMARY KEY,
+       annotation        VARCHAR(50),
+       auto_label        VARCHAR(50),
+       confidence        VARCHAR(50),
+       FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS images_features(
+       image_id          INTEGER PRIMARY KEY,
+       file_size         DECIMAL(10,2),
+       width             INT,
+       height            INT,
+       mean_r            DECIMAL(5,2),
+       mean_g            DECIMAL(5,2),
+       mean_b            DECIMAL(5,2),
+       luminosite        DECIMAL(5,2),
+       contraste         DECIMAL(5,2),
+       saturation        DECIMAL(5,2),
+       edge_density      DECIMAL(5,4),
+       FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE
+    );""")
+
+
+    conn.commit()
+
+    conn.close()
+
+    print(f"Base de donnée initialisée, chemin: {os.path.abspath(db_name)}")
+
+
+def insert_image(file_path: str, id_localisation: int = None) -> int:
+    """
+    Ajoute une image à la base de donnée (table images) et renvoie son ID 
+
+    On renvoie l'id grâce à cursor.lastrowid qui récupère les ID générés par auto_increment
+    https://dev.mysql.com/doc/connector-python/en/connector-python-api-mysqlcursor-lastrowid.html
+
+    :file_path: chemin du fichier en local
+    :id_localisation: id de l'emplacement 
+
+    :return: l'id de l'image qu'on vient d'insérer
+
+    Pour un code plus clean, l'insertion des features etc... se fait dans les fonctions plus bas 
+    on récupère l'id uniquement pour ça pour pouvoir insérer dans les autres tables
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # récupération de l'upload date (on considère qu'une fois que la photo est prise c'est directement upload)
+    upload_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    cursor.execute("""INSERT INTO images (file_path, upload_date, id_localisation) VALUES (?,?,?)""", (file_path,upload_date,id_localisation))
+
+    image_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    return image_id
+
+
+def add_features(image_id : int, features: dict): 
+    """
+    Insère le dictionnaire de features pour une image donnée (grâce à features.py) dans la tables images_features
+    :image_id: id de l'image pour laquelle on ajoute les features extraites
+    :features: dico contenant les features en question 
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""INSERT INTO images_features 
+                   (image_id, file_size, width, height, mean_r, mean_g, mean_b, luminosite, contraste, saturation, edge_density)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                   """, (
+                       image_id,
+                       features["file_size"],
+                       features["image_width"],
+                       features["image_height"],
+                       features["mean_r"],
+                       features["mean_g"],
+                       features["mean_b"],
+                       features["brightness"],
+                       features["contraste"],
+                       features["saturation"],
+                       features["edge_density"]
+                   ))
+
+    conn.commit()
+    conn.close()
+
+def get_all_images() -> list:
+    """
+    Ramène toutes les images de la BDD
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT 
+            i.id, 
+            i.file_path, 
+            i.upload_date,
+            f.luminosite,
+            f.contraste,
+            f.edge_density,
+            c.auto_label,
+            c.confidence
+        FROM images i
+        LEFT JOIN images_features f ON i.id = f.image_id
+        LEFT JOIN images_classification c ON i.id = c.image_id
+        ORDER BY i.upload_date DESC
+    """)
+
+    images = cursor.fetchall()
+    conn.close()
+
+    return images
+
+def get_luminosite()->list:
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT luminosite 
+        FROM images_features 
+        WHERE luminosite IS NOT NULL
+    """)
+    
+    rows = cursor.fetchall()
+    conn.close()
+    
+    return [row["luminosite"] for row in rows]
+
+def get_stats():
+    """Statistiques pour le dashboard."""
+    conn = get_connection()
+    
+    total = conn.execute("SELECT COUNT(*) AS n FROM images").fetchone()["n"]
+
+    auto_counts = conn.execute(
+        "SELECT auto_label, COUNT(*) AS n FROM images_classification GROUP BY auto_label"
+    ).fetchall()
+
+    manual_counts = conn.execute(
+        """
+        SELECT annotation AS label, COUNT(*) AS n
+        FROM images_classification
+        WHERE annotation IS NOT NULL
+        GROUP BY annotation
+        """
+    ).fetchall()
+
+    file_sizes = [
+        row["file_size"]
+        for row in conn.execute("SELECT file_size FROM images_features").fetchall()
+    ]
+
+    conn.close() 
+
+    return {
+        "total_images": total,
+        "automatic_labels": {r["auto_label"]: r["n"] for r in auto_counts if r["auto_label"] is not None}, # Corrigé
+        "manual_annotations": {r["label"]: r["n"] for r in manual_counts},
+        "file_sizes": file_sizes,
+    }
+
+def update_annotation(image_id, annotation):
+    """
+    Définit l’annotation d’une image (‘pleine’ ou ‘vide’),
+    ou l’annule en passant annotation=None.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if annotation not in ("pleine", "vide", None):
+        print("annotation doit être ‘pleine’ ou ‘vide’ ou 'None'")
+    cur = conn.execute(
+    f"UPDATE images_classification SET annotation = {annotation} WHERE image_id = {image_id}")
+
+    conn.close()
+
+
+
+if __name__ == "__main__":
+    init_db()
