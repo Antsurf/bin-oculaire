@@ -1,11 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div id="bin-input">
-    <input type="file" id="imageInput" accept="image/*" class="sr-only">
-    <div class="preview-container">
-        <img id="imagePreview" src="#" alt="Aperçu de l'image" style="display: none;">
+<form action="/index" method="POST" enctype="multipart/form-data" id="bin-input">
+
+    <label for="imageInput" class="image-clicker">
+        <img src="{{ url_for('static', filename='/imgPlaceholder.png') }}?v=1" alt="Nouvelle image" id="imgPlaceholder" style="width: auto; height: 500px; cursor: pointer;">
+    </label>
+
+    <input type="file" id="imageInput" name="mon_image" accept="image/*" style="display: none;">
+
+    <div style="display: flex; gap: 20px;">
+        <input type="text" id="address" name="mon_adresse" placeholder="30-32 avenue de le république, 94800, Villejuif">
+        <button type="submit" id="post-button">Importer l'image</button>
     </div>
-    <button type="button">Soumettre</button>
-</div>
+
+</form>
+<script>
+document.getElementById('imageInput').addEventListener('change', function(event) {
+    const file = event.target.files[0]; // On récupère le fichier sélectionné
+    if (file) {
+        const imagePlaceholder = document.getElementById('imgPlaceholder');
+        imagePlaceholder.src = URL.createObjectURL(file);
+    }
+});
+</script>
 {% endblock %}
