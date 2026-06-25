@@ -9,11 +9,11 @@
 <body>
     <nav>
         <img src="../static/logo.svg" alt="Logo">
-        <a href="{{ url_for('base') }}">Base</a>
+        <a href="{{ url_for('index') }}">Accueil</a>
+        <a href="{{ url_for('index') }}">Carte</a>
         <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('gallery') }}">Gallery</a>
-        <a href="{{ url_for('index') }}">Index</a>
-        <a href="{{ url_for('result') }}">Result</a>
+        <a href="{{ url_for('gallery') }}">Galerie</a>
+        <a href="{{ url_for('result') }}">Résultats</a>
     </nav>
     <main class="main-content">
         {% block content %}

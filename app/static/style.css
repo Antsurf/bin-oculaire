@@ -42,24 +42,64 @@ nav img {
 }
 
 #bin-input {
-    margin-top: 5%;
+    margin-top: 4%;
     display: flex;
     margin-right: auto;
     margin-left: auto;
     flex-direction: column;
     align-items: center;
-    justify-items: center;
+    gap: 15px;
     width: 80%;
 }
 
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
+.vertical-display {
+    width: 115px;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
     white-space: nowrap;
-    border: 0;
+    cursor: pointer;
+}
+
+.vertical-display::file-selector-button {
+    cursor: pointer;
+}
+
+.image-clicker img {
+    cursor: pointer;
+    height: auto;
+    transition: transform 0.2s;
+}
+
+#imgPlaceholder {
+    border-radius: 3px;
+    border-width: 20px;
+    border-color: darkslategray;
+}
+
+#address {
+    width: 400px;
+    height: 30px;
+    padding: 10px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: lightgray;
+    box-shadow: none;
+    outline: none;
+    border-style: solid;
+}
+
+#address::placeholder {
+    color: rgb(151 150 150 / 0.89);
+}
+
+#post-button {
+    background-color: #715555;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    padding: 5px 15px 5px 15px;
+}
+
+#post-button:hover {
+    background-color: #8a6e6e;
+    transition: transform 0.2s;
 }
