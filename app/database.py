@@ -2,7 +2,8 @@ import sqlite3
 import os
 import datetime
 
-db_name = "database.db"
+directory_db = os.path.dirname(os.path.abspath(__file__))
+db_name = os.path.join(directory_db, "database.db")
 
 def get_connection() -> dict:
     """
