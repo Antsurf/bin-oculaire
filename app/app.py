@@ -2,10 +2,13 @@ from flask import Flask, request, render_template, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 import os
 from markupsafe import escape
+import database as db
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app = Flask(__name__)
+db.init_db()
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -20,7 +23,8 @@ def dashboard():
     return render_template('dashboard.html')
 @app.route('/gallery')
 def gallery():
-    return render_template('gallery.html')
+    images = db.get_all_images()
+    return render_template('gallery.html', images=images)
 @app.route('/index', methods=['GET', 'POST'])
 def index():
 
@@ -37,6 +41,7 @@ def index():
             chemin_final = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
             file.save(chemin_final)
+            db.insert_image(chemin_final)
             return render_template('index.html')
     return render_template('index.html')
 @app.route('/result')

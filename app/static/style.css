@@ -2,11 +2,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Calibri, serif;
 }
 
 body {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(0, 0, 0, 0.26) 138.1%), #CFE9E0;
     background-attachment: fixed;
+    overflow-y: auto;
 }
 
 nav {
@@ -27,7 +29,6 @@ nav a {
     color: white;
     text-decoration: none;
     font-size: 160%;
-    font-family: Calibri, serif;
 }
 
 nav a:visited {
@@ -65,14 +66,16 @@ nav img {
 
 .image-clicker img {
     cursor: pointer;
-    height: auto;
-    transition: transform 0.2s;
 }
 
 #imgPlaceholder {
     border-radius: 3px;
-    border-width: 20px;
-    border-color: darkslategray;
+    border: 3px solid whitesmoke;
+    transition: filter 0.2s ease;
+}
+
+#imgPlaceholder:hover {
+    filter: brightness(70%);
 }
 
 #address {
@@ -102,4 +105,79 @@ nav img {
 #post-button:hover {
     background-color: #8a6e6e;
     transition: transform 0.2s;
+}
+
+.img-case p {
+    font-size: 14px;
+}
+
+.title-page {
+    text-align: center;
+}
+
+h1 {
+    display: inline-block;
+    margin: 15px 0 0 0;
+    padding: 10px;
+    text-align: center;
+    color: white;
+    background-color: #715555;
+    border-radius: 5px;
+    font-weight: normal;
+}
+
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: calc(50% - 2px);
+    gap: 10px;
+    padding: 15px;
+    height: calc(90vh - 120px);
+    box-sizing: border-box;
+}
+
+.img-case {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.img-case img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    z-index: 1;
+}
+
+.card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 65%, transparent 100%);
+    padding: 30px 15px 15px 15px;
+    color: #ffffff;
+    box-sizing: border-box;
+    z-index: 2;
+}
+
+.card-label {
+    margin: 0;
+    font-weight: bold;
+    font-size: 0.95rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.card-meta {
+    margin: 4px 0 0 0;
+    font-size: 0.8rem;
+    opacity: 0.85;
 }

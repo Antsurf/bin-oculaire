@@ -2,18 +2,20 @@
 
 {% block content %}
 <form action="/index" method="POST" enctype="multipart/form-data" id="bin-input">
-
     <label for="imageInput" class="image-clicker">
         <img src="{{ url_for('static', filename='/imgPlaceholder.png') }}?v=1" alt="Nouvelle image" id="imgPlaceholder" style="width: auto; height: 500px; cursor: pointer;">
     </label>
-
     <input type="file" id="imageInput" name="mon_image" accept="image/*" style="display: none;">
 
-    <div style="display: flex; gap: 20px;">
-        <input type="text" id="address" name="mon_adresse" placeholder="30-32 avenue de le république, 94800, Villejuif">
+    <div div style="display: flex; gap: 20px;">
+        <input type="text" id="address" name="mon_adresse" placeholder="Tapez une adresse..." list="address-list" autocomplete="off">
+        <datalist id="address-list"></datalist>
+
+        <input type="hidden" id="lat" name="lat">
+        <input type="hidden" id="lon" name="lon">
+
         <button type="submit" id="post-button">Importer l'image</button>
     </div>
-
 </form>
 <script>
 document.getElementById('imageInput').addEventListener('change', function(event) {
@@ -21,6 +23,39 @@ document.getElementById('imageInput').addEventListener('change', function(event)
     if (file) {
         const imagePlaceholder = document.getElementById('imgPlaceholder');
         imagePlaceholder.src = URL.createObjectURL(file);
+    }
+});
+const addressInput = document.getElementById('address');
+const addressList = document.getElementById('address-list');
+const latInput = document.getElementById('lat');
+const lonInput = document.getElementById('lon');
+
+addressInput.addEventListener('input', async () => {
+    const query = addressInput.value;
+    if (query.length < 5) return; // Attend 5 lettres pour lancer la recherche
+
+    const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`);
+    const data = await response.json();
+
+    addressList.innerHTML = '';
+    data.features.forEach(feature => {
+        const option = document.createElement('option');
+        option.value = feature.properties.label;
+
+        // On attache les coordonnées à l'option pour les récupérer plus tard
+        option.dataset.lat = feature.geometry.coordinates[1];
+        option.dataset.lon = feature.geometry.coordinates[0];
+
+        addressList.appendChild(option);
+    });
+});
+
+// Quand l'utilisateur sélectionne une adresse dans la liste
+addressInput.addEventListener('change', () => {
+    const selectedOption = Array.from(addressList.options).find(opt => opt.value === addressInput.value);
+    if (selectedOption) {
+        latInput.value = selectedOption.dataset.lat;
+        lonInput.value = selectedOption.dataset.lon;
     }
 });
 </script>
