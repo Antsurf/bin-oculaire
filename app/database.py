@@ -125,6 +125,50 @@ def insert_image(file_path: str, id_localisation: int = None) -> int:
 
     return image_id
 
+def add_localisation(latitude: float, longitude: float, loc_name: str) -> int:
+    """
+    Cette fonction ajoute dans la table localisation une nouvelle localisation quand une image
+    ajoutée a un emplacement qui n'existe pas déjà. 
+
+    :latitude: coordonnée en float de la latitude récupéré grâce à l'api du gouvernement 
+    :longitude: coordonnée en float de la longitude récupéré grâce à l'api du gouvernement 
+    :loc_name: nom de la localisation avec laquelle on extrait l'adresse 
+
+    :return: renvoie l'id de la localisation dans la table pour ensuite pouvoir update
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""INSERT INTO localisation (latitude, longitude, localisation_nom) VALUES (?,?,?)""", (latitude, longitude, loc_name))
+
+    localisation_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    return localisation_id 
+
+def get_localisation(latitude: float, longitude: float, tolerance = 0.0002) -> int:
+    """
+    Fonction pour récupérer une localisation dans la base de données 
+    :latitude: coordonnée en float de la latitude
+    :longitude: coordonnée en float de la longitude
+    :tolerance: paramètre le plus important c'est pour éviter les doublons de base, on met 
+    une tolérance de 0.0002 ça correspond à peu près à 20 mètres de différence 
+
+    :return: l'id de la localisation 
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""SELECT id_localisation FROM localisation 
+                   WHERE latitude BETWEEN ? AND ? 
+                   AND longitude BETWEEN ? AND ?""",(latitude-tolerance,latitude+tolerance,longitude-tolerance,longitude+tolerance))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return row["id_localisation"] if row else None
+
 
 def add_features(image_id : int, features: dict): 
     """
