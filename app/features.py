@@ -4,6 +4,21 @@ import os
 import json
 import numpy as np
 import cv2
+import requests
+
+def get_coords_from_address(address: str) -> tuple[float, float] | None:
+    """
+    Appelle l'API Adresse et renvoie (lat, lon) ou None si erreur.
+    """
+    try:
+        response = requests.get(f"https://api-adresse.data.gouv.fr/search/?q={address}&limit=1")
+        data = response.json()
+        if data['features']:
+            coords = data['features'][0]['geometry']['coordinates']
+            return coords[1], coords[0] # (lat, lon)
+    except Exception as e:
+        print(f"Erreur API Gouv: {e}")
+    return None
 
 def extract_features(file_path: str) -> dict:
     """
