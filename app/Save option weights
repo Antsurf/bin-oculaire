@@ -1,0 +1,33 @@
+test visant à optimiser le f1 score
+weights : {'mean_r': 0.0, 'mean_g': 0.0, 'brightness': 0.0, 'contraste_global': np.float64(0.576597182511287), 'edge_density_V2': 0.913199779995186, 'max_r': 0.0, 'max_g': 0.0, 'max_b': 0.17758605140143957, 'min_r': np.float64(0.3717998680502938), 'min_g': 0.0, 'min_b': 0.8163328875114694, 'index_max_r': 0.0, 'index_max_g': 0.0, 'max_lum': 0.0, 'min_lum': 0.09817106651949903, 'index_max_lum': 0.0, 'index_min_lum': np.float64(0.5108694211581523), 'sum_avg': 0.0, 'quantity_of_whites': np.float64(0.3653697301979579)}
+thresholds : [52, 100]
+accuracy : 0.5256410256410257
+f1 score : 0.5257648953301127
+notes : good classification but a lot of error between clean and dirty
+
+Result with cost matrix : [[0, 10, 50],[10, 0, 2],[50, 2, 0]]
+weights : {'mean_r': np.float64(0.294151231222769), 'mean_g': 0.0, 'brightness': 0.0, 'contraste_global': 0.08267505649646285, 'edge_density_V2': 0.0, 'max_r': 0.18084870042422807, 'max_g': 0.0, 'max_b': np.float64(0.7296767842718264), 'min_r': 0.6836119706016636, 'min_g': 0.43087868043327976, 'min_b': 1.0, 'index_max_r': 0.0, 'index_max_g': np.float64(0.0565615492209931), 'max_lum': np.float64(0.5933138779883885), 'min_lum': 1.0, 'index_max_lum': 0.0, 'index_min_lum': 0.0, 'sum_avg': 0.0, 'quantity_of_whites': np.float64(0.1517254762332132)}
+thresholds : [24, 95]
+accuracy : 0.4358974358974359
+f1 score : 0.317988941751318
+notes : bad classification, all on dirty
+
+Result with cost matrix : [[0, 10, 10],[10, 0, 2],[50, 2, 0]]
+weights : {'mean_r': 0.2289245464045946, 'mean_g': 0.06302665543327973, 'brightness': 0.10763732330965228, 'contraste_global': np.float64(0.5892667092319058), 'edge_density_V2': np.float64(0.598437901796708), 'max_r': 0.0, 'max_g': 0.0, 'max_b': 0.040315403544763755, 'min_r': 0.9459473715780203, 'min_g': 0.0, 'min_b': 0.9412322503528939, 'index_max_r': 0.0, 'index_max_g': np.float64(0.16148382467084912), 'max_lum': 0.0, 'min_lum': np.float64(0.321242055334843), 'index_max_lum': 0.0, 'index_min_lum': np.float64(0.5122186734131715), 'sum_avg': 0.0, 'quantity_of_whites': 0.0}
+thresholds : [27, 93]
+accuracy : 0.48717948717948717
+f1 score : 0.396086054312968
+notes : bad classification, all on dirty and very_dirty
+
+result with cost matrix : [[0, 25,  25], [15, 0, 5], [50, 5, 0]]
+weights : {'mean_r': 0.0, 'mean_g': 0.03036690776971991, 'brightness': np.float64(0.020005987701213993), 'contraste_global': np.float64(0.4664859882456436), 'edge_density_V2': np.float64(0.3618224589426162), 'max_r': np.float64(0.24029155462922458), 'max_g': np.float64(0.21484668978683052), 'max_b': np.float64(0.24776773738605118), 'min_r': 0.8870304084592805, 'min_g': np.float64(0.1434260787906016), 'min_b': 0.9848757537749889, 'index_max_r': 0.0, 'index_max_g': 0.0, 'max_lum': np.float64(0.3676905147497899), 'min_lum': np.float64(0.9285093512220576), 'index_max_lum': np.float64(0.013578666771201342), 'index_min_lum': 0.0, 'sum_avg': 0.0, 'quantity_of_whites': np.float64(0.3688451521004107)}
+thresholds : [53, 83]
+accuracy : 0.5064102564102564
+f1 score : 0.48608058608058613
+note : good one
+
+result with cost matrix : [[0, 30,  32],[24, 0, 5], [50, 5, 0]]
+weights : {'mean_r': np.float64(0.01376422371403685), 'mean_g': 0.0, 'brightness': 0.0, 'contraste_global': np.float64(0.7199924014556374), 'edge_density_V2': np.float64(0.4704017524096923), 'max_r': 0.0, 'max_g': np.float64(0.30272728971973906), 'max_b': 0.0, 'min_r': 1.0, 'min_g': np.float64(0.41345849348853436), 'min_b': 0.870891282988038, 'index_max_r': 0.0, 'index_max_g': np.float64(0.01748784218304835), 'max_lum': 0.0, 'min_lum': 1.0, 'index_max_lum': 0.0, 'index_min_lum': np.float64(0.047498647545156876), 'sum_avg': 0.0, 'quantity_of_whites': np.float64(0.13373255391552297)}
+thresholds : [50, 84]
+accuracy : 0.532051282051282
+f1 score : 0.5096610108238016
