@@ -147,6 +147,29 @@ def add_localisation(latitude: float, longitude: float, loc_name: str) -> int:
 
     return localisation_id 
 
+def get_localisation(latitude: float, longitude: float, tolerance = 0.0002) -> int:
+    """
+    Fonction pour récupérer une localisation dans la base de données 
+    :latitude: coordonnée en float de la latitude
+    :longitude: coordonnée en float de la longitude
+    :tolerance: paramètre le plus important c'est pour éviter les doublons de base, on met 
+    une tolérance de 0.0002 ça correspond à peu près à 20 mètres de différence 
+
+    :return: l'id de la localisation 
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""SELECT id_localisation FROM localisation 
+                   WHERE latitude BETWEEN ? AND ? 
+                   AND longitude BETWEEN ? AND ?""",(latitude-tolerance,latitude+tolerance,longitude-tolerance,longitude+tolerance))
+
+    row = cursor.fetchone()
+    conn.close()
+
+    return row["id_localisation"] if row else None
+
+
 def add_features(image_id : int, features: dict): 
     """
     Insère le dictionnaire de features pour une image donnée (grâce à features.py) dans la tables images_features
