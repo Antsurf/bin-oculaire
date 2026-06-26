@@ -170,7 +170,7 @@ def get_localisation(latitude: float, longitude: float, tolerance = 0.0002) -> i
     return row["id_localisation"] if row else None
 
 
-def add_features(image_id : int, features: dict): 
+def add_features(image_id : int, features: dict) -> None: 
     """
     Insère le dictionnaire de features pour une image donnée (grâce à features.py) dans la tables images_features
     :image_id: id de l'image pour laquelle on ajoute les features extraites
@@ -202,6 +202,7 @@ def add_features(image_id : int, features: dict):
 def get_all_images() -> list:
     """
     Ramène toutes les images de la BDD
+    Renvoie un dictionnaire avec les différentes infos extraites en clé
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -228,7 +229,9 @@ def get_all_images() -> list:
     return images
 
 def get_luminosite()->list:
-
+    """
+    Renvoie des infos sur la luminosité pour toutes les images
+    """
     conn = get_connection()
     cursor = conn.cursor()
     
@@ -243,8 +246,14 @@ def get_luminosite()->list:
     
     return [row["luminosite"] for row in rows]
 
-def get_stats():
-    """Statistiques pour le dashboard."""
+def get_stats()->dict:
+    """Statistiques pour le dashboard.
+    Renvoie un dictionnaire avec différents paramètres
+    Nombre total d'images
+    Nombre d'image auto labelisé
+    Nombre d'image annotée 
+    Taille totale de toutes les images (en Ko)
+    """
     conn = get_connection()
     
     total = conn.execute("SELECT COUNT(*) AS n FROM images").fetchone()["n"]
@@ -276,7 +285,7 @@ def get_stats():
         "file_sizes": file_sizes,
     }
 
-def update_annotation(image_id, annotation):
+def update_annotation(image_id: int, annotation: str)->None:
     """
     Définit l’annotation d’une image (‘pleine’ ou ‘vide’),
     ou l’annule en passant annotation=None.
@@ -288,7 +297,7 @@ def update_annotation(image_id, annotation):
         print("annotation doit être ‘pleine’ ou ‘vide’ ou 'None'")
     cur = conn.execute(
     f"UPDATE images_classification SET annotation = {annotation} WHERE image_id = {image_id}")
-
+    conn.commit()
     conn.close()
 
 
