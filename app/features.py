@@ -27,12 +27,14 @@ def extract_features(file_path: str) -> dict:
     Moyenne RGB : 3 canaux
     Luminosité RGB: basé sur le calcul REC601 (voir discord)
     Contraste de couleur: max(pixel) - min(pixel)
+    Contraste global : écart type des pixels (0–255)
     Saturation : saturation moyenne HSV (0–255)
     Histogramme niveaux de gris : 256 valeurs (JSON)
     Histogramme RGB       : r/g/b × 256 valeurs (JSON)
     Histogramme luminance : 256 valeurs (JSON)
     Densité de contours   : % de pixels avec un bord détecté (0–1)
- 
+    Densité de contours (OpenCV) : nombre de pixels avec un bord détecté (0–N)
+    
     :param file_path: uploads/...
     :return: dictionary with features of a specific image
     """
@@ -88,7 +90,7 @@ def extract_features(file_path: str) -> dict:
     edge_img = gray.filter(ImageFilter.FIND_EDGES)
     stat_edge = ImageStat.Stat(edge_img)
     features["edge_density"] = round(stat_edge.mean[0] / 255.0, 4)
-    features['edge_density_V2'] = np.sum(cv2.Canny(np.array(gray), 50, 150)>0)
+    features['edge_density_opencv'] = np.sum(cv2.Canny(np.array(gray), 50, 150)>0)
 
     return features
 
@@ -118,9 +120,11 @@ def features_summary(features: dict) -> str:
         f"Dimensions    : {features['image_width']} x {features['image_height']} px\n"
         f"Moyenne RGB   : R={features['mean_r']}  G={features['mean_g']}  B={features['mean_b']}\n"
         f"Luminosité    : {features['brightness']}\n"
-        f"Contraste     : {features['contraste']} / 255\n"
+        f"Contraste     : {features['contraste_maximal']} / 255\n"
+        f"Contraste global : {features['contraste_global']}\n"
         f"Saturation    : {features['saturation']}\n"
         f"Densité bords : {features['edge_density']}"
+        f"Densité bords (OpenCV) : {features['edge_density_opencv']}"
     )
 
 
