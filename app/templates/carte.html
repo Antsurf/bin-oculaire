@@ -1,11 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Carte des zones à risque</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+    <style>
+        #map { height: 600px; width: 100%; }
+    </style>
 </head>
 <body>
-    
+
+    <h1>Carte des zones à risque de débordement</h1>
+    <div id="map"></div>
+
+    <script>
+        // Initialisation de la carte
+        const map = L.map('map').setView([48.8566, 2.3522], 13);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Création du groupe de cluster
+        const markers = L.markerClusterGroup(); 
+
+        async function chargerZonesRisque() {
+            try {
+                const response = await fetch('/api/agglomeration/geojson');
+                const geojsonData = await response.json();
+
+                // Création de la couche GeoJSON
+                const geoJsonLayer = L.geoJSON(geojsonData, {
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup("<strong>Adresse:</strong> " + feature.properties.adresse + 
+                                        "<br><strong>État:</strong> " + feature.properties.etat);
+                    }
+                });
+
+                // On ajoute la couche au cluster, puis le cluster à la carte
+                markers.addLayer(geoJsonLayer); 
+                map.addLayer(markers);
+            } catch (error) {
+                console.error("Erreur lors du chargement :", error);
+            }
+        }
+
+        chargerZonesRisque();
+    </script>
 </body>
 </html>

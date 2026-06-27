@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, flash, redirect, url_for
+from flask import Flask, request, render_template, flash, redirect, url_for, jsonify
 from werkzeug.utils import secure_filename
 import os
 from markupsafe import escape
@@ -112,6 +112,45 @@ def upload_file():
 
     return render_template('index.html')
         
+
+@app.route('/api/agglomeration/geojson', methods=['GET'])
+def get_zones_risque():
+    """
+    API appelée quand on visualise la carte. Elle renvoie les localisations des images avec le dernier label associé en format geojson
+    """
+    conn = db.get_connection()
+
+    # Requête qui récupère les localisations et le dernier label associé
+    rows = conn.execute("""
+        SELECT l.latitude, l.longitude, l.localisation_nom
+        FROM localisation l
+        JOIN images i ON l.id_localisation = i.id_localisation
+    """).fetchall()
+    conn.close()
+#         WHERE ic.auto_label = 'dirty' OR ic.auto_label = 'very_dirty'
+
+    print(rows)
+
+    # transformation en format geojson
+    geojson = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    
+    for row in rows:
+        feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [row['longitude'], row['latitude']]
+            },
+            "properties": {
+                "adresse": row['localisation_nom'],
+            }
+        }
+        geojson["features"].append(feature)
+        
+    return jsonify(geojson)
 
 if __name__ == '__main__':
     print("--- Lancement du serveur sur http://127.0.0.1:5000 ---")
