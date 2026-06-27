@@ -2,7 +2,23 @@ from PIL import Image, ImageStat, ImageFilter
 import matplotlib.pyplot as plt
 import os
 import json
+import numpy as np
+import cv2
+import requests
 
+def get_coords_from_address(address: str) -> tuple[float, float] | None:
+    """
+    Appelle l'API Adresse et renvoie (lat, lon) ou None si erreur.
+    """
+    try:
+        response = requests.get(f"https://api-adresse.data.gouv.fr/search/?q={address}&limit=1")
+        data = response.json()
+        if data['features']:
+            coords = data['features'][0]['geometry']['coordinates']
+            return coords[1], coords[0] # (lat, lon)
+    except Exception as e:
+        print(f"Erreur API Gouv: {e}")
+    return None
 
 def extract_features(file_path: str) -> dict:
     """
@@ -11,12 +27,14 @@ def extract_features(file_path: str) -> dict:
     Moyenne RGB : 3 canaux
     Luminosité RGB: basé sur le calcul REC601 (voir discord)
     Contraste de couleur: max(pixel) - min(pixel)
+    Contraste global : écart type des pixels (0–255)
     Saturation : saturation moyenne HSV (0–255)
     Histogramme niveaux de gris : 256 valeurs (JSON)
     Histogramme RGB       : r/g/b × 256 valeurs (JSON)
     Histogramme luminance : 256 valeurs (JSON)
     Densité de contours   : % de pixels avec un bord détecté (0–1)
- 
+    Densité de contours (OpenCV) : nombre de pixels avec un bord détecté (0–N)
+    
     :param file_path: uploads/...
     :return: dictionary with features of a specific image
     """
@@ -43,7 +61,8 @@ def extract_features(file_path: str) -> dict:
     gray = img.convert("L")
     extrema = gray.getextrema()
     # Niveau de contraste 
-    features["contraste"] = extrema[1] - extrema[0]
+    features["contraste_maximal"] = extrema[1] - extrema[0]
+    features['contraste_global'] = float(np.std(gray))
 
     # Saturation moyenne
     img_hsv = img.convert("HSV")
@@ -71,6 +90,7 @@ def extract_features(file_path: str) -> dict:
     edge_img = gray.filter(ImageFilter.FIND_EDGES)
     stat_edge = ImageStat.Stat(edge_img)
     features["edge_density"] = round(stat_edge.mean[0] / 255.0, 4)
+    features['edge_density_opencv'] = np.sum(cv2.Canny(np.array(gray), 50, 150)>0)
 
     return features
 
@@ -100,9 +120,11 @@ def features_summary(features: dict) -> str:
         f"Dimensions    : {features['image_width']} x {features['image_height']} px\n"
         f"Moyenne RGB   : R={features['mean_r']}  G={features['mean_g']}  B={features['mean_b']}\n"
         f"Luminosité    : {features['brightness']}\n"
-        f"Contraste     : {features['contraste']} / 255\n"
+        f"Contraste     : {features['contraste_maximal']} / 255\n"
+        f"Contraste global : {features['contraste_global']}\n"
         f"Saturation    : {features['saturation']}\n"
         f"Densité bords : {features['edge_density']}"
+        f"Densité bords (OpenCV) : {features['edge_density_opencv']}"
     )
 
 
@@ -117,14 +139,16 @@ def enregistrement_json(features: dict, output_path: str):
     print(f"Features sauvegardées dans : {output_path}")
 
 
+
+
 if __name__ == "__main__":
     path = input("Chemin de l'image : ").replace("\\", "/")
     features = extract_features(path)
     print(features_summary(features))
- 
+
     # Sauvegarde JSON dans le même dossier que l'image
-    json_out = path.rsplit(".", 1)[0] + "_features.json"
-    enregistrement_json(features, json_out)
- 
+    # json_out = path.rsplit(".", 1)[0] + "_features.json"
+    # enregistrement_json(features, json_out)
+
     # Affiche les histogrammes
     show_histo(features)
