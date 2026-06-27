@@ -111,6 +111,31 @@ nav img {
     font-size: 14px;
 }
 
+/*Styles pour la galerie avec le survol des images*/
+
+.img-case {
+    position: relative; 
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7); /* Fond semi-transparent */
+    color: white;
+    padding: 10px;
+    opacity: 0; /* cache l'overlay par défaut */
+    transition: opacity 0.3s ease; 
+}
+
+/* Apparition au survol */
+.img-case:hover .card-overlay {
+    opacity: 1;
+}
+
 .title-page {
     text-align: center;
 }
