@@ -235,6 +235,51 @@ def get_all_images() -> list:
 
     return images
 
+def get_images_paginated(limit, offset):
+    """
+    Fonction pour récupérer les images avec pagination (donc limit et offset)
+    comme la fonction get_all_images mais avec limit et offset pour la pagination
+    :return: une liste de dictionnaires avec les infos des images
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    query = """SELECT 
+            i.id, 
+            i.file_path, 
+            i.upload_date,
+            f.luminosite,
+            f.contraste_maximal,
+            f.contraste_global,
+            f.edge_density,
+            f.edge_density_opencv,
+            c.auto_label,
+            c.confidence,
+            l.localisation_nom,
+            l.latitude,
+            l.longitude
+        FROM images i
+        LEFT JOIN images_features f ON i.id = f.image_id
+        LEFT JOIN images_classification c ON i.id = c.image_id
+        LEFT JOIN localisation l ON i.id_localisation = l.id_localisation
+        ORDER BY i.upload_date DESC
+        LIMIT ? OFFSET ?"""
+    cursor.execute(query, (limit, offset))
+    images = cursor.fetchall()
+    conn.close()
+    return images
+
+def get_total_images_count():
+    """
+    Fonction pour récupérer le nombre total d'images dans la base de données
+    :return: le nombre total d'images
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM images")
+    count = cursor.fetchone()[0] # Récupère le nombre total
+    conn.close()
+    return count
+
 def get_luminosite()->list:
     """
     Renvoie des infos sur la luminosité pour toutes les images
