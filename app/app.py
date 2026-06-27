@@ -39,11 +39,23 @@ def carte():
 def dashboard():
     return render_template('dashboard.html')
 
-# ROUTE VERS LA GALERIE
+# ROUTE VERS LA GALERIE avec différentes pages (pagination)
 @app.route('/gallery')
 def gallery():
-    images = db.get_all_images()
-    return render_template('gallery.html', images=images)
+    page = int(request.args.get('page', 1))
+
+    # nombre d'images par page et offset pour la pagination
+    per_page = 2
+
+    # id de l'image de départ pour la page actuelle (page 1 = 0, page 2 = 50, page 3 = 100, etc.)
+    offset = (page - 1) * per_page
+    
+    images = db.get_images_paginated(limit=per_page, offset=offset)
+    
+    total_images = db.get_total_images_count()
+    total_pages = (total_images + per_page - 1) // per_page
+    
+    return render_template('gallery.html', images=images, page=page, total_pages=total_pages)
 
 # ROUTE VERS RESULT 
 @app.route('/result')
