@@ -83,9 +83,11 @@ def init_db():
        mean_g            DECIMAL(5,2),
        mean_b            DECIMAL(5,2),
        luminosite        DECIMAL(5,2),
-       contraste         DECIMAL(5,2),
+       contraste_maximal         DECIMAL(5,2),
+       contraste_global          DECIMAL(5,2),
        saturation        DECIMAL(5,2),
        edge_density      DECIMAL(5,4),
+       edge_density_opencv DECIMAL(5,4),
        FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE
     );""")
 
@@ -181,8 +183,8 @@ def add_features(image_id : int, features: dict) -> None:
     cursor = conn.cursor()
 
     cursor.execute("""INSERT INTO images_features 
-                   (image_id, file_size, width, height, mean_r, mean_g, mean_b, luminosite, contraste, saturation, edge_density)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                   (image_id, file_size, width, height, mean_r, mean_g, mean_b, luminosite, contraste_maximal, contraste_global, saturation, edge_density, edge_density_opencv)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
                    """, (
                        image_id,
                        features["file_size"],
@@ -192,9 +194,11 @@ def add_features(image_id : int, features: dict) -> None:
                        features["mean_g"],
                        features["mean_b"],
                        features["brightness"],
-                       features["contraste"],
+                       features["contraste_maximal"],
+                       features["contraste_global"],
                        features["saturation"],
-                       features["edge_density"]
+                       features["edge_density"],
+                       features["edge_density_opencv"]
                    ))
 
     conn.commit()
@@ -214,8 +218,10 @@ def get_all_images() -> list:
             i.file_path, 
             i.upload_date,
             f.luminosite,
-            f.contraste,
+            f.contraste_maximal,
+            f.contraste_global,
             f.edge_density,
+            f.edge_density_opencv,
             c.auto_label,
             c.confidence
         FROM images i
