@@ -53,6 +53,7 @@ app/
     ├── index.html      <- upload avec drag & drop  
     ├── result.html     <- features + règles + annotation manuelle  
     ├── gallery.html    <- grille de toutes les images  
+    ├── carte.html      <- onglet pour afficher la cartographie
     └── dashboard.html  <- stats + 3 graphiques matplotlib  
   
 
