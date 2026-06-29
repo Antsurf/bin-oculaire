@@ -6,7 +6,7 @@
 
 <div class="gallery-container">
     {% for img in images %}
-    <div class="img-case">
+    <a href="{{ url_for('result', image_id=img['id']) }}" class="img-case">
         <img src="static/uploads/{{ img.file_path.split('uploads/')[-1] }}" alt="{{ img.auto_label }}">
 
         <div class="card-overlay">
@@ -17,7 +17,7 @@
             <p class="card-meta">Longitude: {{ img['longitude'] if img['longitude'] is not none else "Inconnue" }}</p>
             <p class="card-meta">Adresse: {{ img['localisation_nom'] if img['localisation_nom'] else "Inconnue" }}</p>
         </div>
-    </div>
+    </a>
     {% endfor %}
 </div>
 <div class="pagination">

@@ -169,6 +169,10 @@ h1 {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
+a.img-case {
+    text-decoration: none;
+    display: block; 
+}
 .img-case img {
     position: absolute;
     top: 0;

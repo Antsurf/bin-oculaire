@@ -2,9 +2,13 @@ from flask import Flask, request, render_template, flash, redirect, url_for, jso
 from werkzeug.utils import secure_filename
 import os
 from markupsafe import escape
+import uuid
+from datetime import datetime
+import requests as http_requests
+
 import database as db
 import features as ft
-import uuid
+import classifier as cl
 
 UPLOAD_FOLDER = "app/static/uploads/"
 
@@ -89,7 +93,7 @@ def upload_file():
 
             id_localisation = None
             try:
-                img_features = ft.extract_features(chemin_final)
+                images_features = ft.extract_features(chemin_final)
 
                 adresse = request.form.get('mon_adresse', '').strip() #pour éviter les faux espaces
                 # on regarde si on a des coordonnées 
@@ -117,9 +121,11 @@ def upload_file():
                 # pas de localisation
                 id_localisation = None
 
-            # On insert l'image dans la BDD
+            # On insert l'image dans la BDD ainsi que les features et la classification 
             img_id = db.insert_image(chemin_final, id_localisation)
-            db.add_features(img_id, img_features)
+            db.add_features(img_id, images_features)
+            classification = cl.classify(images_features)
+            db.update_autolabel(img_id, classification)
 
             return redirect(url_for('result', image_id=img_id))
 
@@ -164,6 +170,104 @@ def get_zones_risque():
         geojson["features"].append(feature)
         
     return jsonify(geojson)
+
+
+@app.route('/api/context')
+def api_context():
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
+
+    if not lat or not lon:
+        return jsonify({"error": "Coordonnées manquantes"}), 400
+
+    meteo = "Indisponible"
+    jour_marche = "Non"
+    chantiers_btp = 0
+
+    # open-météo pas de clé API
+    try:
+        r = http_requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": lat,
+                "longitude": lon,
+                "current_weather": True
+            },
+            timeout=5
+        )
+        data = r.json()
+        code = data["current_weather"]["weathercode"]
+        temp = data["current_weather"]["temperature"]
+
+        # Traduction basique des weather codes WMO
+        if code == 0:
+            desc = "Ciel dégagé"
+        elif code in [1, 2, 3]:
+            desc = "Nuageux"
+        elif code in range(51, 68):
+            desc = "Pluie"
+        elif code in range(71, 78):
+            desc = "Neige"
+        elif code in range(80, 83):
+            desc = "Averses"
+        elif code in range(95, 100):
+            desc = "Orage"
+        else:
+            desc = f"Code {code}"
+
+        meteo = f"{desc}, {temp}°C"
+    except Exception as e:
+        print(f"Erreur météo: {e}")
+
+    # marché
+    try:
+        # Recherche des marchés dans un rayon de 500m
+        overpass_query = f"""
+        [out:json][timeout:10];
+        node["amenity"="marketplace"](around:500,{lat},{lon});
+        out body;
+        """
+        r = http_requests.post(
+            "https://overpass-api.de/api/interpreter",
+            data=overpass_query,
+            timeout=10
+        )
+        data = r.json()
+        if data.get("elements"):
+            # Un marché existe à proximité
+            # Tu peux affiner avec les horaires OSM si disponibles
+            jour_marche = f"Oui ({len(data['elements'])} marché(s) à proximité)"
+        else:
+            jour_marche = "Aucun marché à proximité"
+    except Exception as e:
+        print(f"Erreur marchés: {e}")
+        jour_marche = "Indisponible"
+
+    # chantier
+    try:
+        overpass_query = f"""
+        [out:json][timeout:10];
+        (
+          node["landuse"="construction"](around:300,{lat},{lon});
+          way["landuse"="construction"](around:300,{lat},{lon});
+        );
+        out count;
+        """
+        r = http_requests.post(
+            "https://overpass-api.de/api/interpreter",
+            data=overpass_query,
+            timeout=10
+        )
+        data = r.json()
+        chantiers_btp = data.get("elements", [{}])[0].get("tags", {}).get("total", 0)
+    except Exception as e:
+        print(f"Erreur chantiers: {e}")
+
+    return jsonify({
+        "meteo": meteo,
+        "jour_marche": jour_marche,
+        "chantiers_btp": chantiers_btp
+    })
 
 if __name__ == '__main__':
     print("--- Lancement du serveur sur http://127.0.0.1:5000 ---")
