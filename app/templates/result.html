@@ -1,11 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
+<!-- Injection de Chart.js pour les graphiques dynamiques-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="result-wrapper">
     
-</body>
-</html>
+    <a href="{{ url_for('gallery') }}" class="btn-back">← Retour à la galerie</a>
+
+    <div class="result-layout">
+        
+        <!-- Colonne Gauche: Image et Méta de base -->
+        <div class="result-col">
+            <h1 style="margin-top: 0; display: block;">Image #{{ image['id'] if image else 'X' }}</h1>
+            
+            <img src="{{ url_for('static', filename='uploads/' ~ image['file_path'].split('uploads/')[-1]) if image else '' }}" 
+                 class="result-image" alt="Image analysée">
+            
+            <div class="info-box">
+                <h3>Informations de Base</h3>
+                <p><strong>Date d'upload :</strong> {{ image['upload_date'] if image else '' }}</p>
+                <p><strong>Lieu :</strong> {{ image['localisation_nom'] | default('Non spécifié') if image else '' }}</p>
+                <p><strong>Classification :</strong> <span class="badge badge-warning">{{ image['auto_label'] | default('En attente') if image else '' }}</span></p>
+                <p><strong>Taille fichier :</strong> {{ image['file_size'] if image else '' }} Ko</p>
+                <p><strong>Dimensions :</strong> {{ image['width'] if image else '' }} x {{ image['height'] if image else '' }} px</p>
+            </div>
+        </div>
+
+        <!-- Colonne Droite: Tableaux de bord Avancés -->
+        <div class="result-col-wide">
+            
+            <!-- Graphe Dynamique -->
+            <div class="result-card">
+                <h3>Histogramme RGB Dynamique</h3>
+                <p style="font-size: 14px; color: #666;">Distribution des niveaux de couleurs (cliquez sur les légendes pour filtrer).</p>
+                <canvas id="rgbChart" height="100"></canvas>
+            </div>
+
+            <!-- Contexte -->
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="info-box info-box-blue" style="flex: 1; margin-top: 0;">
+                    <h3>Métriques d'Image</h3>
+                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                        <li><strong>Luminosité :</strong> {{ image['luminosite'] if image else '' }}</li>
+                        <li><strong>Contraste Max :</strong> {{ image['contraste_maximal'] if image else '' }}</li>
+                        <li><strong>Saturation :</strong> {{ image['saturation'] if image else '' }}</li>
+                        <li><strong>Densité contours :</strong> {{ image['edge_density'] if image else '' }}</li>
+                    </ul>
+                </div>
+
+                <div class="info-box info-box-yellow" style="flex: 1; margin-top: 0;">
+                    <h3>Contexte (Niveau 3)</h3>
+                    <p style="font-size: 13px; color: #555;"><i>Indicateurs temps-réel via AJAX</i></p>
+                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                        <li>🌤️ <strong>Météo :</strong> <span id="meteo-value">Chargement...</span></li>
+                        <li>📅 <strong>Jour de marché :</strong> <span id="marche-value">Chargement...</span></li>
+                        <li>🚧 <strong>Travaux BTP :</strong> <span id="btp-value">Chargement...</span></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Sécurisation du transfert de données Jinja vers JavaScript -->
+<script id="hist-data" type="application/json">
+    {{ hist_data | default('{}') | safe }}
+</script>
+
+<script>
+    // Récupération sécurisée du texte pour éviter l'erreur de syntaxe
+    const rawHistData = document.getElementById('hist-data').textContent.trim();
+    let histData = {};
+
+    try {
+        // Mode prévisualisation (si Jinja n'est pas interprété)
+        if (rawHistData.includes('{' + '{') || rawHistData === '{}' || rawHistData === '') {
+            // Données fictives aléatoires pour la démo visuelle
+            histData = {
+                red: Array.from({length: 256}, () => Math.floor(Math.random() * 100)),
+                green: Array.from({length: 256}, () => Math.floor(Math.random() * 100)),
+                blue: Array.from({length: 256}, () => Math.floor(Math.random() * 100))
+            };
+        } else {
+            histData = JSON.parse(rawHistData);
+        }
+    } catch (e) {
+        console.error("Erreur de parsing des données:", e);
+    }
+    
+    if (histData && histData.red) {
+        const ctx = document.getElementById('rgbChart').getContext('2d');
+        const labels = Array.from({length: 256}, (_, i) => i);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Rouge', data: histData.red, borderColor: 'rgba(255, 99, 132, 1)', backgroundColor: 'rgba(255, 99, 132, 0.2)', borderWidth: 1, pointRadius: 0, tension: 0.4 },
+                    { label: 'Vert', data: histData.green, borderColor: 'rgba(75, 192, 192, 1)', backgroundColor: 'rgba(75, 192, 192, 0.2)', borderWidth: 1, pointRadius: 0, tension: 0.4 },
+                    { label: 'Bleu', data: histData.blue, borderColor: 'rgba(54, 162, 235, 1)', backgroundColor: 'rgba(54, 162, 235, 0.2)', borderWidth: 1, pointRadius: 0, tension: 0.4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { display: false },
+                    y: { beginAtZero: true }
+                },
+                interaction: { mode: 'index', intersect: false }
+            }
+        });
+    } else {
+        document.getElementById('rgbChart').outerHTML = "<p>Histogramme non disponible pour cette image.</p>";
+    }
+
+    // REQUÊTE AJAX POUR LE CONTEXTE
+    const lat = "{{ image['latitude'] if image else '' }}";
+    const lon = "{{ image['longitude'] if image else '' }}";
+    
+    if (lat && lat !== "None" && !lat.includes('{' + '{')) {
+        fetch(`/api/context?lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('meteo-value').innerText = data.meteo;
+                document.getElementById('marche-value').innerText = data.jour_marche;
+                document.getElementById('btp-value').innerText = data.chantiers_btp + " déclarés autour";
+            })
+            .catch(error => {
+                console.error('Erreur AJAX:', error);
+                document.getElementById('meteo-value').innerText = "Erreur réseau";
+                document.getElementById('marche-value').innerText = "Erreur réseau";
+                document.getElementById('btp-value').innerText = "Erreur réseau";
+            });
+    } else {
+        document.getElementById('meteo-value').innerText = "Coordonnées indisponibles";
+        document.getElementById('marche-value').innerText = "Coordonnées indisponibles";
+        document.getElementById('btp-value').innerText = "Coordonnées indisponibles";
+    }
+</script>
+{% endblock %}

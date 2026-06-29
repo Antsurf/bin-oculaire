@@ -58,10 +58,11 @@ def gallery():
     return render_template('gallery.html', images=images, page=page, total_pages=total_pages)
 
 # ROUTE VERS RESULT 
-@app.route('/result')
-def result():
-    return render_template('result.html')
-
+@app.route('/result/<int:image_id>')
+def result(image_id):
+    image = db.get_image_details(image_id)
+    
+    return render_template('result.html', image=image)
 
 
 # Route d'upload d'une image
@@ -120,7 +121,7 @@ def upload_file():
             img_id = db.insert_image(chemin_final, id_localisation)
             db.add_features(img_id, img_features)
 
-            return redirect(url_for('result'))
+            return redirect(url_for('result', image_id=img_id))
 
     return render_template('index.html')
         
