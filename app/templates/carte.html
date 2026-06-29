@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends "base.html" %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <title>Carte des zones à risque</title>
@@ -11,14 +11,15 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
-    <style>
-        #map { height: 600px; width: 100%; }
-    </style>
+
 </head>
 <body>
-
-    <h1>Carte des zones à risque de débordement</h1>
-    <div id="map"></div>
+    <div id="map-container">
+        <div class="title-page">
+            <h1>Carte des zones à risque de débordemment</h1>
+        </div>
+        <div id="map"></div>
+    </div>
 
     <script>
         // Initialisation de la carte
@@ -55,4 +56,4 @@
         chargerZonesRisque();
     </script>
 </body>
-</html>
+{% endblock %}
