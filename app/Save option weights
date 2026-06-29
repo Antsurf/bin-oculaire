@@ -31,3 +31,9 @@ weights : {'mean_r': np.float64(0.01376422371403685), 'mean_g': 0.0, 'brightness
 thresholds : [50, 84]
 accuracy : 0.532051282051282
 f1 score : 0.5096610108238016
+
+
+rules : {'mean_r': {'threshold': 0.7469323535899823, 'sign': '>', 'score': 0.0}, 'mean_g': {'threshold': 0.15678378648593713, 'sign': '<', 'score': 1.5166477596108545}, 'brightness': {'threshold': 1.0, 'sign': '>', 'score': 2.390936399042628}, 'contraste_global': {'threshold': 0.5942115792527014, 'sign': '>', 'score': 4.871691449202862}, 'edge_density_V2': {'threshold': 0.4687872967089334, 'sign': '<', 'score': 5.0}, 'max_r': {'threshold': 0.218255493071549, 'sign': '<', 'score': 2.309938096668817}, 'max_g': {'threshold': 0.3000856393416853, 'sign': '>', 'score': 1.6991596341923754}, 'max_b': {'threshold': 0.6600192140467905, 'sign': '>', 'score': 3.166957616360601}, 'min_r': {'threshold': 0.7930687354896114, 'sign': '>', 'score': 5.0}, 'min_g': {'threshold': 0.6445334324055313, 'sign': '<', 'score': 1.2817118409836672}, 'min_b': {'threshold': 0.37050946945511487, 'sign': '<', 'score': 3.301266910889861}, 'index_max_r': {'threshold': 0.7480353790893508, 'sign': '>', 'score': 4.904627204797387}, 'index_max_g': {'threshold': 0.8050660131592206, 'sign': '>', 'score': 1.1814090336672494}, 'max_lum': {'threshold': 0.6372882265110763, 'sign': '>', 'score': 3.2255375556745194}, 'min_lum': {'threshold': 0.8664985266025824, 'sign': '<', 'score': 2.13835806968736}, 'index_max_lum': {'threshold': 1.0, 'sign': '<', 'score': 0.6326246718501172}, 'index_min_lum': {'threshold': 0.6392358198078278, 'sign': '>', 'score': 2.0212421113342915}, 'sum_avg': {'threshold': 0.10122048546453222, 'sign': '<', 'score': 2.2220003154694803}, 'quantity_of_whites': {'threshold': 0.9890829787161401, 'sign': '<', 'score': 5.0}}
+threshold : [24, 26]
+accuracy : 0.4358974358974359
+f1 score : 0.38573460447500385
