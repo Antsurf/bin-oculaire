@@ -235,6 +235,24 @@ def get_all_images() -> list:
 
     return images
 
+def get_image_details(image_id):
+    """Récupère les informations nécessaires pour la page de résultat."""
+    conn = get_connection()
+    query = """
+        SELECT i.id, i.file_path, i.upload_date, f.file_size, f.width, f.height, 
+               c.auto_label, f.luminosite, f.contraste_maximal, f.saturation, f.edge_density,
+               l.latitude, l.longitude, l.localisation_nom
+        FROM images i
+        LEFT JOIN localisation l ON i.id_localisation = l.id_localisation
+        LEFT JOIN images_features f ON i.id = f.image_id
+        LEFT JOIN images_classification c ON i.id = c.image_id
+        WHERE i.id = ?
+    """
+    row = conn.execute(query, (image_id,)).fetchone()
+    conn.close()
+    
+    return dict(row) if row else None
+
 def get_images_paginated(limit, offset):
     """
     Fonction pour récupérer les images avec pagination (donc limit et offset)
