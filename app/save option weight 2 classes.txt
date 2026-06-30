@@ -22,3 +22,10 @@ thresholds : 22
 accuracy : 0.5915492957746479
 f1 score : 0.590818759936407
 note: this is with all images, 0.675 with only the 20 from test
+
+
+weights : {'mean_r': np.float64(0.42729892472925207), 'mean_g': 0.0, 'brightness': 0.0, 'contraste_global': 1.0, 'edge_density_opencv': 0.0, 'max_r': 0.6733576466932568, 'max_g': 0.18877137526241963, 'max_b': 0.9162693796846357, 'min_r': 0.9459473351254188, 'min_g': 0.0, 'min_b': 0.0, 'index_max_r': 0.0, 'index_max_g': 0.0, 'max_lum': 0.008791698893076827, 'min_lum': 0.0, 'index_max_lum': 0.0, 'index_min_lum': 0.0, 'sum_avg': 0.0, 'quantity_of_whites': np.float64(0.37181125359407446)}
+thresholds : 99
+accuracy : 0.6338028169014085
+f1 score : 0.6290938316254773
+note : 0.63 avec toutes les photos
