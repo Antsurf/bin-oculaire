@@ -49,7 +49,7 @@ def gallery():
     page = int(request.args.get('page', 1))
 
     # nombre d'images par page et offset pour la pagination
-    per_page = 2
+    per_page = 10
 
     # id de l'image de départ pour la page actuelle (page 1 = 0, page 2 = 50, page 3 = 100, etc.)
     offset = (page - 1) * per_page
@@ -124,8 +124,8 @@ def upload_file():
             # On insert l'image dans la BDD ainsi que les features et la classification 
             img_id = db.insert_image(chemin_final, id_localisation)
             db.add_features(img_id, images_features)
-            classification = cl.classify(images_features)
-            db.update_autolabel(img_id, classification)
+            classification, confidence = cl.classify(images_features)
+            db.update_autolabel(img_id, classification, confidence)
 
             return redirect(url_for('result', image_id=img_id))
 
