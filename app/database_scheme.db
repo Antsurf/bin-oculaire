@@ -10,6 +10,7 @@ CREATE TABLE localisation(
 CREATE TABLE images(
    id                INTEGER PRIMARY KEY AUTOINCREMENT,
    file_path         VARCHAR(255) NOT NULL,
+   file_name         VARCHAR(255) NOT NULL,
    upload_date       TEXT NOT NULL,                     
    id_localisation   INTEGER,         
    -- Si la localisation disparait, l'image reste mais perd le paramètre géographique                   
