@@ -204,6 +204,34 @@ def add_features(image_id : int, features: dict) -> None:
     conn.commit()
     conn.close()
 
+def update_annotation(image_id: int, annotation: str)->None:
+    """
+    Définit l’annotation d’une image (‘pleine’ ou ‘vide’),
+    ou l’annule en passant annotation=None.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if annotation not in ("pleine", "vide", None):
+        print("annotation doit être ‘pleine’ ou ‘vide’ ou 'None'")
+    cur = conn.execute(
+    f"UPDATE images_classification SET annotation = {annotation} WHERE image_id = {image_id}")
+    conn.commit()
+    conn.close()
+
+def update_autolabel(image_id:int, autolabel: str, confidence: str) -> None:
+    """
+    Insère ou met à jour le label du classifier dans la BDD (INSERT OR REPLACE)
+    """
+    conn = get_connection()
+    conn.execute("""
+        INSERT INTO images_classification (image_id, auto_label, confidence)
+        VALUES (?, ?, ?)
+        ON CONFLICT(image_id) DO UPDATE SET auto_label = excluded.auto_label
+    """, (image_id, autolabel, confidence))  
+    conn.commit()
+    conn.close()
+
 def get_all_images() -> list:
     """
     Ramène toutes les images de la BDD
@@ -279,7 +307,7 @@ def get_images_paginated(limit, offset):
         LEFT JOIN images_features f ON i.id = f.image_id
         LEFT JOIN images_classification c ON i.id = c.image_id
         LEFT JOIN localisation l ON i.id_localisation = l.id_localisation
-        ORDER BY i.upload_date DESC
+        ORDER BY i.upload_date ASC
         LIMIT ? OFFSET ?"""
     cursor.execute(query, (limit, offset))
     images = cursor.fetchall()
@@ -355,33 +383,6 @@ def get_stats()->dict:
         "file_sizes": file_sizes,
     }
 
-def update_annotation(image_id: int, annotation: str)->None:
-    """
-    Définit l’annotation d’une image (‘pleine’ ou ‘vide’),
-    ou l’annule en passant annotation=None.
-    """
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    if annotation not in ("pleine", "vide", None):
-        print("annotation doit être ‘pleine’ ou ‘vide’ ou 'None'")
-    cur = conn.execute(
-    f"UPDATE images_classification SET annotation = {annotation} WHERE image_id = {image_id}")
-    conn.commit()
-    conn.close()
-
-def update_autolabel(image_id:int, autolabel: str) -> None:
-    """
-    Insère ou met à jour le label du classifier dans la BDD (INSERT OR REPLACE)
-    """
-    conn = get_connection()
-    conn.execute("""
-        INSERT INTO images_classification (image_id, auto_label)
-        VALUES (?, ?)
-        ON CONFLICT(image_id) DO UPDATE SET auto_label = excluded.auto_label
-    """, (image_id, autolabel))  
-    conn.commit()
-    conn.close()
 
 if __name__ == "__main__":
     init_db()
