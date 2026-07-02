@@ -2,6 +2,8 @@
 import numpy as np
 import pandas as pd
 import ast
+import joblib
+
 
 def get_whites_from_hist(hist):
     red = np.array(hist['red'])
@@ -43,24 +45,45 @@ def get_features(features_dict):
 
     return features_dict
 
+def scale_features(features):
+    column_to_normalize = ['file_size', 'image_width', 'image_height', 'mean_r', 'mean_g', 'mean_b', 'brightness', 'contraste_maximal',
+     'contraste_global', 'saturation', 'edge_density', 'edge_density_opencv', 'max_r', 'max_g', 'max_b', 'min_r',
+     'min_g', 'min_b', 'index_max_r', 'index_max_g', 'index_max_b', 'index_min_r', 'index_min_g', 'index_min_b',
+     'max_lum', 'min_lum', 'index_max_lum', 'index_min_lum', 'sum_avg', 'sum_diff_avg', 'quantity_of_whites']
+    values = []
+    for col in column_to_normalize:
+        values.append(features[col])
+    values = np.array(values)
+    values = values.reshape(1, -1)
+    min_max_scaler = joblib.load('scaler_for_data.save')
+    scaled_values = min_max_scaler.transform(values)
+    scaled_values = scaled_values.reshape(-1)
+
+    for i in range(len(column_to_normalize)):
+        features[column_to_normalize[i]] = scaled_values[i]
+    return features
+
 # Définition des fonctions pour les poids
 
 def score_to_three_class(score, thresholds):
     if score < thresholds[0]:
         clean_class = "propre"
+        confidence = thresholds[0] - score
     elif thresholds[0] <= score <= thresholds[1]:
         clean_class = "sale"
+        confidence = min(score - thresholds[0], thresholds[1] - score)
     else:
         clean_class = "debordante"
-    return clean_class
+        confidence = score - thresholds[1]
+    return clean_class, confidence
 
 def compute_score(img_features, weights):
     cleaness_score = sum([img_features[k]*v for k,v in weights.items()])
     return cleaness_score*100
 
 def predict_with_weight(row, weights, thresholds):
-    y_pred = score_to_three_class(compute_score(row, weights), thresholds)
-    return y_pred
+    y_pred, confidence = score_to_three_class(compute_score(row, weights), thresholds)
+    return y_pred, confidence
 
 # Définition des fonctions pour les règles
 
@@ -69,7 +92,8 @@ def score_to_two_class(score, threshold):
         clean_class = "propre"
     else:
         clean_class = "sale"
-    return clean_class
+    confidence = abs(score - threshold)
+    return clean_class, confidence
 
 def apply_rule(row,rule):
     score = 0
@@ -83,8 +107,8 @@ def apply_rule(row,rule):
     return score
 
 def predict_with_rules(row, rule, thresholds):
-    y_pred = score_to_two_class(apply_rule(row, rule), thresholds)
-    return y_pred
+    y_pred, confidence = score_to_two_class(apply_rule(row, rule), thresholds)
+    return y_pred, confidence
 
 def classify(features, nb_of_classes = 2, weights = None, rules = None, thresholds = None):
     """
@@ -105,8 +129,9 @@ def classify(features, nb_of_classes = 2, weights = None, rules = None, threshol
 
     # Ajout de différent élément supplémentaire à nos features
     features = get_features(features)
+    features = scale_features(features)
 
-    # Règle de base si non définies
+    # Règle de base si non définie
     if rules is None and nb_of_classes == 2:
         rules = {
             'mean_r': {'threshold': 0.4150344801743592, 'sign': '>', 'score': 0.0},
@@ -131,7 +156,7 @@ def classify(features, nb_of_classes = 2, weights = None, rules = None, threshol
         }
         thresholds = 22
 
-    # Poids de base si non définis
+    # Poids de base si non définie
     if weights is None and nb_of_classes == 3:
         weights = {
             'mean_r': np.float64(0.01376422371403685),
@@ -158,12 +183,12 @@ def classify(features, nb_of_classes = 2, weights = None, rules = None, threshol
 
 
     if nb_of_classes == 2:
-        prediction = predict_with_rules(features, rules, thresholds)
-        return prediction
+        prediction, confidence = predict_with_rules(features, rules, thresholds)
+        return prediction, confidence
 
     elif nb_of_classes == 3:
-        prediction = predict_with_weight(features, weights, thresholds)
-        return prediction
+        prediction, confidence = predict_with_weight(features, weights, thresholds)
+        return prediction, confidence
 
     else:
         print("Le nombre de class indiqué n'est pas supporté")
