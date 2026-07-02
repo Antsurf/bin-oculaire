@@ -263,6 +263,24 @@ def get_all_images() -> list:
 
     return images
 
+def get_classified_count() -> tuple:
+    """
+    Fonction qui renvoie le nombre d'image classifiées en propre et en sale 
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT 
+            SUM(CASE WHEN auto_label = 'sale' THEN 1 ELSE 0 END) as count_sales,
+            SUM(CASE WHEN auto_label = 'propre' THEN 1 ELSE 0 END) as count_propres
+        FROM images_classification
+    """)
+    row = conn.fetchone()
+    conn.close()
+    
+    return row["count_sales"], row["count_propres"]
+
 def get_image_details(image_id):
     """Récupère les informations nécessaires pour la page de résultat."""
     conn = get_connection()
