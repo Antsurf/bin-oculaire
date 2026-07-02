@@ -370,7 +370,18 @@ def update_annotation(image_id: int, annotation: str)->None:
     conn.commit()
     conn.close()
 
-
+def update_autolabel(image_id:int, autolabel: str) -> None:
+    """
+    Insère ou met à jour le label du classifier dans la BDD (INSERT OR REPLACE)
+    """
+    conn = get_connection()
+    conn.execute("""
+        INSERT INTO images_classification (image_id, auto_label)
+        VALUES (?, ?)
+        ON CONFLICT(image_id) DO UPDATE SET auto_label = excluded.auto_label
+    """, (image_id, autolabel))  
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
     init_db()
