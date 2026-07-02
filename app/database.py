@@ -245,6 +245,7 @@ def get_all_images() -> list:
         SELECT 
             i.id, 
             i.file_path, 
+            i.file_name,
             i.upload_date,
             f.luminosite,
             f.contraste_maximal,
@@ -286,7 +287,7 @@ def get_image_details(image_id):
     """Récupère les informations nécessaires pour la page de résultat."""
     conn = get_connection()
     query = """
-        SELECT i.id, i.file_path, i.upload_date, f.file_size, f.width, f.height, 
+        SELECT i.id, i.file_path, i.file_name, i.upload_date, f.file_size, f.width, f.height, 
                c.auto_label, f.luminosite, f.contraste_maximal, f.saturation, f.edge_density,
                l.latitude, l.longitude, l.localisation_nom
         FROM images i
@@ -311,6 +312,7 @@ def get_images_paginated(limit, offset):
     query = """SELECT 
             i.id, 
             i.file_path, 
+            i.file_name,
             i.upload_date,
             f.luminosite,
             f.contraste_maximal,
