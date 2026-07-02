@@ -21,13 +21,16 @@
     {% endfor %}
 </div>
 <div class="pagination">
-    {% if page > 1 %}
-    <a href="{{ url_for('gallery', page=page-1) }}">Précédent</a>
-    {% endif %}
-
-    <span>Page {{ page }} sur {{ total_pages }}</span>
-
-    {% if page < total_pages %} <a href="{{ url_for('gallery', page=page+1) }}">Suivant</a>
+    <div>
+        <span>Page {{ page }} sur {{ total_pages }} | </span>
+    </div>
+    <div>
+        {% if page > 1 %}
+            <a class="btn-back" href="{{ url_for('gallery', page=page-1) }}">←</a>
         {% endif %}
+        {% if page < total_pages %}
+            <a class="btn-back" href="{{ url_for('gallery', page=page+1) }}">→</a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
