@@ -61,6 +61,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS images(
        id                INTEGER PRIMARY KEY AUTOINCREMENT,
        file_path         VARCHAR(255) NOT NULL,
+       file_name         VARCHAR(255) NOT NULL,
        upload_date       TEXT NOT NULL,
        id_localisation   INTEGER,
        FOREIGN KEY(id_localisation) REFERENCES localisation(id_localisation) ON DELETE SET NULL
@@ -99,7 +100,7 @@ def init_db():
     print(f"Base de donnée initialisée, chemin: {os.path.abspath(db_name)}")
 
 
-def insert_image(file_path: str, id_localisation: int = None) -> int:
+def insert_image(file_path: str, file_name: str ,id_localisation: int = None) -> int:
     """
     Ajoute une image à la base de donnée (table images) et renvoie son ID 
 
@@ -120,7 +121,7 @@ def insert_image(file_path: str, id_localisation: int = None) -> int:
     # récupération de l'upload date (on considère qu'une fois que la photo est prise c'est directement upload)
     upload_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    cursor.execute("""INSERT INTO images (file_path, upload_date, id_localisation) VALUES (?,?,?)""", (file_path,upload_date,id_localisation))
+    cursor.execute("""INSERT INTO images (file_path, file_name, upload_date, id_localisation) VALUES (?,?,?,?)""", (file_path,file_name,upload_date,id_localisation))
 
     image_id = cursor.lastrowid
     conn.commit()

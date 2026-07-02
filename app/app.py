@@ -140,7 +140,7 @@ def upload_file():
                 id_localisation = None
 
             # On insert l'image dans la BDD ainsi que les features et la classification 
-            img_id = db.insert_image(chemin_final, id_localisation)
+            img_id = db.insert_image(chemin_final, filename, id_localisation)
             db.add_features(img_id, images_features)
             classification, confidence = cl.classify(images_features)
             db.update_autolabel(img_id, classification, confidence)
