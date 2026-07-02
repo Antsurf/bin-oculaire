@@ -39,8 +39,8 @@ nav a {
     font-size: 160%;
 }
 
-nav a:visited {
-    color: white;
+nav a.active {
+    color: orange;
 }
 
 #bin-input {
@@ -285,7 +285,7 @@ a.img-case {
 }
 
 .info-box-blue { background: rgba(255, 255, 255, 0.7); border: 1px solid #CFE9E0; }
-.info-box-yellow { background: rgba(255, 255, 255, 0.7); border: 1px solid #715555; }
+.info-box-yellow { background: rgba(255, 255, 255, 0.7); border: 1px solid #CFE9E0; }
 
 .badge {
     padding: 4px 8px;
@@ -308,6 +308,47 @@ a.img-case {
     min-height: 0;
     flex: 1;
     margin-top: 10px;
+}
+
+.charts{
+    display: flex;
+}
+
+.chart-left{
+    width: 20%;
+    padding: 30px;
+    margin-left: 3%;
+}
+
+.chart-right{
+    width: 50%;
+    padding: 30px;
+    margin-right: 10px;
+}
+
+
+.infoDash{
+    display: grid;
+    padding : 1%;
+    margin-left: 3%;
+    margin-top : 5%;
+    text-align : left;
+    width: 20%;
+    border : solid 1px;
+    border-radius : 13px;
+    background-color: rgba(12, 3, 34, 0.5);
+}
+
+.infoDash .info{
+    display: flex;
+
+}
+
+.infoDash h2{
+    display : inline;
+    color : #FFFFFF;
+    padding-left: 5%;
+    text-align: center;
 }
 
 .pagination {

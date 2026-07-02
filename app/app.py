@@ -10,7 +10,7 @@ import database as db
 import features as ft
 import classifier as cl
 
-UPLOAD_FOLDER = "app/static/uploads/"
+UPLOAD_FOLDER = "../app/static/uploads/"
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app = Flask(__name__)
@@ -41,7 +41,24 @@ def carte():
 # ROUTE VERS LE DASHBOARD
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    """
+    Récupère données python (stats des poubelles) pour les exploiter ensuite en chartjs (graphiques)
+    """
+    nb_images = db.get_total_images_count()
+    nb_poubelles_sales, nb_poubelles_propres = db.get_classified_count()
+    nb_poubelles_none = nb_images - nb_poubelles_sales - nb_poubelles_propres # normalement elle sont toutes classifiées mais s'il reste des reliques dans vos db
+    labels = ["Sale", "Propre"]
+    values1 = [nb_poubelles_propres, nb_poubelles_sales, nb_poubelles_none]
+    values2 = [5, 10, 8, 15, 13]
+
+    return render_template(
+        "dashboard.html",
+        nb_images=nb_images,
+        labels=labels,
+        values1=values1,
+        values2=values2
+    )
+
 
 # ROUTE VERS LA GALERIE avec différentes pages (pagination)
 @app.route('/gallery')
