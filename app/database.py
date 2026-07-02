@@ -227,7 +227,7 @@ def update_autolabel(image_id:int, autolabel: str, confidence: str) -> None:
     conn.execute("""
         INSERT INTO images_classification (image_id, auto_label, confidence)
         VALUES (?, ?, ?)
-        ON CONFLICT(image_id) DO UPDATE SET auto_label = excluded.auto_label
+        ON CONFLICT(image_id) DO UPDATE SET auto_label = excluded.auto_label, confidence = excluded.confidence
     """, (image_id, autolabel, confidence))  
     conn.commit()
     conn.close()
