@@ -276,7 +276,7 @@ def get_classified_count() -> tuple:
             SUM(CASE WHEN auto_label = 'propre' THEN 1 ELSE 0 END) as count_propres
         FROM images_classification
     """)
-    row = conn.fetchone()
+    row = cursor.fetchone()
     conn.close()
     
     return row["count_sales"], row["count_propres"]
