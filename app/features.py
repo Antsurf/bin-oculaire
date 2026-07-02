@@ -6,6 +6,28 @@ import numpy as np
 import cv2
 import requests
 
+def get_histograms(file_path:str) -> dict:
+    """
+    Renvoie les histogrammes pour la visualisation dans la page result.html
+    """
+    histo_dic = {}
+    img = Image.open(file_path).convert("RGB")
+    r, g, b = img.split()
+    r_histo = r.histogram()
+    g_histo = g.histogram()
+    b_histo = b.histogram()
+    histo_dic["hist_rgb"] = json.dumps({
+        "red":   r_histo,
+        "green": g_histo,
+        "blue":  b_histo,
+    })
+
+    gray = img.convert("L")
+    histo_dic["luminance"] = json.dumps(gray.histogram())
+
+    return histo_dic
+
+
 def get_coords_from_address(address: str) -> tuple[float, float] | None:
     """
     Appelle l'API Adresse et renvoie (lat, lon) ou None si erreur.
