@@ -1,6 +1,6 @@
 # Solution_Factory_Data
 =======  
-Solution Factory Project : Efrei, 2025  
+Solution Factory Project : Efrei, 2025 - 2026
 Projet filière Data   
 Auteur : Ahmed Ghazi BLAIECH  
 
@@ -36,6 +36,15 @@ Une plateforme web capable de :
 - Cartographier dynamiquement les zones à risque de débordement 
 ## Impact
 - Reduction de l'empreinte écologique de l'homme et le risque des dépôts sauvages par une action préventive efficace et une meilleure gestion des points de collecte officiels 
+
+# Le projet au global :  
+
+## Lancer le projet : 
+Pour faire run le projet, il faut s'assurer d'avoir toutes les librairies nécessaires. Pour cela il suffit de run la commande suivante : <br>
+``` pip install -r requirements.txt ```
+
+Une fois que cela est fait, on peut ouvrir le fichier app/app.py, et lancer le programme ou bien directement run la commande : <br>
+``` python app/app.py ``` ou ``` python app.py``` en fonction d'où vous vous situez sur dans la structure du projet présente ci-dessous.
 
 ## Structure du projet :
 
