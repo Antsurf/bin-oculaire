@@ -69,27 +69,12 @@
 </script>
 
 <script>
-    // Récupération sécurisée du texte pour éviter l'erreur de syntaxe
+// Récupération sécurisée des données envoyées par Flask
     const rawHistData = document.getElementById('hist-data').textContent.trim();
-    let histData = {};
-
-    try {
-        // Mode prévisualisation (si Jinja n'est pas interprété)
-        if (rawHistData.includes('{' + '{') || rawHistData === '{}' || rawHistData === '') {
-            // Données fictives aléatoires pour la démo visuelle
-            histData = {
-                red: Array.from({length: 256}, () => Math.floor(Math.random() * 100)),
-                green: Array.from({length: 256}, () => Math.floor(Math.random() * 100)),
-                blue: Array.from({length: 256}, () => Math.floor(Math.random() * 100))
-            };
-        } else {
-            histData = JSON.parse(rawHistData);
-        }
-    } catch (e) {
-        console.error("Erreur de parsing des données:", e);
-    }
     
-    if (histData && histData.red) {
+    if (rawHistData && rawHistData !== '{}') {
+        const histData = JSON.parse(rawHistData);
+        
         const ctx = document.getElementById('rgbChart').getContext('2d');
         const labels = Array.from({length: 256}, (_, i) => i);
 
@@ -105,17 +90,14 @@
             },
             options: {
                 responsive: true,
-                scales: {
-                    x: { display: false },
-                    y: { beginAtZero: true }
-                },
+                scales: { x: { display: false }, y: { beginAtZero: true } },
                 interaction: { mode: 'index', intersect: false }
             }
         });
     } else {
-        document.getElementById('rgbChart').outerHTML = "<p>Histogramme non disponible pour cette image.</p>";
+        document.getElementById('rgbChart').outerHTML = "<p>Histogramme non disponible.</p>";
     }
-
+    
     // REQUÊTE AJAX POUR LE CONTEXTE
     const lat = "{{ image['latitude'] if image else '' }}";
     const lon = "{{ image['longitude'] if image else '' }}";

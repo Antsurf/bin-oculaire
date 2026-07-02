@@ -65,8 +65,9 @@ def gallery():
 @app.route('/result/<int:image_id>')
 def result(image_id):
     image = db.get_image_details(image_id)
-    
-    return render_template('result.html', image=image)
+    file_path = image['file_path']
+    histo_dic = ft.get_histograms(file_path)
+    return render_template('result.html', image=image, hist_data=histo_dic['hist_rgb'])
 
 
 # Route d'upload d'une image
