@@ -10,17 +10,21 @@ import database as db
 import features as ft
 import classifier as cl
 
-UPLOAD_FOLDER = "../app/static/uploads/"
+# BASE_DIR pointe vers le dossier où se trouve app.py
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# On définit le chemin complet vers static/uploads
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app = Flask(__name__)
+# On l'applique à la configuration Flask
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# On s'assure qu'il existe
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 # création de la base de donnée en local ou vérification de son existence
 db.init_db()
-
-# création du fichier upload dans lequel toutes les images uploadés via le form sont stockées localement
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     """
@@ -84,7 +88,7 @@ def result(image_id):
     image = db.get_image_details(image_id)
     file_path = image['file_path']
     histo_dic = ft.get_histograms(file_path)
-    return render_template('result.html', image=image, hist_data=histo_dic['hist_rgb'])
+    return render_template('result.html', image=image, hist_rgb=histo_dic['hist_rgb'], hist_lum = histo_dic['luminance'])
 
 
 # Route d'upload d'une image
