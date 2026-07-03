@@ -55,7 +55,7 @@ def scale_features(features):
         values.append(features[col])
     values = np.array(values)
     values = values.reshape(1, -1)
-    min_max_scaler = joblib.load('app/scaler_for_data.save')
+    min_max_scaler = joblib.load('scaler_for_data.save')
     scaled_values = min_max_scaler.transform(values)
     scaled_values = scaled_values.reshape(-1)
 
