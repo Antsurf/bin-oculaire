@@ -93,8 +93,8 @@
                 minRotation: 0,
                 callback: function(value) {
                         const label = this.getLabelForValue(value);
-                        return label.length > 20              // la légende en dessous du graphique est slice si besoin
-                            ? label.slice(0, 20) + "..."
+                        return label.length > 15              // la légende en dessous du graphique est slice si besoin
+                            ? label.slice(0, 15) + "..."
                             : label;
                     }
               }

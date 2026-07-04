@@ -48,27 +48,21 @@ def dashboard():
     """
     Récupère données python (stats des poubelles) pour les exploiter ensuite en chartjs (graphiques)
     """
-    page = int(request.args.get('page', 1))
-    # nombre d'images par page et offset pour la pagination
-    per_page = 10
-    # id de l'image de départ pour la page actuelle (page 1 = 0, page 2 = 10, page 3 = 20, etc.)
-    offset = (page - 1) * per_page
-
-    images = db.get_images_paginated(limit=per_page, offset=offset)
+    images = db.get_all_images() #récupère toutes les images
 
     # récupérer toutes les adresses des poubelles
     adresses = []
     for image in images:
-        adresses.append(image['localisation_nom'])
-    #print(adresses)
+        image_id = image["id"] # récupère id de chaque image
+        image_info = db.get_image_details(image_id)  # récupère infos sur l'image
+        adresses.append(image_info['localisation_nom']) # ajoute la localisation
+
     adresses_count = dict()
     for ad in adresses:
         if ad in adresses_count.keys():
             adresses_count[ad] += 1 #ajoute 1 au compte
         else:
             adresses_count[ad] = 1 # initialise le compte
-
-    #print(adresses_count)
 
     nb_images = db.get_total_images_count()
     nb_poubelles_sales, nb_poubelles_propres = db.get_classified_count()
