@@ -39,8 +39,8 @@ nav a {
     font-size: 160%;
 }
 
-nav a:visited {
-    color: white;
+nav a.active {
+    color: orange;
 }
 
 #bin-input {
@@ -285,7 +285,7 @@ a.img-case {
 }
 
 .info-box-blue { background: rgba(255, 255, 255, 0.7); border: 1px solid #CFE9E0; }
-.info-box-yellow { background: rgba(255, 255, 255, 0.7); border: 1px solid #715555; }
+.info-box-yellow { background: rgba(255, 255, 255, 0.7); border: 1px solid #CFE9E0; }
 
 .badge {
     padding: 4px 8px;
@@ -309,6 +309,71 @@ a.img-case {
     flex: 1;
     margin-top: 10px;
 }
+
+.charts{
+    display: flex;
+    justify-content: center;
+}
+
+.chart-left{
+    width: 20%;
+    padding: 30px;
+}
+
+.chart-right{
+    width: 50%;
+    padding: 30px;
+}
+
+
+.infoModel{
+    display: grid;
+    padding : 1%;
+    margin-left: 3%;
+    text-align : left;
+    width: 20%;
+    border : solid 1px;
+    border-radius : 13px;
+    background-color: rgba(125, 34, 34, 0.5);
+}
+
+.infoModel .info{
+    display: flex;
+    align-items: center;
+
+}
+
+.infoModel h2{
+    display : inline;
+    color : #FFFFFF;
+    padding-left: 5%;
+    text-align: center;
+}
+
+#infoDash{
+    display: flex;
+    margin-top: 3%;
+    justify-content: center;
+}
+
+#infoIm{
+    margin-left: 7%;
+    width: 30%;
+    padding-top: 1%;
+    text-align: center;
+
+}
+
+
+#infoIm h4{
+    font-size: 1.25em;
+    color: rgba(125, 34, 34, 1);
+}
+
+#infoIm p{
+    font-size: 2.5em;
+    color: gray;
+    }
 
 .pagination {
     margin-top: 8px;

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="title-page">
+    <h1>Dashboard</h1>
+</div>
+
+<body>
+  <div id="infoDash">
+    <div class="infoModel">
+      <div class="info">
+        <p> Précision du modèle binaire : </p>
+        <h2> 67,5 % </h2>
+      </div>
+      <div class="info">
+        <p> Précision du modèle tri-classe : </p>
+        <h2> 50 % </h2>
+      </div>
+    </div>
+
+    <div id="infoIm">
+      <h4> Nombre d'images dans la base de données : </h4>
+
+    </div>
+
+  </div>
+
+  <div class="charts">
+    <div class="chart-left">
+      <h3 style="text-align: center;"> Répartition des poubelles </h3>
+      <canvas id="Chart1"></canvas>
+    </div>
+    <div class="chart-right">
+      <h3 style="text-align: center;"> Visualisation géographique des poubelles </h3>
+      <canvas id="Chart2"></canvas>
+    </div>
+  </div>
+</body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const nbImages = {{ nb_images | tojson }};
+
+  const p = document.createElement("p");
+  p.textContent = nbImages;
+
+  document.getElementById("infoIm").appendChild(p);
+
+
+  // console.log("hello", nbImages);
+  const ctx = document.getElementById('Chart1');
+  const values1 = {{ values1 | tojson }};
+  const labels1 = {{ labels1 | tojson }};
+
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels1,
+      datasets: [{
+        data: values1,
+        backgroundColor: ["rgba(217, 179, 171, 0.75)", "rgba(165, 145, 171, 0.75)"]
+
+      }],
+
+    },
+
+  });
+
+  const ctx2 = document.getElementById('Chart2');
+  const values2 = {{ values2 | tojson }};
+  const labels2 = {{ labels2 | tojson }};
+
+
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: labels2,
+      datasets: [{
+        label: 'Nombre de poubelles par adresse',
+        data: values2,
+        backgroundColor: ["rgba(66, 31, 77, 0.5)"]
+
+      }],
+
+    },
+    options: {
+        scales: {
+            x: {
+              ticks: {
+                maxRotation: 0,
+                minRotation: 0,
+                callback: function(value) {
+                        const label = this.getLabelForValue(value);
+                        return label.length > 15              // la légende en dessous du graphique est slice si besoin
+                            ? label.slice(0, 15) + "..."
+                            : label;
+                    }
+              }
+
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+    }
+  });
+
+</script>
+
+
+{% endblock %}

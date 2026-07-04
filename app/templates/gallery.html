@@ -7,11 +7,11 @@
 <div class="gallery-container">
     {% for img in images %}
     <a href="{{ url_for('result', image_id=img['id']) }}" class="img-case">
-        <img src="static/uploads/{{ img.file_path.split('uploads/')[-1] }}" alt="{{ img.auto_label }}">
-
+        <img src="{{ url_for('static', filename='uploads/' + img['file_name']) }}" alt="{{ img['auto_label'] }}">
         <div class="card-overlay">
             <p class="card-label">Label: {{ img['auto_label'] if img['auto_label'] else "Non classifié" }}</p>
-            <p class="card-meta">Luminosité: {{ img['luminosite'] if img['luminosite'] is not none else "Inconnue" }}</p>
+            <p class="card-meta">Luminosité: {{ img['luminosite'] if img['luminosite'] is not none else "Inconnue" }}
+            </p>
             <p class="card-meta">Date: {{ img['upload_date'] if img['upload_date'] else "Inconnue" }}</p>
             <p class="card-meta">Latitude: {{ img['latitude'] if img['latitude'] is not none else "Inconnue" }}</p>
             <p class="card-meta">Longitude: {{ img['longitude'] if img['longitude'] is not none else "Inconnue" }}</p>
@@ -26,11 +26,10 @@
     </div>
     <div>
         {% if page > 1 %}
-            <a class="btn-back" href="{{ url_for('gallery', page=page-1) }}">←</a>
+        <a class="btn-back" href="{{ url_for('gallery', page=page-1) }}">←</a>
         {% endif %}
-        {% if page < total_pages %}
-            <a class="btn-back" href="{{ url_for('gallery', page=page+1) }}">→</a>
-        {% endif %}
+        {% if page < total_pages %} <a class="btn-back" href="{{ url_for('gallery', page=page+1) }}">→</a>
+            {% endif %}
     </div>
 </div>
 {% endblock %}

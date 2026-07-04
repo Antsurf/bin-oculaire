@@ -10,17 +10,21 @@ import database as db
 import features as ft
 import classifier as cl
 
-UPLOAD_FOLDER = "app/static/uploads/"
+# BASE_DIR pointe vers le dossier où se trouve app.py
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# On définit le chemin complet vers static/uploads
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app = Flask(__name__)
+# On l'applique à la configuration Flask
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# On s'assure qu'il existe
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 # création de la base de donnée en local ou vérification de son existence
 db.init_db()
-
-# création du fichier upload dans lequel toutes les images uploadés via le form sont stockées localement
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     """
@@ -41,7 +45,41 @@ def carte():
 # ROUTE VERS LE DASHBOARD
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    """
+    Récupère données python (stats des poubelles) pour les exploiter ensuite en chartjs (graphiques)
+    """
+    images = db.get_all_images() #récupère toutes les images
+
+    # récupérer toutes les adresses des poubelles
+    adresses = []
+    for image in images:
+        image_id = image["id"] # récupère id de chaque image
+        image_info = db.get_image_details(image_id)  # récupère infos sur l'image
+        adresses.append(image_info['localisation_nom']) # ajoute la localisation
+
+    adresses_count = dict()
+    for ad in adresses:
+        if ad in adresses_count.keys():
+            adresses_count[ad] += 1 #ajoute 1 au compte
+        else:
+            adresses_count[ad] = 1 # initialise le compte
+
+    nb_images = db.get_total_images_count()
+    nb_poubelles_sales, nb_poubelles_propres = db.get_classified_count()
+    labels1 = ["Propre", "Sale"]
+    labels2 = list(adresses_count.keys())
+    values1 = [nb_poubelles_propres, nb_poubelles_sales]
+    values2 = list(adresses_count.values())
+
+    return render_template(
+        "dashboard.html",
+        nb_images=nb_images,
+        labels1=labels1,
+        labels2=labels2,
+        values1=values1,
+        values2=values2
+    )
+
 
 # ROUTE VERS LA GALERIE avec différentes pages (pagination)
 @app.route('/gallery')
@@ -67,7 +105,7 @@ def result(image_id):
     image = db.get_image_details(image_id)
     file_path = image['file_path']
     histo_dic = ft.get_histograms(file_path)
-    return render_template('result.html', image=image, hist_data=histo_dic['hist_rgb'])
+    return render_template('result.html', image=image, hist_rgb=histo_dic['hist_rgb'], hist_lum = histo_dic['luminance'])
 
 
 # Route d'upload d'une image
@@ -123,7 +161,7 @@ def upload_file():
                 id_localisation = None
 
             # On insert l'image dans la BDD ainsi que les features et la classification 
-            img_id = db.insert_image(chemin_final, id_localisation)
+            img_id = db.insert_image(chemin_final, filename, id_localisation)
             db.add_features(img_id, images_features)
             classification, confidence = cl.classify(images_features)
             db.update_autolabel(img_id, classification, confidence)

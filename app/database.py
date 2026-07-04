@@ -61,6 +61,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS images(
        id                INTEGER PRIMARY KEY AUTOINCREMENT,
        file_path         VARCHAR(255) NOT NULL,
+       file_name         VARCHAR(255) NOT NULL,
        upload_date       TEXT NOT NULL,
        id_localisation   INTEGER,
        FOREIGN KEY(id_localisation) REFERENCES localisation(id_localisation) ON DELETE SET NULL
@@ -99,7 +100,7 @@ def init_db():
     print(f"Base de donnée initialisée, chemin: {os.path.abspath(db_name)}")
 
 
-def insert_image(file_path: str, id_localisation: int = None) -> int:
+def insert_image(file_path: str, file_name: str ,id_localisation: int = None) -> int:
     """
     Ajoute une image à la base de donnée (table images) et renvoie son ID 
 
@@ -120,7 +121,7 @@ def insert_image(file_path: str, id_localisation: int = None) -> int:
     # récupération de l'upload date (on considère qu'une fois que la photo est prise c'est directement upload)
     upload_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    cursor.execute("""INSERT INTO images (file_path, upload_date, id_localisation) VALUES (?,?,?)""", (file_path,upload_date,id_localisation))
+    cursor.execute("""INSERT INTO images (file_path, file_name, upload_date, id_localisation) VALUES (?,?,?,?)""", (file_path,file_name,upload_date,id_localisation))
 
     image_id = cursor.lastrowid
     conn.commit()
@@ -244,6 +245,7 @@ def get_all_images() -> list:
         SELECT 
             i.id, 
             i.file_path, 
+            i.file_name,
             i.upload_date,
             f.luminosite,
             f.contraste_maximal,
@@ -263,11 +265,29 @@ def get_all_images() -> list:
 
     return images
 
+def get_classified_count() -> tuple:
+    """
+    Fonction qui renvoie le nombre d'image classifiées en propre et en sale 
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT 
+            SUM(CASE WHEN auto_label = 'sale' THEN 1 ELSE 0 END) as count_sales,
+            SUM(CASE WHEN auto_label = 'propre' THEN 1 ELSE 0 END) as count_propres
+        FROM images_classification
+    """)
+    row = cursor.fetchone()
+    conn.close()
+    
+    return row["count_sales"], row["count_propres"]
+
 def get_image_details(image_id):
     """Récupère les informations nécessaires pour la page de résultat."""
     conn = get_connection()
     query = """
-        SELECT i.id, i.file_path, i.upload_date, f.file_size, f.width, f.height, 
+        SELECT i.id, i.file_path, i.file_name, i.upload_date, f.file_size, f.width, f.height, 
                c.auto_label, f.luminosite, f.contraste_maximal, f.saturation, f.edge_density,
                l.latitude, l.longitude, l.localisation_nom
         FROM images i
@@ -292,6 +312,7 @@ def get_images_paginated(limit, offset):
     query = """SELECT 
             i.id, 
             i.file_path, 
+            i.file_name,
             i.upload_date,
             f.luminosite,
             f.contraste_maximal,
