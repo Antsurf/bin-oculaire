@@ -25,11 +25,12 @@ nav {
     height: 80px;
     }
 
-nav img {
+nav img
+ {
     position: absolute;
     left: 4%;
-    top: 5px;
-    width: 130px;
+    top: 4px;
+    width: 5em;
     height: auto;
 }
 
