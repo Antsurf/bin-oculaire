@@ -48,17 +48,40 @@ def dashboard():
     """
     Récupère données python (stats des poubelles) pour les exploiter ensuite en chartjs (graphiques)
     """
+    page = int(request.args.get('page', 1))
+    # nombre d'images par page et offset pour la pagination
+    per_page = 10
+    # id de l'image de départ pour la page actuelle (page 1 = 0, page 2 = 10, page 3 = 20, etc.)
+    offset = (page - 1) * per_page
+
+    images = db.get_images_paginated(limit=per_page, offset=offset)
+
+    # récupérer toutes les adresses des poubelles
+    adresses = []
+    for image in images:
+        adresses.append(image['localisation_nom'])
+    #print(adresses)
+    adresses_count = dict()
+    for ad in adresses:
+        if ad in adresses_count.keys():
+            adresses_count[ad] += 1 #ajoute 1 au compte
+        else:
+            adresses_count[ad] = 1 # initialise le compte
+
+    #print(adresses_count)
+
     nb_images = db.get_total_images_count()
     nb_poubelles_sales, nb_poubelles_propres = db.get_classified_count()
-    nb_poubelles_none = nb_images - nb_poubelles_sales - nb_poubelles_propres # normalement elle sont toutes classifiées mais s'il reste des reliques dans vos db
-    labels = ["Sale", "Propre"]
-    values1 = [nb_poubelles_propres, nb_poubelles_sales, nb_poubelles_none]
-    values2 = [5, 10, 8, 15, 13]
+    labels1 = ["Propre", "Sale"]
+    labels2 = list(adresses_count.keys())
+    values1 = [nb_poubelles_propres, nb_poubelles_sales]
+    values2 = list(adresses_count.values())
 
     return render_template(
         "dashboard.html",
         nb_images=nb_images,
-        labels=labels,
+        labels1=labels1,
+        labels2=labels2,
         values1=values1,
         values2=values2
     )

@@ -312,44 +312,68 @@ a.img-case {
 
 .charts{
     display: flex;
+    justify-content: center;
 }
 
 .chart-left{
     width: 20%;
     padding: 30px;
-    margin-left: 3%;
 }
 
 .chart-right{
     width: 50%;
     padding: 30px;
-    margin-right: 10px;
 }
 
 
-.infoDash{
+.infoModel{
     display: grid;
     padding : 1%;
     margin-left: 3%;
-    margin-top : 5%;
     text-align : left;
     width: 20%;
     border : solid 1px;
     border-radius : 13px;
-    background-color: rgba(12, 3, 34, 0.5);
+    background-color: rgba(125, 34, 34, 0.5);
 }
 
-.infoDash .info{
+.infoModel .info{
     display: flex;
+    align-items: center;
 
 }
 
-.infoDash h2{
+.infoModel h2{
     display : inline;
     color : #FFFFFF;
     padding-left: 5%;
     text-align: center;
 }
+
+#infoDash{
+    display: flex;
+    margin-top: 3%;
+    justify-content: center;
+}
+
+#infoIm{
+    margin-left: 7%;
+    width: 30%;
+    padding-top: 1%;
+    text-align: center;
+
+}
+
+
+#infoIm h4{
+    font-size: 1.25em;
+    color: rgba(125, 34, 34, 1);
+}
+
+#infoIm p{
+    font-size: 2.5em;
+    color: gray;
+    }
 
 .pagination {
     margin-top: 8px;
