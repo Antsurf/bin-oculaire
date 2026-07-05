@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+
 <head>
     <meta charset="UTF-8">
     <title>Carte des zones à risque</title>
-    
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -13,16 +14,25 @@
 
 
 </head>
+
 <body>
     <div id="map-container">
         <div class="title-page">
             <h1>{{ _('Carte des zones à risque de débordemment') }}</h1>
         </div>
         <div id="map-legend" style="margin: 10px 0; display: flex; gap: 20px; align-items: center;">
-            <span><span style="display:inline-block;width:12px;height:12px;background:green;border-radius:50%;margin-right:6px;"></span>{{ _('Propre') }}</span>
-            <span><span style="display:inline-block;width:12px;height:12px;background:orange;border-radius:50%;margin-right:6px;"></span>{{ _('Sale') }}</span>
-            <span><span style="display:inline-block;width:12px;height:12px;background:red;border-radius:50%;margin-right:6px;"></span>{{ _('Débordante') }}</span>
-            <span><span style="display:inline-block;width:12px;height:12px;background:gray;border-radius:50%;margin-right:6px;"></span>{{ _('Inconnu') }}</span>
+            <span><span
+                    style="display:inline-block;width:12px;height:12px;background:green;border-radius:50%;margin-right:6px;"></span>{{
+                _('Propre') }}</span>
+            <span><span
+                    style="display:inline-block;width:12px;height:12px;background:orange;border-radius:50%;margin-right:6px;"></span>{{
+                _('Sale') }}</span>
+            <span><span
+                    style="display:inline-block;width:12px;height:12px;background:red;border-radius:50%;margin-right:6px;"></span>{{
+                _('Débordante') }}</span>
+            <span><span
+                    style="display:inline-block;width:12px;height:12px;background:gray;border-radius:50%;margin-right:6px;"></span>{{
+                _('Inconnu') }}</span>
         </div>
         <div id="map"></div>
     </div>
@@ -30,13 +40,13 @@
     <script>
         // Initialisation de la carte
         const map = L.map('map').setView([48.8566, 2.3522], 13);
-        
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
         // Création du groupe de cluster
-        const markers = L.markerClusterGroup(); 
+        const markers = L.markerClusterGroup();
 
         // Couleurs associées à chaque état de classification
         const couleursEtat = {
@@ -44,6 +54,13 @@
             "sale": "orange",
             "debordante": "red",
             "inconnu": "gray"
+        };
+
+        const traductionsEtat = {
+            "propre": "{{ _('Propre') }}",
+            "sale": "{{ _('Sale') }}",
+            "debordante": "{{ _('Débordante') }}",
+            "inconnu": "{{ _('Inconnu') }}"
         };
 
         function creerMarqueurColore(feature, latlng) {
@@ -68,9 +85,13 @@
                 const geoJsonLayer = L.geoJSON(geojsonData, {
                     pointToLayer: creerMarqueurColore,
                     onEachFeature: (feature, layer) => {
+                        // Récupérer l'état traduit
+                        const etatBrut = feature.properties.etat ? feature.properties.etat.toLowerCase() : 'inconnu';
+                        const etatTraduit = traductionsEtat[etatBrut] || etatBrut;
+
                         layer.bindPopup(
                             "<strong>{{ _('Adresse') }}:</strong> " + feature.properties.adresse +
-                            "<br><strong>{{ _('État') }}:</strong> " + feature.properties.etat +
+                            "<br><strong>{{ _('État') }}:</strong> " + etatTraduit +
                             "<br><strong>{{ _('Date') }}:</strong> " + feature.properties.date +
                             "<br><a href='/result/" + feature.properties.image_id + "'>{{ _('Voir le détail') }} →</a>"
                         );
@@ -78,7 +99,7 @@
                 });
 
                 // On ajoute la couche au cluster, puis le cluster à la carte
-                markers.addLayer(geoJsonLayer); 
+                markers.addLayer(geoJsonLayer);
                 map.addLayer(markers);
             } catch (error) {
                 console.error("Erreur lors du chargement :", error);
