@@ -18,7 +18,10 @@ UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app = Flask(__name__)
-app.secret_key = "poubelle-app-secret-key-dev"  # nécessaire pour flash() ; à changer en prod
+
+# c'est pratique pour éviter de faire du js avec des alert() pour afficher les messages d'erreur ou de succès
+app.secret_key = "poubelle-app-secret-key-dev"  # nécessaire pour flash() 
+
 # On l'applique à la configuration Flask
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

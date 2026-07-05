@@ -27,20 +27,6 @@
                 <p><strong>Dimensions :</strong> {{ image['width'] if image else '' }} x {{ image['height'] if image
                     else '' }} px</p>
             </div>
-
-            <div class="info-box">
-                <h3>Annotation manuelle</h3>
-                <p style="font-size: 13px; color: #555;">Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider à améliorer le modèle.</p>
-                <form action="{{ url_for('save_annotation', image_id=image['id']) if image else '#' }}" method="POST">
-                    <select name="annotation">
-                        <option value="" {% if not image or not image['annotation'] %}selected{% endif %}>Non annoté</option>
-                        <option value="propre" {% if image and image['annotation'] == 'propre' %}selected{% endif %}>Propre</option>
-                        <option value="sale" {% if image and image['annotation'] == 'sale' %}selected{% endif %}>Sale</option>
-                        <option value="pleine" {% if image and image['annotation'] == 'pleine' %}selected{% endif %}>Pleine / débordante</option>
-                    </select>
-                    <button type="submit">Enregistrer</button>
-                </form>
-            </div>
         </div>
 
         <!-- Colonne Droite: Tableaux de bord Avancés -->
@@ -78,6 +64,21 @@
                         <li><strong>Travaux BTP :</strong> <span id="btp-value">Chargement...</span></li>
                     </ul>
                 </div>
+            </div>
+
+            <!-- Annotation manuelle : placée sous les stats, une fois que l'utilisateur les a consultées -->
+            <div class="info-box">
+                <h3>Annotation manuelle</h3>
+                <p style="font-size: 13px; color: #555;">Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider à améliorer le modèle.</p>
+                <form action="{{ url_for('save_annotation', image_id=image['id']) if image else '#' }}" method="POST">
+                    <select name="annotation">
+                        <option value="" {% if not image or not image['annotation'] %}selected{% endif %}>Non annoté</option>
+                        <option value="propre" {% if image and image['annotation'] == 'propre' %}selected{% endif %}>Propre</option>
+                        <option value="sale" {% if image and image['annotation'] == 'sale' %}selected{% endif %}>Sale</option>
+                        <option value="pleine" {% if image and image['annotation'] == 'pleine' %}selected{% endif %}>Pleine / débordante</option>
+                    </select>
+                    <button type="submit">Enregistrer</button>
+                </form>
             </div>
 
         </div>
