@@ -332,80 +332,105 @@ a.img-case {
     margin-top: 10px;
 }
 
-.charts{
-    margin-top: 3%;
-    display: flex;
-    justify-content: center;
-    gap: 3%;
-}
-
-.chart-pie{
-    width: 20%;
-
-}
-
-.chart-bar{
-    width: 42%;
-
-}
-
-.infoModel{
-    font-size: 1.25em;
-    color:#FFFFFF;
-    justify-content: flex;
-    flex-wrap: wrap;
-    display: grid;
-    padding : 1%;
+/* --- Bloc infos --- */
+#infoDash {
     width: 100%;
-    border-radius : 13px;
-    text-align : center;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 3%;
+    justify-content: center;
+    align-items: stretch;
+    gap: 5%;
+}
+
+.infoModel {
+    font-size: 1.1em;
+    color: #FFFFFF;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1%;
+    width: 50%;
+    border-radius: 5px;
+    text-align: center;
     background-color: rgba(92, 120, 83, 0.5);
 }
 
-.infoModel .info{
-    width: 100%;
-    text-align :center;
+.infoModel .info {
+    width: 50%;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
-.infoModel h2{
-    display : inline;
-    color : #FFFFFF;
+.infoModel h2 {
+    display: inline;
+    color: #FFFFFF;
     padding-left: 5%;
     text-align: center;
 }
 
-.info {
-    text-align: center;
-}
-
-#infoDash{
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 3%;
-    justify-content: center;
-    gap: 10%;
-}
-
-#infoIm{
+#infoIm {
     width: 30%;
     padding-top: 1%;
     text-align: center;
-
 }
 
-
-#infoIm h4{
+#infoIm h4 {
     font-size: 1.25em;
     color: rgba(125, 34, 34, 1);
 }
 
-#infoIm p{
+#infoIm p {
     font-size: 2.5em;
     color: gray;
-    }
+}
+
+/* --- Bloc graphiques --- */
+.charts {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 3%;
+    margin-top: 3%;
+}
+
+.chart-bar,
+.chart-pie {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 13px;
+    padding: 1.5%;
+    box-sizing: border-box;
+    margin-bottom: 3%;
+}
+
+.chart-bar h3,
+.chart-pie h3 {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.chart-bar {
+    width: 55%;
+}
+
+.chart-pie {
+    width: 35%;
+}
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 320px;
+}
+
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
 
 .pagination {
     margin-top: 8px;
@@ -597,5 +622,38 @@ a.img-case {
 
     .lang-switcher {
         margin: 10px 0;
+    }
+}
+
+@media (max-width: 992px) {
+    .infoModel {
+        width: 100%;
+    }
+
+    #infoIm {
+        width: 100%;
+    }
+
+    .chart-bar,
+    .chart-pie {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .infoModel .info {
+        width: 100%;
+    }
+
+    #infoIm h4 {
+        font-size: 1em;
+    }
+
+    #infoIm p {
+        font-size: 1.75em;
+    }
+
+    .chart-wrapper {
+        height: 260px;
     }
 }

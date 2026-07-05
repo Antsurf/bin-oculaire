@@ -5,42 +5,43 @@
     <h1>{{ _('Dashboard') }}</h1>
 </div>
 
-<body>
-  <div id="infoDash">
-    <div class="infoModel">
-      <div class="info">
-        <p> {{ _('Précision du modèle binaire :') }} </p>
-        <h2> 67,5 % </h2>
-      </div>
-      <div class="info">
-        <p> {{ _('Précision du modèle tri-classe :') }} </p>
-        <h2> 50 % </h2>
-      </div>
+<div id="infoDash">
+  <div class="infoModel">
+    <div class="info">
+      <p>{{ _('Précision du modèle binaire :') }}</p>
+      <h2>67,5 %</h2>
     </div>
-    <div id="infoIm">
-      <h4> {{ _("Nombre d'images annotées dans la base de données :") }} </h4>
+    <div class="info">
+      <p>{{ _('Précision du modèle tri-classe :') }}</p>
+      <h2>50 %</h2>
     </div>
   </div>
 
-  <div class="charts">
-    <div class="chart-bar">
-      <h3 style="text-align: center;"> {{ _('Visualisation géographique des poubelles') }} </h3>
+  <div id="infoIm">
+    <h4>{{ _("Nombre d'images annotées dans la base de données :") }}</h4>
+  </div>
+</div>
+
+<div class="charts">
+  <div class="chart-bar">
+    <h3>{{ _('Visualisation géographique des poubelles') }}</h3>
+    <div class="chart-wrapper">
       <canvas id="Chart2"></canvas>
     </div>
-    <div class="chart-pie">
-      <h3 style="text-align: center;"> {{ _('Répartition des poubelles') }} </h3>
+  </div>
+  <div class="chart-pie">
+    <h3>{{ _('Répartition des poubelles') }}</h3>
+    <div class="chart-wrapper">
       <canvas id="Chart1"></canvas>
     </div>
-    <div class="chart-pie">
-      <h3 style="text-align: center;"> {{ _('Visualisation Annotations') }} </h3>
+  </div>
+  <div class="chart-pie">
+    <h3>{{ _('Visualisation Annotations') }}</h3>
+    <div class="chart-wrapper">
       <canvas id="Chart3"></canvas>
     </div>
-
   </div>
-
-
-</body>
-
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -50,11 +51,14 @@
 
   const p = document.createElement("p");
   p.textContent = nbImagesAnnot + "/" + nbImages;
-
   document.getElementById("infoIm").appendChild(p);
 
+  // Options communes pour que les charts respectent la taille de leur conteneur
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false
+  };
 
-  // console.log("hello", nbImages);
   const ctx = document.getElementById('Chart1');
   const values1 = {{ values1 | tojson }};
   const labels1 = {{ labels1 | tojson }};
@@ -66,17 +70,19 @@
       datasets: [{
         data: values1,
         backgroundColor: ["rgba(217, 179, 171, 0.75)", "rgba(165, 145, 171, 0.75)", "rgba(235, 152, 91, 0.75)"]
-
-      }],
-
+      }]
     },
-
+    options: {
+      ...commonOptions,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
   });
 
   const ctx2 = document.getElementById('Chart2');
   const values2 = {{ values2 | tojson }};
   const labels2 = {{ labels2 | tojson }};
-
 
   new Chart(ctx2, {
     type: 'bar',
@@ -86,35 +92,30 @@
         label: '{{ _("Nombre de poubelles par adresse") }}',
         data: values2,
         backgroundColor: ["rgba(66, 31, 77, 0.5)"]
-
-      }],
-
+      }]
     },
     options: {
-        scales: {
-            x: {
-              ticks: {
-                maxRotation: 0,
-                minRotation: 0,
-                callback: function(value) {
-                        const label = this.getLabelForValue(value);
-                        return label.length > 15              // la légende en dessous du graphique est slice si besoin
-                            ? label.slice(0, 15) + "..."
-                            : label;
-                    }
-              }
-
-            },
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    stepSize: 1
-                }
+      ...commonOptions,
+      scales: {
+        x: {
+          ticks: {
+            maxRotation: 0,
+            minRotation: 0,
+            callback: function (value) {
+              const label = this.getLabelForValue(value);
+              return label.length > 15
+                ? label.slice(0, 15) + "..."
+                : label;
             }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 }
         }
+      }
     }
   });
-
 
   const ctx3 = document.getElementById('Chart3');
   const values3 = {{ values3 | tojson }};
@@ -127,14 +128,15 @@
       datasets: [{
         data: values3,
         backgroundColor: ["rgba(217, 179, 171, 0.75)", "rgba(165, 145, 171, 0.75)"]
-
-      }],
-
+      }]
     },
-
+    options: {
+      ...commonOptions,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
   });
-
 </script>
-
 
 {% endblock %}
