@@ -197,7 +197,6 @@ Compétences attendues :
 - Intégration de module de vérification de la conformité des données stockées dans une base,  
 - Développement d’un tableau de bord avancé avec des indicateurs en temps réel, via des technologies telles que WebSocket ou AJAX, Ces indicateurs incluent notamment la localisation, la population, les jours de marché, les déclarations de travaux BTP, la météo, le jour de la semaine et la date d’acquisition des images, afin de cartographier dynamiquement les zones à risque de débordement.
 - Optimisation de performance (compression image, gestion mémoire interne, gestion asynchrone de l'upload et de l'extraction de features pour ne pas bloquer l'interface, pagination pour les listes d'images, optimisation des requêtes BDD, etc.),  
-- Optimisation des performances : compression des images, gestion de la mémoire interne, gestion asynchrone de l’upload et de l’extraction des caractéristiques pour ne pas bloquer l’interface, pagination des listes d’images, optimisation des requêtes vers la BDD,  
 - Version multilingue de la plateforme.
 
 ## Trame d’évaluation technique
