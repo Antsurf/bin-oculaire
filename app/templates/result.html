@@ -16,15 +16,15 @@
                 class="result-image" alt="Image analysée">
 
             <div class="info-box">
-                <h3>Informations de Base</h3>
-                <p><strong>Date d'upload :</strong> {{ image['upload_date'] if image else '' }}</p>
-                <p><strong>Lieu :</strong> {{ image['localisation_nom'] | default('Non spécifié') if image else '' }}
+                <h3>{{ _('Informations de Base') }}</h3>
+                <p><strong>{{ _('Date d\'upload') }} :</strong> {{ image['upload_date'] if image else '' }}</p>
+                <p><strong>{{ _('Lieu') }} :</strong> {{ image['localisation_nom'] | default('Non spécifié') if image else '' }}
                 </p>
-                <p><strong>Classification :</strong> <span class="badge badge-warning">{{ image['auto_label'] |
+                <p><strong>{{ _('Classification') }} :</strong> <span class="badge badge-warning">{{ image['auto_label'] |
                         default('En attente') if image else '' }}</span></p>
-                <p><strong>Confiance de la prédiction :</strong> {{ image['confidence'] if image and image['confidence'] is not none else 'Inconnue' }}</p>
-                <p><strong>Taille fichier :</strong> {{ image['file_size'] if image else '' }} Ko</p>
-                <p><strong>Dimensions :</strong> {{ image['width'] if image else '' }} x {{ image['height'] if image
+                <p><strong>{{ _('Confiance de la prédiction') }} :</strong> {{ image['confidence'] if image and image['confidence'] is not none else 'Inconnue' }}</p>
+                <p><strong>{{ _('Taille fichier') }} :</strong> {{ image['file_size'] if image else '' }} Ko</p>
+                <p><strong>{{ _('Dimensions') }} :</strong> {{ image['width'] if image else '' }} x {{ image['height'] if image
                     else '' }} px</p>
             </div>
         </div>
@@ -46,38 +46,38 @@
             <!-- Contexte -->
             <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                 <div class="info-box info-box-blue" style="flex: 1; margin-top: 0;">
-                    <h3>Métriques d'Image</h3>
+                    <h3>{{ _('Métriques d\'Image') }}</h3>
                     <ul style="list-style: none; padding: 0; line-height: 1.8;">
-                        <li><strong>Luminosité :</strong> {{ image['luminosite'] if image else '' }}</li>
-                        <li><strong>Contraste Max :</strong> {{ image['contraste_maximal'] if image else '' }}</li>
-                        <li><strong>Saturation :</strong> {{ image['saturation'] if image else '' }}</li>
-                        <li><strong>Densité contours :</strong> {{ image['edge_density'] if image else '' }}</li>
+                        <li><strong>{{ _('Luminosité') }} :</strong> {{ image['luminosite'] if image else '' }}</li>
+                        <li><strong>{{ _('Contraste Max') }} :</strong> {{ image['contraste_maximal'] if image else '' }}</li>
+                        <li><strong>{{ _('Saturation') }} :</strong> {{ image['saturation'] if image else '' }}</li>
+                        <li><strong>{{ _('Densité contours') }} :</strong> {{ image['edge_density'] if image else '' }}</li>
                     </ul>
                 </div>
 
                 <div class="info-box info-box-yellow" style="flex: 1; margin-top: 0;">
-                    <h3>Contexte</h3>
-                    <p style="font-size: 13px; color: #555;"><i>Indicateurs temps-réel via AJAX</i></p>
+                    <h3>{{ _('Contexte') }}</h3>
+                    <p style="font-size: 13px; color: #555;"><i>{{ _('Indicateurs temps-réel via AJAX') }}</i></p>
                     <ul style="list-style: none; padding: 0; line-height: 1.8;">
-                        <li><strong>Météo :</strong> <span id="meteo-value">Chargement...</span></li>
-                        <li><strong>Jour de marché :</strong> <span id="marche-value">Chargement...</span></li>
-                        <li><strong>Travaux BTP :</strong> <span id="btp-value">Chargement...</span></li>
+                        <li><strong>{{ _('Météo') }} :</strong> <span id="meteo-value">Chargement...</span></li>
+                        <li><strong>{{ _('Jour de marché') }} :</strong> <span id="marche-value">Chargement...</span></li>
+                        <li><strong>{{ _('Travaux BTP') }} :</strong> <span id="btp-value">Chargement...</span></li>
                     </ul>
                 </div>
             </div>
 
             <!-- Annotation manuelle : placée sous les stats, une fois que l'utilisateur les a consultées -->
             <div class="info-box">
-                <h3>Annotation manuelle</h3>
-                <p style="font-size: 13px; color: #555;">Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider à améliorer le modèle.</p>
+                <h3>{{ _('Annotation manuelle') }}</h3>
+                <p style="font-size: 13px; color: #555;">{{ _('Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider à améliorer le modèle.') }}</p>
                 <form action="{{ url_for('save_annotation', image_id=image['id']) if image else '#' }}" method="POST">
                     <select name="annotation">
-                        <option value="" {% if not image or not image['annotation'] %}selected{% endif %}>Non annoté</option>
-                        <option value="propre" {% if image and image['annotation'] == 'propre' %}selected{% endif %}>Propre</option>
-                        <option value="sale" {% if image and image['annotation'] == 'sale' %}selected{% endif %}>Sale</option>
-                        <option value="pleine" {% if image and image['annotation'] == 'pleine' %}selected{% endif %}>Pleine / débordante</option>
+                        <option value="" {% if not image or not image['annotation'] %}selected{% endif %}>{{ _('Non annoté') }}</option>
+                        <option value="propre" {% if image and image['annotation'] == 'propre' %}selected{% endif %}>{{ _('Propre') }}</option>
+                        <option value="sale" {% if image and image['annotation'] == 'sale' %}selected{% endif %}>{{ _('Sale') }}</option>
+                        <option value="pleine" {% if image and image['annotation'] == 'pleine' %}selected{% endif %}>{{ _('Pleine / débordante') }}</option>
                     </select>
-                    <button type="submit">Enregistrer</button>
+                    <button type="submit">{{ _('Enregistrer') }}</button>
                 </form>
             </div>
 

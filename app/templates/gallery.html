@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="title-page">
-    <h1>Galerie des images</h1>
+    <h1>{{ _('Galerie des images') }}</h1>
 </div>
 
 <div class="gallery-container">
@@ -9,27 +9,27 @@
     <a href="{{ url_for('result', image_id=img['id']) }}" class="img-case">
         <img src="{{ url_for('static', filename='uploads/' + img['file_name']) }}" alt="{{ img['auto_label'] }}">
         <div class="card-overlay">
-            <p class="card-label">Label: {{ img['auto_label'] if img['auto_label'] else "Non classifié" }}</p>
-            <p class="card-meta">Luminosité: {{ img['luminosite'] if img['luminosite'] is not none else "Inconnue" }}
-            </p>
-            <p class="card-meta">Date: {{ img['upload_date'] if img['upload_date'] else "Inconnue" }}</p>
-            <p class="card-meta">Latitude: {{ img['latitude'] if img['latitude'] is not none else "Inconnue" }}</p>
-            <p class="card-meta">Longitude: {{ img['longitude'] if img['longitude'] is not none else "Inconnue" }}</p>
-            <p class="card-meta">Adresse: {{ img['localisation_nom'] if img['localisation_nom'] else "Inconnue" }}</p>
+            <p class="card-label">{{ _('Label:') }} {{ _(img['auto_label']) if img['auto_label'] else _("Non classifié") }}</p>
+            <p class="card-meta">{{ _('Luminosité:') }} {{ img['luminosite'] if img['luminosite'] is not none else _("Inconnue") }}</p>
+            <p class="card-meta">{{ _('Date:') }} {{ img['upload_date'] if img['upload_date'] else _("Inconnue") }}</p>
+            <p class="card-meta">{{ _('Latitude:') }} {{ img['latitude'] if img['latitude'] is not none else _("Inconnue") }}</p>
+            <p class="card-meta">{{ _('Longitude:') }} {{ img['longitude'] if img['longitude'] is not none else _("Inconnue") }}</p>
+            <p class="card-meta">{{ _('Adresse:') }} {{ img['localisation_nom'] if img['localisation_nom'] else _("Inconnue") }}</p>
         </div>
     </a>
     {% endfor %}
 </div>
 <div class="pagination">
     <div>
-        <span>Page {{ page }} sur {{ total_pages }} | </span>
+        <span>{{ _('Page') }} {{ page }} {{ _('sur') }} {{ total_pages }} | </span>
     </div>
     <div>
         {% if page > 1 %}
         <a class="btn-back" href="{{ url_for('gallery', page=page-1) }}">←</a>
         {% endif %}
-        {% if page < total_pages %} <a class="btn-back" href="{{ url_for('gallery', page=page+1) }}">→</a>
-            {% endif %}
+        {% if page < total_pages %} 
+        <a class="btn-back" href="{{ url_for('gallery', page=page+1) }}">→</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
