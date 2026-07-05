@@ -50,6 +50,8 @@ Une fois que cela est fait, on peut ouvrir le fichier app/app.py, et lancer le p
 
 Le projet est multilingue grâce à **Flask-Babel** (français par défaut, anglais disponible, espagnol/allemand/italien configurables). Les textes traduisibles sont marqués dans le code avec `_('mon texte')` (dans les templates `.html` et dans `app.py`).
 
+**Attention à bien être au même niveau que l'app quand on fait ça (bin-oculaire\app)
+
 **1. Installer la dépendance** (déjà dans `requirements.txt`) :
 ```
 pip install Flask-Babel

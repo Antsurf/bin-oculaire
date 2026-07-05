@@ -20,19 +20,24 @@
         <div class="title-page">
             <h1>{{ _('Carte des zones à risque de débordemment') }}</h1>
         </div>
-        <div id="map-legend" style="margin: 10px 0; display: flex; gap: 20px; align-items: center;">
-            <span><span
-                    style="display:inline-block;width:12px;height:12px;background:green;border-radius:50%;margin-right:6px;"></span>{{
-                _('Propre') }}</span>
-            <span><span
-                    style="display:inline-block;width:12px;height:12px;background:orange;border-radius:50%;margin-right:6px;"></span>{{
-                _('Sale') }}</span>
-            <span><span
-                    style="display:inline-block;width:12px;height:12px;background:red;border-radius:50%;margin-right:6px;"></span>{{
-                _('Débordante') }}</span>
-            <span><span
-                    style="display:inline-block;width:12px;height:12px;background:gray;border-radius:50%;margin-right:6px;"></span>{{
-                _('Inconnu') }}</span>
+        <div id="map-filter" class="map-filter">
+            <span class="map-filter-label">{{ _('Filtrer par état :') }}</span>
+            <label class="map-filter-item">
+                <input type="checkbox" class="filtre-etat" value="propre" checked>
+                <span class="dot" style="background:green;"></span>{{ _('Propre') }}
+            </label>
+            <label class="map-filter-item">
+                <input type="checkbox" class="filtre-etat" value="sale" checked>
+                <span class="dot" style="background:orange;"></span>{{ _('Sale') }}
+            </label>
+            <label class="map-filter-item">
+                <input type="checkbox" class="filtre-etat" value="debordante" checked>
+                <span class="dot" style="background:red;"></span>{{ _('Débordante') }}
+            </label>
+            <label class="map-filter-item">
+                <input type="checkbox" class="filtre-etat" value="inconnu" checked>
+                <span class="dot" style="background:gray;"></span>{{ _('Inconnu') }}
+            </label>
         </div>
         <div id="map"></div>
     </div>
@@ -47,6 +52,10 @@
 
         // Création du groupe de cluster
         const markers = L.markerClusterGroup();
+        map.addLayer(markers);
+
+        // Toutes les features chargées depuis l'API (non filtrées)
+        let toutesLesFeatures = [];
 
         // Couleurs associées à chaque état de classification
         const couleursEtat = {
@@ -76,35 +85,62 @@
             });
         }
 
+        function creerPopup(feature, layer) {
+            // Récupérer l'état traduit
+            const etatBrut = feature.properties.etat ? feature.properties.etat.toLowerCase() : 'inconnu';
+            const etatTraduit = traductionsEtat[etatBrut] || etatBrut;
+
+            layer.bindPopup(
+                "<strong>{{ _('Adresse') }}:</strong> " + feature.properties.adresse +
+                "<br><strong>{{ _('État') }}:</strong> " + etatTraduit +
+                "<br><strong>{{ _('Date') }}:</strong> " + feature.properties.date +
+                "<br><a href='/result/" + feature.properties.image_id + "'>{{ _('Voir le détail') }} →</a>"
+            );
+        }
+
+        // Récupère les états actuellement cochés dans les filtres
+        function getEtatsSelectionnes() {
+            return Array.from(document.querySelectorAll('.filtre-etat:checked')).map(cb => cb.value);
+        }
+
+        // Reconstruit les marqueurs affichés en fonction des filtres cochés
+        function appliquerFiltre() {
+            const etatsSelectionnes = getEtatsSelectionnes();
+
+            markers.clearLayers();
+
+            const featuresFiltrees = toutesLesFeatures.filter(feature => {
+                const etat = feature.properties.etat ? feature.properties.etat.toLowerCase() : "inconnu";
+                return etatsSelectionnes.includes(etat);
+            });
+
+            const geoJsonLayer = L.geoJSON(
+                { type: "FeatureCollection", features: featuresFiltrees },
+                {
+                    pointToLayer: creerMarqueurColore,
+                    onEachFeature: creerPopup
+                }
+            );
+
+            markers.addLayer(geoJsonLayer);
+        }
+
         async function chargerZonesRisque() {
             try {
                 const response = await fetch('/api/agglomeration/geojson');
                 const geojsonData = await response.json();
 
-                // Création de la couche GeoJSON
-                const geoJsonLayer = L.geoJSON(geojsonData, {
-                    pointToLayer: creerMarqueurColore,
-                    onEachFeature: (feature, layer) => {
-                        // Récupérer l'état traduit
-                        const etatBrut = feature.properties.etat ? feature.properties.etat.toLowerCase() : 'inconnu';
-                        const etatTraduit = traductionsEtat[etatBrut] || etatBrut;
-
-                        layer.bindPopup(
-                            "<strong>{{ _('Adresse') }}:</strong> " + feature.properties.adresse +
-                            "<br><strong>{{ _('État') }}:</strong> " + etatTraduit +
-                            "<br><strong>{{ _('Date') }}:</strong> " + feature.properties.date +
-                            "<br><a href='/result/" + feature.properties.image_id + "'>{{ _('Voir le détail') }} →</a>"
-                        );
-                    }
-                });
-
-                // On ajoute la couche au cluster, puis le cluster à la carte
-                markers.addLayer(geoJsonLayer);
-                map.addLayer(markers);
+                toutesLesFeatures = geojsonData.features || [];
+                appliquerFiltre();
             } catch (error) {
                 console.error("Erreur lors du chargement :", error);
             }
         }
+
+        // On réapplique le filtre à chaque changement de case cochée
+        document.querySelectorAll('.filtre-etat').forEach(checkbox => {
+            checkbox.addEventListener('change', appliquerFiltre);
+        });
 
         chargerZonesRisque();
     </script>

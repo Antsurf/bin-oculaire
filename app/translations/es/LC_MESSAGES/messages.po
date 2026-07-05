@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-07-05 18:55+0200\n"
+"POT-Creation-Date: 2026-07-05 23:26+0200\n"
 "PO-Revision-Date: 2026-07-05 17:42+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:124 templates/carte.html:22 templates/gallery.html:8\n"
-#: templates/result.html:7 templates/result.html:81
+#: app.py:124 templates/carte.html:27 templates/carte.html:69
+#: templates/gallery.html:8 templates/result.html:7 templates/result.html:81
 msgid "Propre"
 msgstr "Limpio"
 
-#: app.py:124 templates/carte.html:23 templates/gallery.html:9\n"
-#: templates/result.html:8 templates/result.html:82
+#: app.py:124 templates/carte.html:31 templates/carte.html:70
+#: templates/gallery.html:9 templates/result.html:8 templates/result.html:82
 msgid "Sale"
 msgstr "Sucio"
 
-#: app.py:124 templates/carte.html:24 templates/gallery.html:10\n"
-#: templates/result.html:9
+#: app.py:124 templates/carte.html:35 templates/carte.html:71
+#: templates/gallery.html:10 templates/result.html:9
 msgid "Débordante"
 msgstr "Desbordado"
 
@@ -40,61 +40,73 @@ msgstr "Bien clasificado"
 msgid "Mal classé"
 msgstr "Mal clasificado"
 
-#: app.py:406
+#: app.py:196
+msgid "Aucun fichier envoyé."
+msgstr "No se ha subido ningún archivo"
+
+#: app.py:202
+msgid "Aucune image sélectionnée."
+msgstr "No se ha seleccionado ninguna imagen."
+
+#: app.py:219
+msgid "L'adresse est obligatoire."
+msgstr "La dirección es obligatoria."
+
+#: app.py:411
 msgid "Coordonnées manquantes"
 msgstr "Coordenadas faltantes"
 
-#: app.py:408
+#: app.py:413
 msgid "Indisponible"
 msgstr "No disponible"
 
-#: app.py:409
+#: app.py:414
 msgid "Non"
 msgstr "No"
 
-#: app.py:429
+#: app.py:434
 msgid "Ciel dégagé"
 msgstr "Cielo despejado"
 
-#: app.py:431
+#: app.py:436
 msgid "Nuageux"
 msgstr "Nublado"
 
-#: app.py:433
+#: app.py:438
 msgid "Pluie"
 msgstr "Lluvia"
 
-#: app.py:435
+#: app.py:440
 msgid "Neige"
 msgstr "Nieve"
 
-#: app.py:437
+#: app.py:442
 msgid "Averses"
 msgstr "Chubascos"
 
-#: app.py:439
+#: app.py:444
 msgid "Orage"
 msgstr "Tormenta"
 
-#: app.py:441
+#: app.py:446
 #, python-format
 msgid "Code %(code)s"
 msgstr "Código %(code)s"
 
-#: app.py:471
+#: app.py:476
 #, python-format
 msgid "Oui (%(num)d marché à proximité)"
 msgid_plural "Oui (%(num)d marchés à proximité)"
 msgstr[0] "Sí (%(num)d mercado cercano)"
 msgstr[1] "Sí (%(num)d mercados cercanos)"
 
-#: app.py:477
+#: app.py:482
 msgid "Aucun marché à proximité"
 msgstr "Ningún mercado cercano"
 
-#: app.py:480 app.py:484
+#: app.py:485 app.py:489
 msgid "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
-msgstr "No disponible (servidor Overpass sobrecargado, inténtelo más tarde)"
+msgstr "No disponible (servidor Overpass sobrecargado, intente más tarde)"
 
 #: templates/base.html:12
 msgid "Accueil"
@@ -106,7 +118,7 @@ msgstr "Mapa"
 
 #: templates/base.html:14 templates/dashboard.html:5
 msgid "Dashboard"
-msgstr "Panel de control"
+msgstr "Dashboard"
 
 #: templates/base.html:15
 msgid "Galerie"
@@ -114,29 +126,33 @@ msgstr "Galería"
 
 #: templates/base.html:16
 msgid "Paramètres"
-msgstr "Ajustes"
+msgstr "Configuración"
 
-#: templates/carte.html:19
+#: templates/carte.html:21
 msgid "Carte des zones à risque de débordemment"
 msgstr "Mapa de zonas con riesgo de desbordamiento"
 
-#: templates/carte.html:25
+#: templates/carte.html:24
+msgid "Filtrer par état :"
+msgstr "Filtrar por estado:"
+
+#: templates/carte.html:39 templates/carte.html:72
 msgid "Inconnu"
 msgstr "Desconocido"
 
-#: templates/carte.html:72
+#: templates/carte.html:94
 msgid "Adresse"
 msgstr "Dirección"
 
-#: templates/carte.html:73
+#: templates/carte.html:95
 msgid "État"
 msgstr "Estado"
 
-#: templates/carte.html:74
+#: templates/carte.html:96
 msgid "Date"
 msgstr "Fecha"
 
-#: templates/carte.html:75
+#: templates/carte.html:97
 msgid "Voir le détail"
 msgstr "Ver detalles"
 
@@ -178,14 +194,14 @@ msgstr "Etiqueta:"
 
 #: templates/gallery.html:18
 msgid "Non classifié"
-msgstr "Sin clasificar"
+msgstr "No clasificado"
 
 #: templates/gallery.html:19
 msgid "Luminosité:"
 msgstr "Brillo:"
 
-#: templates/gallery.html:19 templates/gallery.html:20\n"
-#: templates/gallery.html:21 templates/gallery.html:22\n"
+#: templates/gallery.html:19 templates/gallery.html:20
+#: templates/gallery.html:21 templates/gallery.html:22
 #: templates/gallery.html:23 templates/result.html:30
 msgid "Inconnue"
 msgstr "Desconocida"
@@ -216,11 +232,11 @@ msgstr "de"
 
 #: templates/index.html:11
 msgid "Tapez une adresse..."
-msgstr "Escribe una dirección..."
+msgstr "Escriba una dirección..."
 
 #: templates/index.html:18
 msgid "Type de classification :"
-msgstr "Tipo de classification:"
+msgstr "Tipo de clasificación:"
 
 #: templates/index.html:19
 msgid "Propre / Sale"
@@ -236,7 +252,7 @@ msgstr "Subir imagen"
 
 #: templates/parametres.html:5
 msgid "Paramètres du classifier"
-msgstr "Ajustes del clasificador"
+msgstr "Configuración del clasificador"
 
 #: templates/parametres.html:10
 msgid ""
@@ -256,9 +272,9 @@ msgid ""
 "calculée initialement ; vous pouvez vous en servir de référence avant de "
 "faire vos propres réglages."
 msgstr ""
-"mostrado al lado de cada campo corresponde al valor por defecto calculado"
-" inicialmente; puede usarlo como referencia antes de realizar sus propios"
-" ajustes."
+"que se muestra junto a cada campo corresponde al valor predeterminado "
+"calculado inicialmente; puede usarlo como referencia antes de realizar "
+"sus propios ajustes."
 
 #: templates/parametres.html:19
 msgid "Modèle 2 classes (Propre / Sale) — règles"
@@ -280,9 +296,9 @@ msgstr "Umbral"
 msgid "Score"
 msgstr "Puntuación"
 
-#: templates/parametres.html:40 templates/parametres.html:44\n"
-#: templates/parametres.html:48 templates/parametres.html:59\n"
-#: templates/parametres.html:81 templates/parametres.html:92\n"
+#: templates/parametres.html:40 templates/parametres.html:44
+#: templates/parametres.html:48 templates/parametres.html:59
+#: templates/parametres.html:81 templates/parametres.html:92
 #: templates/parametres.html:97
 msgid "recommandé"
 msgstr "recomendado"
@@ -309,7 +325,7 @@ msgstr "Umbral 2 (Sucio / Desbordado):"
 
 #: templates/parametres.html:102
 msgid "Enregistrer les paramètres"
-msgstr "Guardar ajustes"
+msgstr "Guardar configuración"
 
 #: templates/result.html:14
 msgid "Retour à la galerie"
@@ -333,7 +349,7 @@ msgstr "Fecha de subida"
 
 #: templates/result.html:27
 msgid "Lieu"
-msgstr "Ubicación"
+msgstr "Lugar"
 
 #: templates/result.html:27
 msgid "Non spécifié"
@@ -345,7 +361,7 @@ msgstr "Clasificación"
 
 #: templates/result.html:29
 msgid "En attente"
-msgstr "En espera"
+msgstr "Pendiente"
 
 #: templates/result.html:30
 msgid "Confiance de la prédiction"
@@ -455,12 +471,13 @@ msgstr "Luminancia"
 msgid "déclarés autour"
 msgstr "declarados alrededor"
 
-#: templates/result.html:155 templates/result.html:156\n"
+#: templates/result.html:155 templates/result.html:156
 #: templates/result.html:157
 msgid "Erreur réseau"
 msgstr "Error de red"
 
-#: templates/result.html:160 templates/result.html:161\n"
+#: templates/result.html:160 templates/result.html:161
 #: templates/result.html:162
 msgid "Coordonnées indisponibles"
 msgstr "Coordenadas no disponibles"
+

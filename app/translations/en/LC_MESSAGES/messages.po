@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-07-05 18:55+0200\n"
+"POT-Creation-Date: 2026-07-05 23:26+0200\n"
 "PO-Revision-Date: 2026-07-05 17:42+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:124 templates/carte.html:22 templates/gallery.html:8\n"
-#: templates/result.html:7 templates/result.html:81
+#: app.py:124 templates/carte.html:27 templates/carte.html:69
+#: templates/gallery.html:8 templates/result.html:7 templates/result.html:81
 msgid "Propre"
 msgstr "Clean"
 
-#: app.py:124 templates/carte.html:23 templates/gallery.html:9\n"
-#: templates/result.html:8 templates/result.html:82
+#: app.py:124 templates/carte.html:31 templates/carte.html:70
+#: templates/gallery.html:9 templates/result.html:8 templates/result.html:82
 msgid "Sale"
 msgstr "Dirty"
 
-#: app.py:124 templates/carte.html:24 templates/gallery.html:10\n"
-#: templates/result.html:9
+#: app.py:124 templates/carte.html:35 templates/carte.html:71
+#: templates/gallery.html:10 templates/result.html:9
 msgid "Débordante"
 msgstr "Overflowing"
 
@@ -40,59 +40,71 @@ msgstr "Correctly classified"
 msgid "Mal classé"
 msgstr "Incorrectly classified"
 
-#: app.py:406
+#: app.py:196
+msgid "Aucun fichier envoyé."
+msgstr "No file uploaded."
+
+#: app.py:202
+msgid "Aucune image sélectionnée."
+msgstr "No image selected."
+
+#: app.py:219
+msgid "L'adresse est obligatoire."
+msgstr "The address is mandatory."
+
+#: app.py:411
 msgid "Coordonnées manquantes"
 msgstr "Missing coordinates"
 
-#: app.py:408
+#: app.py:413
 msgid "Indisponible"
 msgstr "Unavailable"
 
-#: app.py:409
+#: app.py:414
 msgid "Non"
 msgstr "No"
 
-#: app.py:429
+#: app.py:434
 msgid "Ciel dégagé"
 msgstr "Clear sky"
 
-#: app.py:431
+#: app.py:436
 msgid "Nuageux"
 msgstr "Cloudy"
 
-#: app.py:433
+#: app.py:438
 msgid "Pluie"
 msgstr "Rain"
 
-#: app.py:435
+#: app.py:440
 msgid "Neige"
 msgstr "Snow"
 
-#: app.py:437
+#: app.py:442
 msgid "Averses"
 msgstr "Showers"
 
-#: app.py:439
+#: app.py:444
 msgid "Orage"
 msgstr "Thunderstorm"
 
-#: app.py:441
+#: app.py:446
 #, python-format
 msgid "Code %(code)s"
 msgstr "Code %(code)s"
 
-#: app.py:471
+#: app.py:476
 #, python-format
 msgid "Oui (%(num)d marché à proximité)"
 msgid_plural "Oui (%(num)d marchés à proximité)"
 msgstr[0] "Yes (%(num)d market nearby)"
 msgstr[1] "Yes (%(num)d markets nearby)"
 
-#: app.py:477
+#: app.py:482
 msgid "Aucun marché à proximité"
 msgstr "No markets nearby"
 
-#: app.py:480 app.py:484
+#: app.py:485 app.py:489
 msgid "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
 msgstr "Unavailable (Overpass server overloaded, try again later)"
 
@@ -116,27 +128,31 @@ msgstr "Gallery"
 msgid "Paramètres"
 msgstr "Settings"
 
-#: templates/carte.html:19
+#: templates/carte.html:21
 msgid "Carte des zones à risque de débordemment"
 msgstr "Map of overflow risk areas"
 
-#: templates/carte.html:25
+#: templates/carte.html:24
+msgid "Filtrer par état :"
+msgstr "Filter by state:"
+
+#: templates/carte.html:39 templates/carte.html:72
 msgid "Inconnu"
 msgstr "Unknown"
 
-#: templates/carte.html:72
+#: templates/carte.html:94
 msgid "Adresse"
 msgstr "Address"
 
-#: templates/carte.html:73
+#: templates/carte.html:95
 msgid "État"
 msgstr "Status"
 
-#: templates/carte.html:74
+#: templates/carte.html:96
 msgid "Date"
 msgstr "Date"
 
-#: templates/carte.html:75
+#: templates/carte.html:97
 msgid "Voir le détail"
 msgstr "View details"
 
@@ -184,8 +200,8 @@ msgstr "Unclassified"
 msgid "Luminosité:"
 msgstr "Brightness:"
 
-#: templates/gallery.html:19 templates/gallery.html:20\n"
-#: templates/gallery.html:21 templates/gallery.html:22\n"
+#: templates/gallery.html:19 templates/gallery.html:20
+#: templates/gallery.html:21 templates/gallery.html:22
 #: templates/gallery.html:23 templates/result.html:30
 msgid "Inconnue"
 msgstr "Unknown"
@@ -280,9 +296,9 @@ msgstr "Threshold"
 msgid "Score"
 msgstr "Score"
 
-#: templates/parametres.html:40 templates/parametres.html:44\n"
-#: templates/parametres.html:48 templates/parametres.html:59\n"
-#: templates/parametres.html:81 templates/parametres.html:92\n"
+#: templates/parametres.html:40 templates/parametres.html:44
+#: templates/parametres.html:48 templates/parametres.html:59
+#: templates/parametres.html:81 templates/parametres.html:92
 #: templates/parametres.html:97
 msgid "recommandé"
 msgstr "recommended"
@@ -455,12 +471,13 @@ msgstr "Luminance"
 msgid "déclarés autour"
 msgstr "reported around"
 
-#: templates/result.html:155 templates/result.html:156\n"
+#: templates/result.html:155 templates/result.html:156
 #: templates/result.html:157
 msgid "Erreur réseau"
 msgstr "Network error"
 
-#: templates/result.html:160 templates/result.html:161\n"
+#: templates/result.html:160 templates/result.html:161
 #: templates/result.html:162
 msgid "Coordonnées indisponibles"
 msgstr "Coordinates unavailable"
+

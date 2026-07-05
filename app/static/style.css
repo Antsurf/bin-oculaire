@@ -543,3 +543,42 @@ a.img-case {
     padding: 10px 25px;
     font-size: 1rem;
 }
+
+/* --- Filtre sur la carte --- */
+.map-filter {
+    margin: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #CFE9E0;
+    border-radius: 8px;
+    padding: 8px 15px;
+}
+
+.map-filter-label {
+    font-weight: bold;
+    color: #2D4613;
+    font-size: 0.9rem;
+}
+
+.map-filter-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.map-filter-item input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.map-filter-item .dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}

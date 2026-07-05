@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-07-05 18:55+0200\n"
+"POT-Creation-Date: 2026-07-05 23:26+0200\n"
 "PO-Revision-Date: 2026-07-05 17:42+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:124 templates/carte.html:22 templates/gallery.html:8\n"
-#: templates/result.html:7 templates/result.html:81
+#: app.py:124 templates/carte.html:27 templates/carte.html:69
+#: templates/gallery.html:8 templates/result.html:7 templates/result.html:81
 msgid "Propre"
 msgstr "Pulito"
 
-#: app.py:124 templates/carte.html:23 templates/gallery.html:9\n"
-#: templates/result.html:8 templates/result.html:82
+#: app.py:124 templates/carte.html:31 templates/carte.html:70
+#: templates/gallery.html:9 templates/result.html:8 templates/result.html:82
 msgid "Sale"
 msgstr "Sporco"
 
-#: app.py:124 templates/carte.html:24 templates/gallery.html:10\n"
-#: templates/result.html:9
+#: app.py:124 templates/carte.html:35 templates/carte.html:71
+#: templates/gallery.html:10 templates/result.html:9
 msgid "Débordante"
 msgstr "Traboccante"
 
@@ -40,59 +40,71 @@ msgstr "Ben classificato"
 msgid "Mal classé"
 msgstr "Mal classificato"
 
-#: app.py:406
+#: app.py:196
+msgid "Aucun fichier envoyé."
+msgstr "Nessun file caricato."
+
+#: app.py:202
+msgid "Aucune image sélectionnée."
+msgstr "Nessuna immagine selezionata."
+
+#: app.py:219
+msgid "L'adresse est obligatoire."
+msgstr "L'indirizzo è obbligatorio."
+
+#: app.py:411
 msgid "Coordonnées manquantes"
 msgstr "Coordinate mancanti"
 
-#: app.py:408
+#: app.py:413
 msgid "Indisponible"
 msgstr "Non disponibile"
 
-#: app.py:409
+#: app.py:414
 msgid "Non"
 msgstr "No"
 
-#: app.py:429
+#: app.py:434
 msgid "Ciel dégagé"
 msgstr "Cielo sereno"
 
-#: app.py:431
+#: app.py:436
 msgid "Nuageux"
 msgstr "Nuvoloso"
 
-#: app.py:433
+#: app.py:438
 msgid "Pluie"
 msgstr "Pioggia"
 
-#: app.py:435
+#: app.py:440
 msgid "Neige"
 msgstr "Neve"
 
-#: app.py:437
+#: app.py:442
 msgid "Averses"
 msgstr "Rovesci"
 
-#: app.py:439
+#: app.py:444
 msgid "Orage"
 msgstr "Temporale"
 
-#: app.py:441
+#: app.py:446
 #, python-format
 msgid "Code %(code)s"
 msgstr "Codice %(code)s"
 
-#: app.py:471
+#: app.py:476
 #, python-format
 msgid "Oui (%(num)d marché à proximité)"
 msgid_plural "Oui (%(num)d marchés à proximité)"
 msgstr[0] "Sì (%(num)d mercato nelle vicinanze)"
 msgstr[1] "Sì (%(num)d mercati nelle vicinanze)"
 
-#: app.py:477
+#: app.py:482
 msgid "Aucun marché à proximité"
 msgstr "Nessun mercato nelle vicinanze"
 
-#: app.py:480 app.py:484
+#: app.py:485 app.py:489
 msgid "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
 msgstr "Non disponibile (server Overpass sovraccarico, riprova più tardi)"
 
@@ -116,27 +128,31 @@ msgstr "Galleria"
 msgid "Paramètres"
 msgstr "Impostazioni"
 
-#: templates/carte.html:19
+#: templates/carte.html:21
 msgid "Carte des zones à risque de débordemment"
 msgstr "Mappa delle zone a rischio di traboccamento"
 
-#: templates/carte.html:25
+#: templates/carte.html:24
+msgid "Filtrer par état :"
+msgstr "Filtra per stato:"
+
+#: templates/carte.html:39 templates/carte.html:72
 msgid "Inconnu"
 msgstr "Sconosciuto"
 
-#: templates/carte.html:72
+#: templates/carte.html:94
 msgid "Adresse"
 msgstr "Indirizzo"
 
-#: templates/carte.html:73
+#: templates/carte.html:95
 msgid "État"
 msgstr "Stato"
 
-#: templates/carte.html:74
+#: templates/carte.html:96
 msgid "Date"
 msgstr "Data"
 
-#: templates/carte.html:75
+#: templates/carte.html:97
 msgid "Voir le détail"
 msgstr "Visualizza dettagli"
 
@@ -184,8 +200,8 @@ msgstr "Non classificato"
 msgid "Luminosité:"
 msgstr "Luminosità:"
 
-#: templates/gallery.html:19 templates/gallery.html:20\n"
-#: templates/gallery.html:21 templates/gallery.html:22\n"
+#: templates/gallery.html:19 templates/gallery.html:20
+#: templates/gallery.html:21 templates/gallery.html:22
 #: templates/gallery.html:23 templates/result.html:30
 msgid "Inconnue"
 msgstr "Sconosciuta"
@@ -243,8 +259,8 @@ msgid ""
 "Modifiez ici les règles et poids utilisés par le classifier automatique. "
 "La valeur"
 msgstr ""
-"Modifica qui le regole e i pesi utilizzati dal classificatore automatico. "
-"Il valore"
+"Modifica qui le regole e i pesi utilizzati dal classificatore automatico."
+" Il valore"
 
 #: templates/parametres.html:11
 msgid "« recommandé »"
@@ -280,9 +296,9 @@ msgstr "Soglia"
 msgid "Score"
 msgstr "Punteggio"
 
-#: templates/parametres.html:40 templates/parametres.html:44\n"
-#: templates/parametres.html:48 templates/parametres.html:59\n"
-#: templates/parametres.html:81 templates/parametres.html:92\n"
+#: templates/parametres.html:40 templates/parametres.html:44
+#: templates/parametres.html:48 templates/parametres.html:59
+#: templates/parametres.html:81 templates/parametres.html:92
 #: templates/parametres.html:97
 msgid "recommandé"
 msgstr "raccomandato"
@@ -455,12 +471,13 @@ msgstr "Luminanza"
 msgid "déclarés autour"
 msgstr "dichiarati intorno"
 
-#: templates/result.html:155 templates/result.html:156\n"
+#: templates/result.html:155 templates/result.html:156
 #: templates/result.html:157
 msgid "Erreur réseau"
 msgstr "Errore di rete"
 
-#: templates/result.html:160 templates/result.html:161\n"
+#: templates/result.html:160 templates/result.html:161
 #: templates/result.html:162
 msgid "Coordonnées indisponibles"
 msgstr "Coordinate non disponibili"
+

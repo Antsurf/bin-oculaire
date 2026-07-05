@@ -193,11 +193,13 @@ def upload_file():
     if request.method == 'POST':
 
         if 'mon_image' not in request.files:
+            flash(_("Aucun fichier envoyé."))
             return redirect(request.url)
         
         file = request.files['mon_image']
         
         if file.filename == '':
+            flash(_("Aucune image sélectionnée."))
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
@@ -213,6 +215,9 @@ def upload_file():
                 images_features = ft.extract_features(chemin_final)
 
                 adresse = request.form.get('mon_adresse', '').strip() #pour éviter les faux espaces
+                if not adresse:
+                        flash(_("L'adresse est obligatoire."))
+                        return redirect(request.url)
                 # on regarde si on a des coordonnées 
                 """
                 Petite remarque, quand on vérifie que la personne rentre une adresse via 

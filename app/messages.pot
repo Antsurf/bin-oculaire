@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-07-05 18:55+0200\n"
+"POT-Creation-Date: 2026-07-05 23:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:124 templates/carte.html:22 templates/gallery.html:8
-#: templates/result.html:7 templates/result.html:81
+#: app.py:124 templates/carte.html:27 templates/carte.html:69
+#: templates/gallery.html:8 templates/result.html:7 templates/result.html:81
 msgid "Propre"
 msgstr ""
 
-#: app.py:124 templates/carte.html:23 templates/gallery.html:9
-#: templates/result.html:8 templates/result.html:82
+#: app.py:124 templates/carte.html:31 templates/carte.html:70
+#: templates/gallery.html:9 templates/result.html:8 templates/result.html:82
 msgid "Sale"
 msgstr ""
 
-#: app.py:124 templates/carte.html:24 templates/gallery.html:10
-#: templates/result.html:9
+#: app.py:124 templates/carte.html:35 templates/carte.html:71
+#: templates/gallery.html:10 templates/result.html:9
 msgid "Débordante"
 msgstr ""
 
@@ -40,59 +40,71 @@ msgstr ""
 msgid "Mal classé"
 msgstr ""
 
-#: app.py:406
+#: app.py:196
+msgid "Aucun fichier envoyé."
+msgstr ""
+
+#: app.py:202
+msgid "Aucune image sélectionnée."
+msgstr ""
+
+#: app.py:219
+msgid "L'adresse est obligatoire."
+msgstr ""
+
+#: app.py:411
 msgid "Coordonnées manquantes"
 msgstr ""
 
-#: app.py:408
+#: app.py:413
 msgid "Indisponible"
 msgstr ""
 
-#: app.py:409
+#: app.py:414
 msgid "Non"
 msgstr ""
 
-#: app.py:429
+#: app.py:434
 msgid "Ciel dégagé"
 msgstr ""
 
-#: app.py:431
+#: app.py:436
 msgid "Nuageux"
 msgstr ""
 
-#: app.py:433
+#: app.py:438
 msgid "Pluie"
 msgstr ""
 
-#: app.py:435
+#: app.py:440
 msgid "Neige"
 msgstr ""
 
-#: app.py:437
+#: app.py:442
 msgid "Averses"
 msgstr ""
 
-#: app.py:439
+#: app.py:444
 msgid "Orage"
 msgstr ""
 
-#: app.py:441
+#: app.py:446
 #, python-format
 msgid "Code %(code)s"
 msgstr ""
 
-#: app.py:471
+#: app.py:476
 #, python-format
 msgid "Oui (%(num)d marché à proximité)"
 msgid_plural "Oui (%(num)d marchés à proximité)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app.py:477
+#: app.py:482
 msgid "Aucun marché à proximité"
 msgstr ""
 
-#: app.py:480 app.py:484
+#: app.py:485 app.py:489
 msgid "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
 msgstr ""
 
@@ -116,27 +128,31 @@ msgstr ""
 msgid "Paramètres"
 msgstr ""
 
-#: templates/carte.html:19
+#: templates/carte.html:21
 msgid "Carte des zones à risque de débordemment"
 msgstr ""
 
-#: templates/carte.html:25
+#: templates/carte.html:24
+msgid "Filtrer par état :"
+msgstr ""
+
+#: templates/carte.html:39 templates/carte.html:72
 msgid "Inconnu"
 msgstr ""
 
-#: templates/carte.html:72
+#: templates/carte.html:94
 msgid "Adresse"
 msgstr ""
 
-#: templates/carte.html:73
+#: templates/carte.html:95
 msgid "État"
 msgstr ""
 
-#: templates/carte.html:74
+#: templates/carte.html:96
 msgid "Date"
 msgstr ""
 
-#: templates/carte.html:75
+#: templates/carte.html:97
 msgid "Voir le détail"
 msgstr ""
 

@@ -8,7 +8,7 @@
     <input type="file" id="imageInput" name="mon_image" accept="image/*" style="display: none;">
 
     <div div style="display: flex; gap: 20px;">
-        <input type="text" id="address" name="mon_adresse" placeholder="{{ _('Tapez une adresse...') }}" list="address-list" autocomplete="off">
+        <input type="text" id="address" name="mon_adresse" placeholder="{{ _('Tapez une adresse...') }}" list="address-list" autocomplete="off" required>    
         <datalist id="address-list"></datalist>
 
         <input type="hidden" id="lat" name="lat">
