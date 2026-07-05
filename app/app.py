@@ -54,34 +54,55 @@ def dashboard():
     """
     images = db.get_all_images() #récupère toutes les images
 
-    # récupérer toutes les adresses des poubelles
-    adresses = []
+    adresses = [] # récupérer toutes les adresses des poubelles
+    total_images_annotees = 0  # compter les images qui ont une annotation
+    nb_good_class = 0 # compter les images qui ont une bonne annotation
+
     for image in images:
         image_id = image["id"] # récupère id de chaque image
         image_info = db.get_image_details(image_id)  # récupère infos sur l'image
-        adresses.append(image_info['localisation_nom']) # ajoute la localisation
+
+        annot = image_info["annotation"]
+        if annot == "pleine":
+            annot = "debordante" # respecter stockage bdd
+        label = image_info["auto_label"]
+
+        if annot is not None:
+            total_images_annotees += 1
+            if annot == label: # vérifie si classification bien effectuée
+                nb_good_class += 1
+
+        if image_info['localisation_nom'] is None: # vérifie si Adresse dispo
+            adresses.append('Adresse inconnue')
+        else:
+            adresses.append(image_info['localisation_nom']) # ajoute la localisation
 
     adresses_count = dict()
     for ad in adresses:
         if ad in adresses_count.keys():
-            adresses_count[ad] += 1 #ajoute 1 au compte
+            adresses_count[ad] += 1 # ajoute 1 au compte
         else:
             adresses_count[ad] = 1 # initialise le compte
 
     nb_images = db.get_total_images_count()
-    nb_poubelles_sales, nb_poubelles_propres = db.get_classified_count()
-    labels1 = ["Propre", "Sale"]
+    nb_poubelles_sales, nb_poubelles_propres, nb_poubelles_deb = db.get_classified_count()
+    labels1 = ["Propre", "Sale", "Débordante"]
     labels2 = list(adresses_count.keys())
-    values1 = [nb_poubelles_propres, nb_poubelles_sales]
+    labels3 = ["Bien classé", "Mal classé"]
+    values1 = [nb_poubelles_propres, nb_poubelles_sales, nb_poubelles_deb]
     values2 = list(adresses_count.values())
+    values3 = [nb_good_class, total_images_annotees - nb_good_class]
 
     return render_template(
         "dashboard.html",
         nb_images=nb_images,
+        nb_images_annot=total_images_annotees,
         labels1=labels1,
         labels2=labels2,
+        labels3=labels3,
         values1=values1,
-        values2=values2
+        values2=values2,
+        values3=values3
     )
 
 

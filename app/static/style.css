@@ -312,18 +312,20 @@ a.img-case {
 }
 
 .charts{
+    margin-top: 3%;
     display: flex;
     justify-content: center;
+    gap: 3%;
 }
 
-.chart-left{
+.chart-pie{
     width: 20%;
-    padding: 30px;
+
 }
 
-.chart-right{
-    width: 50%;
-    padding: 30px;
+.chart-bar{
+    width: 42%;
+
 }
 
 
@@ -355,10 +357,10 @@ a.img-case {
     display: flex;
     margin-top: 3%;
     justify-content: center;
+    gap: 18%;
 }
 
 #infoIm{
-    margin-left: 7%;
     width: 30%;
     padding-top: 1%;
     text-align: center;

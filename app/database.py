@@ -245,7 +245,7 @@ def update_annotation(image_id: int, annotation: str)->None:
 
     # INSERT OR REPLACE au cas où l'image n'aurait pas encore de ligne dans images_classification
     # (par exemple si elle n'a pas encore été auto-labelisée)
-    conn.execute("""
+    cursor.execute("""
         INSERT INTO images_classification (image_id, annotation)
         VALUES (?, ?)
         ON CONFLICT(image_id) DO UPDATE SET annotation = excluded.annotation
@@ -308,13 +308,14 @@ def get_classified_count() -> tuple:
     cursor.execute("""
         SELECT 
             SUM(CASE WHEN auto_label = 'sale' THEN 1 ELSE 0 END) as count_sales,
-            SUM(CASE WHEN auto_label = 'propre' THEN 1 ELSE 0 END) as count_propres
+            SUM(CASE WHEN auto_label = 'propre' THEN 1 ELSE 0 END) as count_propres,
+            SUM(CASE WHEN auto_label = 'debordante' THEN 1 ELSE 0 END) as count_debordantes
         FROM images_classification
     """)
     row = cursor.fetchone()
     conn.close()
     
-    return row["count_sales"], row["count_propres"]
+    return row["count_sales"], row["count_propres"], row["count_debordantes"]
 
 def get_image_details(image_id):
     """Récupère les informations nécessaires pour la page de résultat."""
