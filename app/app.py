@@ -108,6 +108,16 @@ def result(image_id):
     return render_template('result.html', image=image, hist_rgb=histo_dic['hist_rgb'], hist_lum = histo_dic['luminance'])
 
 
+# ROUTE POUR ENREGISTRER L'ANNOTATION MANUELLE DE L'UTILISATEUR (poubelle réellement sale/pleine ou non)
+@app.route('/result/<int:image_id>/annotation', methods=['POST'])
+def save_annotation(image_id):
+    annotation = request.form.get('annotation')
+    if annotation == '':
+        annotation = None
+    db.update_annotation(image_id, annotation)
+    return redirect(url_for('result', image_id=image_id))
+
+
 # Route d'upload d'une image
 @app.route('/index', methods=['GET', 'POST'])
 def upload_file():
@@ -163,7 +173,16 @@ def upload_file():
             # On insert l'image dans la BDD ainsi que les features et la classification 
             img_id = db.insert_image(chemin_final, filename, id_localisation)
             db.add_features(img_id, images_features)
-            classification, confidence = cl.classify(images_features)
+
+            # récupération du choix de l'utilisateur (2 ou 3 classes) sur index.html
+            try:
+                nb_classes = int(request.form.get('nb_classes', 2))
+            except (TypeError, ValueError):
+                nb_classes = 2
+            if nb_classes not in (2, 3):
+                nb_classes = 2
+
+            classification, confidence = cl.classify(images_features, nb_of_classes=nb_classes)
             db.update_autolabel(img_id, classification, confidence)
 
             return redirect(url_for('result', image_id=img_id))
@@ -179,13 +198,17 @@ def get_zones_risque():
     conn = db.get_connection()
 
     # Requête qui récupère les localisations et le dernier label associé
+    # (on prend le label le plus récent par localisation, au cas où plusieurs
+    # images existent pour le même emplacement)
     rows = conn.execute("""
-        SELECT l.latitude, l.longitude, l.localisation_nom
+        SELECT l.latitude, l.longitude, l.localisation_nom, c.auto_label
         FROM localisation l
         JOIN images i ON l.id_localisation = i.id_localisation
+        LEFT JOIN images_classification c ON i.id = c.image_id
+        GROUP BY l.id_localisation
+        HAVING i.upload_date = MAX(i.upload_date)
     """).fetchall()
     conn.close()
-#         WHERE ic.auto_label = 'dirty' OR ic.auto_label = 'very_dirty'
 
     print(rows)
 
@@ -204,6 +227,7 @@ def get_zones_risque():
             },
             "properties": {
                 "adresse": row['localisation_nom'],
+                "etat": row['auto_label'] if row['auto_label'] else "inconnu",
             }
         }
         geojson["features"].append(feature)

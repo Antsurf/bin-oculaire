@@ -22,9 +22,24 @@
                 </p>
                 <p><strong>Classification :</strong> <span class="badge badge-warning">{{ image['auto_label'] |
                         default('En attente') if image else '' }}</span></p>
+                <p><strong>Confiance de la prédiction :</strong> {{ image['confidence'] if image and image['confidence'] is not none else 'Inconnue' }}</p>
                 <p><strong>Taille fichier :</strong> {{ image['file_size'] if image else '' }} Ko</p>
                 <p><strong>Dimensions :</strong> {{ image['width'] if image else '' }} x {{ image['height'] if image
                     else '' }} px</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Annotation manuelle</h3>
+                <p style="font-size: 13px; color: #555;">Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider à améliorer le modèle.</p>
+                <form action="{{ url_for('save_annotation', image_id=image['id']) if image else '#' }}" method="POST">
+                    <select name="annotation">
+                        <option value="" {% if not image or not image['annotation'] %}selected{% endif %}>Non annoté</option>
+                        <option value="propre" {% if image and image['annotation'] == 'propre' %}selected{% endif %}>Propre</option>
+                        <option value="sale" {% if image and image['annotation'] == 'sale' %}selected{% endif %}>Sale</option>
+                        <option value="pleine" {% if image and image['annotation'] == 'pleine' %}selected{% endif %}>Pleine / débordante</option>
+                    </select>
+                    <button type="submit">Enregistrer</button>
+                </form>
             </div>
         </div>
 
