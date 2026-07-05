@@ -43,3 +43,25 @@ CREATE TABLE images_features(
    edge_density_opencv DECIMAL(5,4),
    FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE         -- image_id est à la fois clé primaire et étrangère car directe lié à Images(id)
 );
+
+ CREATE TABLE IF NOT EXISTS classifier_rules(
+       id                INTEGER PRIMARY KEY AUTOINCREMENT,
+       feature_name      VARCHAR(50) NOT NULL UNIQUE,
+       sign              VARCHAR(2) NOT NULL,
+       threshold         DECIMAL(12,8) NOT NULL,
+       score             DECIMAL(12,8) NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS classifier_weights(
+       id                INTEGER PRIMARY KEY AUTOINCREMENT,
+       feature_name      VARCHAR(50) NOT NULL UNIQUE,
+       weight            DECIMAL(12,8) NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS classifier_thresholds(
+       id                INTEGER PRIMARY KEY AUTOINCREMENT,
+       model_type        VARCHAR(10) NOT NULL,
+       threshold_order   INTEGER NOT NULL,
+       threshold_value   DECIMAL(12,8) NOT NULL,
+       UNIQUE(model_type, threshold_order)
+    );

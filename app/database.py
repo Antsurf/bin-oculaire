@@ -90,6 +90,28 @@ def init_db():
        edge_density      DECIMAL(5,4),
        edge_density_opencv DECIMAL(5,4),
        FOREIGN KEY(image_id) REFERENCES images(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS classifier_rules(
+       id                INTEGER PRIMARY KEY AUTOINCREMENT,
+       feature_name      VARCHAR(50) NOT NULL UNIQUE,
+       sign              VARCHAR(2) NOT NULL,
+       threshold         DECIMAL(12,8) NOT NULL,
+       score             DECIMAL(12,8) NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS classifier_weights(
+       id                INTEGER PRIMARY KEY AUTOINCREMENT,
+       feature_name      VARCHAR(50) NOT NULL UNIQUE,
+       weight            DECIMAL(12,8) NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS classifier_thresholds(
+       id                INTEGER PRIMARY KEY AUTOINCREMENT,
+       model_type        VARCHAR(10) NOT NULL,
+       threshold_order   INTEGER NOT NULL,
+       threshold_value   DECIMAL(12,8) NOT NULL,
+       UNIQUE(model_type, threshold_order)
     );""")
 
 
@@ -98,6 +120,9 @@ def init_db():
     conn.close()
 
     print(f"Base de donnée initialisée, chemin: {os.path.abspath(db_name)}")
+
+    # on initialise les règles / poids / seuils par défaut si les tables sont vides
+    seed_classifier_defaults()
 
 
 def insert_image(file_path: str, file_name: str ,id_localisation: int = None) -> int:
@@ -213,10 +238,18 @@ def update_annotation(image_id: int, annotation: str)->None:
     conn = get_connection()
     cursor = conn.cursor()
 
-    if annotation not in ("pleine", "vide", None):
-        print("annotation doit être ‘pleine’ ou ‘vide’ ou 'None'")
-    cur = conn.execute(
-    f"UPDATE images_classification SET annotation = {annotation} WHERE image_id = {image_id}")
+    if annotation not in ("pleine", "sale", "vide", "propre", "debordante", None):
+        print("annotation doit être 'pleine', 'sale', 'vide', 'propre', 'debordante' ou None")
+        conn.close()
+        return
+
+    # INSERT OR REPLACE au cas où l'image n'aurait pas encore de ligne dans images_classification
+    # (par exemple si elle n'a pas encore été auto-labelisée)
+    conn.execute("""
+        INSERT INTO images_classification (image_id, annotation)
+        VALUES (?, ?)
+        ON CONFLICT(image_id) DO UPDATE SET annotation = excluded.annotation
+    """, (image_id, annotation))
     conn.commit()
     conn.close()
 
@@ -288,7 +321,7 @@ def get_image_details(image_id):
     conn = get_connection()
     query = """
         SELECT i.id, i.file_path, i.file_name, i.upload_date, f.file_size, f.width, f.height, 
-               c.auto_label, f.luminosite, f.contraste_maximal, f.saturation, f.edge_density,
+               c.auto_label, c.confidence, c.annotation, f.luminosite, f.contraste_maximal, f.saturation, f.edge_density,
                l.latitude, l.longitude, l.localisation_nom
         FROM images i
         LEFT JOIN localisation l ON i.id_localisation = l.id_localisation
@@ -403,6 +436,170 @@ def get_stats()->dict:
         "manual_annotations": {r["label"]: r["n"] for r in manual_counts},
         "file_sizes": file_sizes,
     }
+
+
+################################################
+# Cette partie concerne le modèle de classification (classifier.py) et permet de stocker les règles / poids / seuils dans la base de données.
+# Y'a rien à toucher à moins que vous vouliez modifier les valeurs par défaut du modèle (mais c'est pas conseillé, ça peut fausser les résultats). 
+# C'est toutes les valeurs qui étaient dans l'ancien classifier.py, mais maintenant elles sont stockées dans la base de données pour que l'utilisateur puisse les modifier via l'interface web.
+################################################ 
+
+# Valeurs par défaut (reprises de l'ancien classifier.py) utilisées uniquement
+# pour peupler la base la toute première fois
+_DEFAULT_RULES = {
+    'mean_r': {'threshold': 0.4150344801743592, 'sign': '>', 'score': 0.0},
+    'mean_g': {'threshold': 0.37576611164675755, 'sign': '<', 'score': 5.0},
+    'brightness': {'threshold': 0.3081680996813572, 'sign': '>', 'score': 0.0},
+    'contraste_global': {'threshold': 0.8825309043036617, 'sign': '>', 'score': 4.006880156485172},
+    'edge_density_opencv': {'threshold': 0.07458731202114097, 'sign': '>', 'score': 3.016836491962818},
+    'max_r': {'threshold': 0.35701858263043873, 'sign': '>', 'score': 5.0},
+    'max_g': {'threshold': 0.5711799355230485, 'sign': '<', 'score': 1.3194733615860947},
+    'max_b': {'threshold': 0.2906460917001866, 'sign': '<', 'score': 5.0},
+    'min_r': {'threshold': 0.8325647870174255, 'sign': '>', 'score': 5.0},
+    'min_g': {'threshold': 0.4132767987860906, 'sign': '<', 'score': 1.4018698389974804},
+    'min_b': {'threshold': 0.8781258552989745, 'sign': '<', 'score': 0.4617996469677823},
+    'index_max_r': {'threshold': 0.2169395594693997, 'sign': '<', 'score': 5.0},
+    'index_max_g': {'threshold': 0.5592029408562174, 'sign': '<', 'score': 2.9971308149598004},
+    'max_lum': {'threshold': 0.05198941915700317, 'sign': '<', 'score': 0.0},
+    'min_lum': {'threshold': 0.4698152878443205, 'sign': '<', 'score': 0.8497127013463754},
+    'index_max_lum': {'threshold': 0.9333318980617655, 'sign': '<', 'score': 2.897761468964595},
+    'index_min_lum': {'threshold': 0.6180389106981365, 'sign': '<', 'score': 5.0},
+    'sum_avg': {'threshold': 0.7096892789474282, 'sign': '<', 'score': 1.3021515119621079},
+    'quantity_of_whites': {'threshold': 0.13134950971169676, 'sign': '>', 'score': 3.050209399787727}
+}
+_DEFAULT_RULES_THRESHOLD = 22  # seuil du modèle 2-classes (propre / sale)
+
+_DEFAULT_WEIGHTS = {
+    'mean_r': 0.01376422371403685,
+    'mean_g': 0.0,
+    'brightness': 0.0,
+    'contraste_global': 0.7199924014556374,
+    'edge_density_opencv': 0.4704017524096923,
+    'max_r': 0.0,
+    'max_g': 0.30272728971973906,
+    'max_b': 0.0,
+    'min_r': 1.0,
+    'min_g': 0.41345849348853436,
+    'min_b': 0.870891282988038,
+    'index_max_r': 0.0,
+    'index_max_g': 0.01748784218304835,
+    'max_lum': 0.0,
+    'min_lum': 1.0,
+    'index_max_lum': 0.0,
+    'index_min_lum': 0.047498647545156876,
+    'sum_avg': 0.0,
+    'quantity_of_whites': 0.13373255391552297
+}
+_DEFAULT_WEIGHTS_THRESHOLDS = [50, 84]  # seuils du modèle 3-classes (propre / sale / débordante)
+
+
+def seed_classifier_defaults():
+    """
+    Peuple les tables classifier_rules / classifier_weights / classifier_thresholds
+    avec les valeurs par défaut si elles sont vides. Ne touche à rien si l'utilisateur
+    a déjà modifié / rempli ces tables.
+    """
+    conn = get_connection()
+
+    already_seeded = conn.execute("SELECT COUNT(*) AS n FROM classifier_rules").fetchone()["n"]
+    if already_seeded == 0:
+        for feature_name, params in _DEFAULT_RULES.items():
+            conn.execute(
+                "INSERT INTO classifier_rules (feature_name, sign, threshold, score) VALUES (?,?,?,?)",
+                (feature_name, params["sign"], params["threshold"], params["score"])
+            )
+        conn.execute(
+            "INSERT INTO classifier_thresholds (model_type, threshold_order, threshold_value) VALUES ('rules', 0, ?)",
+            (_DEFAULT_RULES_THRESHOLD,)
+        )
+
+    already_seeded_w = conn.execute("SELECT COUNT(*) AS n FROM classifier_weights").fetchone()["n"]
+    if already_seeded_w == 0:
+        for feature_name, weight in _DEFAULT_WEIGHTS.items():
+            conn.execute(
+                "INSERT INTO classifier_weights (feature_name, weight) VALUES (?,?)",
+                (feature_name, weight)
+            )
+        for i, val in enumerate(_DEFAULT_WEIGHTS_THRESHOLDS):
+            conn.execute(
+                "INSERT INTO classifier_thresholds (model_type, threshold_order, threshold_value) VALUES ('weights', ?, ?)",
+                (i, val)
+            )
+
+    conn.commit()
+    conn.close()
+
+
+def get_classifier_rules() -> dict:
+    """Renvoie le dictionnaire de règles pour le modèle 2-classes, tel qu'attendu par classifier.py"""
+    conn = get_connection()
+    rows = conn.execute("SELECT feature_name, sign, threshold, score FROM classifier_rules").fetchall()
+    conn.close()
+    return {
+        row["feature_name"]: {"sign": row["sign"], "threshold": row["threshold"], "score": row["score"]}
+        for row in rows
+    }
+
+
+def get_classifier_weights() -> dict:
+    """Renvoie le dictionnaire de poids pour le modèle 3-classes"""
+    conn = get_connection()
+    rows = conn.execute("SELECT feature_name, weight FROM classifier_weights").fetchall()
+    conn.close()
+    return {row["feature_name"]: row["weight"] for row in rows}
+
+
+def get_classifier_thresholds(model_type: str):
+    """
+    :model_type: 'rules' (modèle 2-classes) ou 'weights' (modèle 3-classes)
+    :return: un int pour 'rules' (un seul seuil), une liste pour 'weights' (deux seuils)
+    """
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT threshold_value FROM classifier_thresholds WHERE model_type = ? ORDER BY threshold_order",
+        (model_type,)
+    ).fetchall()
+    conn.close()
+    values = [row["threshold_value"] for row in rows]
+    if model_type == "rules":
+        return values[0] if values else _DEFAULT_RULES_THRESHOLD
+    return values if values else _DEFAULT_WEIGHTS_THRESHOLDS
+
+
+def update_classifier_rule(feature_name: str, sign: str, threshold: float, score: float) -> None:
+    """Permet à l'utilisateur de modifier une règle du modèle 2-classes"""
+    conn = get_connection()
+    conn.execute("""
+        INSERT INTO classifier_rules (feature_name, sign, threshold, score)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(feature_name) DO UPDATE SET sign = excluded.sign, threshold = excluded.threshold, score = excluded.score
+    """, (feature_name, sign, threshold, score))
+    conn.commit()
+    conn.close()
+
+
+def update_classifier_weight(feature_name: str, weight: float) -> None:
+    """Permet à l'utilisateur de modifier un poids du modèle 3-classes"""
+    conn = get_connection()
+    conn.execute("""
+        INSERT INTO classifier_weights (feature_name, weight)
+        VALUES (?, ?)
+        ON CONFLICT(feature_name) DO UPDATE SET weight = excluded.weight
+    """, (feature_name, weight))
+    conn.commit()
+    conn.close()
+
+
+def update_classifier_threshold(model_type: str, threshold_order: int, threshold_value: float) -> None:
+    """Permet à l'utilisateur de modifier un seuil ('rules' ou 'weights')"""
+    conn = get_connection()
+    conn.execute("""
+        INSERT INTO classifier_thresholds (model_type, threshold_order, threshold_value)
+        VALUES (?, ?, ?)
+        ON CONFLICT(model_type, threshold_order) DO UPDATE SET threshold_value = excluded.threshold_value
+    """, (model_type, threshold_order, threshold_value))
+    conn.commit()
+    conn.close()
 
 
 if __name__ == "__main__":
