@@ -81,6 +81,21 @@ def base():
 def carte():
     return render_template('carte.html')
 
+
+# Fonction pour le dashboard pour convertir la taille en Ko en une chaîne lisible
+def format_taille_stockage(taille_ko: float) -> str:
+    """
+    Convertit une taille en Ko (comme stockée dans images_features.file_size)
+    en une chaîne lisible : Ko / Mo / Go selon l'ordre de grandeur.
+    """
+    taille_mo = taille_ko / 1024
+    if taille_mo >= 1024:
+        return f"{taille_mo / 1024:.2f} Go"
+    elif taille_mo >= 1:
+        return f"{taille_mo:.2f} Mo"
+    else:
+        return f"{taille_ko:.2f} Ko"
+
 # ROUTE VERS LE DASHBOARD
 @app.route('/dashboard')
 def dashboard():
@@ -121,6 +136,7 @@ def dashboard():
 
     nb_images = db.get_total_images_count()
     nb_poubelles_sales, nb_poubelles_propres, nb_poubelles_deb = db.get_classified_count()
+    taille_totale = format_taille_stockage(db.get_total_file_size())
     labels1 = [_("Propre"), _("Sale"), _("Débordante")]
     labels2 = list(adresses_count.keys())
     labels3 = [_("Bien classé"), _("Mal classé")]
@@ -132,6 +148,7 @@ def dashboard():
         "dashboard.html",
         nb_images=nb_images,
         nb_images_annot=total_images_annotees,
+        taille_totale=taille_totale,
         labels1=labels1,
         labels2=labels2,
         labels3=labels3,

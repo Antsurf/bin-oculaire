@@ -5,10 +5,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-07-05 23:26+0200\n"
+"Report-Msgid-Bugs-To: antoine.richard@efrei.net\n"
+"POT-Creation-Date: 2026-07-05 23:40+0200\n"
 "PO-Revision-Date: 2026-07-05 17:42+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: ANTOINE RICHARD <antoine.richard@efrei.net>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,94 +17,94 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:124 templates/carte.html:27 templates/carte.html:69
+#: app.py:140 templates/carte.html:27 templates/carte.html:69
 #: templates/gallery.html:8 templates/result.html:7 templates/result.html:81
 msgid "Propre"
 msgstr "Limpio"
 
-#: app.py:124 templates/carte.html:31 templates/carte.html:70
+#: app.py:140 templates/carte.html:31 templates/carte.html:70
 #: templates/gallery.html:9 templates/result.html:8 templates/result.html:82
 msgid "Sale"
 msgstr "Sucio"
 
-#: app.py:124 templates/carte.html:35 templates/carte.html:71
+#: app.py:140 templates/carte.html:35 templates/carte.html:71
 #: templates/gallery.html:10 templates/result.html:9
 msgid "Débordante"
 msgstr "Desbordado"
 
-#: app.py:126
+#: app.py:142
 msgid "Bien classé"
 msgstr "Bien clasificado"
 
-#: app.py:126
+#: app.py:142
 msgid "Mal classé"
 msgstr "Mal clasificado"
 
-#: app.py:196
+#: app.py:213
 msgid "Aucun fichier envoyé."
 msgstr "No se ha subido ningún archivo"
 
-#: app.py:202
+#: app.py:219
 msgid "Aucune image sélectionnée."
 msgstr "No se ha seleccionado ninguna imagen."
 
-#: app.py:219
+#: app.py:236
 msgid "L'adresse est obligatoire."
 msgstr "La dirección es obligatoria."
 
-#: app.py:411
+#: app.py:428
 msgid "Coordonnées manquantes"
 msgstr "Coordenadas faltantes"
 
-#: app.py:413
+#: app.py:430
 msgid "Indisponible"
 msgstr "No disponible"
 
-#: app.py:414
+#: app.py:431
 msgid "Non"
 msgstr "No"
 
-#: app.py:434
+#: app.py:451
 msgid "Ciel dégagé"
 msgstr "Cielo despejado"
 
-#: app.py:436
+#: app.py:453
 msgid "Nuageux"
 msgstr "Nublado"
 
-#: app.py:438
+#: app.py:455
 msgid "Pluie"
 msgstr "Lluvia"
 
-#: app.py:440
+#: app.py:457
 msgid "Neige"
 msgstr "Nieve"
 
-#: app.py:442
+#: app.py:459
 msgid "Averses"
 msgstr "Chubascos"
 
-#: app.py:444
+#: app.py:461
 msgid "Orage"
 msgstr "Tormenta"
 
-#: app.py:446
+#: app.py:463
 #, python-format
 msgid "Code %(code)s"
 msgstr "Código %(code)s"
 
-#: app.py:476
+#: app.py:493
 #, python-format
 msgid "Oui (%(num)d marché à proximité)"
 msgid_plural "Oui (%(num)d marchés à proximité)"
 msgstr[0] "Sí (%(num)d mercado cercano)"
 msgstr[1] "Sí (%(num)d mercados cercanos)"
 
-#: app.py:482
+#: app.py:499
 msgid "Aucun marché à proximité"
 msgstr "Ningún mercado cercano"
 
-#: app.py:485 app.py:489
+#: app.py:502 app.py:506
 msgid "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
 msgstr "No disponible (servidor Overpass sobrecargado, intente más tarde)"
 
@@ -168,19 +168,23 @@ msgstr "Precisión del modelo de tres clases:"
 msgid "Nombre d'images annotées dans la base de données :"
 msgstr "Número de imágenes anotadas en la base de datos:"
 
-#: templates/dashboard.html:27
+#: templates/dashboard.html:24
+msgid "Taille totale des images stockées :"
+msgstr "Tamaño total de las imágenes almacenadas:"
+
+#: templates/dashboard.html:31
 msgid "Visualisation géographique des poubelles"
 msgstr "Visualización geográfica de los contenedores"
 
-#: templates/dashboard.html:31
+#: templates/dashboard.html:35
 msgid "Répartition des poubelles"
 msgstr "Distribución de los contenedores"
 
-#: templates/dashboard.html:35
+#: templates/dashboard.html:39
 msgid "Visualisation Annotations"
 msgstr "Visualización de anotaciones"
 
-#: templates/dashboard.html:86
+#: templates/dashboard.html:90
 msgid "Nombre de poubelles par adresse"
 msgstr "Número de contenedores por dirección"
 

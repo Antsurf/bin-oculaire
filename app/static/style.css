@@ -377,7 +377,8 @@ a.img-case {
     display: flex;
     margin-top: 3%;
     justify-content: center;
-    gap: 18%;
+    flex-wrap: wrap;
+    gap: 5%;
 }
 
 #infoIm{
@@ -397,6 +398,22 @@ a.img-case {
     font-size: 2.5em;
     color: gray;
     }
+
+#infoSize{
+    width: 30%;
+    padding-top: 1%;
+    text-align: center;
+}
+
+#infoSize h4{
+    font-size: 1.25em;
+    color: rgba(125, 34, 34, 1);
+}
+
+#infoSize p{
+    font-size: 2.5em;
+    color: gray;
+}
 
 .pagination {
     margin-top: 8px;

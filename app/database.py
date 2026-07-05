@@ -381,6 +381,20 @@ def get_total_images_count():
     conn.close()
     return count
 
+def get_total_file_size() -> float:
+    """
+    Fonction qui renvoie la somme des tailles (en Ko) de toutes les images
+    stockées localement, calculée directement en SQL (plus léger que de
+    tout charger en mémoire avec get_stats()).
+    :return: la taille totale en Ko (0 si aucune image)
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    row = cursor.execute("SELECT SUM(file_size) AS total FROM images_features").fetchone()
+    conn.close()
+    return row["total"] or 0
+
+
 def get_luminosite()->list:
     """
     Renvoie des infos sur la luminosité pour toutes les images
@@ -440,10 +454,13 @@ def get_stats()->dict:
 
 
 
-# ---------------------------------------------------------------------------
+#=================================
+# A PARTIR DE LA NE RIEN TOUCHER, C'EST LE CODE DU CLASSIFIER
+# UNE MODIFICATION DE CES VALEURS DOIT SE FAIRE DANS LA BDD, PAS DANS LE CODE
+# SINON LE CLASSIFIER NE SERA PAS A JOUR ET LES MODIFICATIONS SERONT PERDUES AU PROCHAIN DEPLOIEMENT ET L'ALGORITHME NE SERA PAS A JOUR
 # Gestion des règles / poids / seuils du classifier (table modifiable par
 # l'utilisateur, plutôt que des dictionnaires codés en dur dans classifier.py)
-# ---------------------------------------------------------------------------
+#================================
 
 # Valeurs par défaut (reprises de l'ancien classifier.py) utilisées uniquement
 # pour peupler la base la toute première fois
