@@ -438,11 +438,11 @@ def get_stats()->dict:
     }
 
 
-################################################
-# Cette partie concerne le modèle de classification (classifier.py) et permet de stocker les règles / poids / seuils dans la base de données.
-# Y'a rien à toucher à moins que vous vouliez modifier les valeurs par défaut du modèle (mais c'est pas conseillé, ça peut fausser les résultats). 
-# C'est toutes les valeurs qui étaient dans l'ancien classifier.py, mais maintenant elles sont stockées dans la base de données pour que l'utilisateur puisse les modifier via l'interface web.
-################################################ 
+
+# ---------------------------------------------------------------------------
+# Gestion des règles / poids / seuils du classifier (table modifiable par
+# l'utilisateur, plutôt que des dictionnaires codés en dur dans classifier.py)
+# ---------------------------------------------------------------------------
 
 # Valeurs par défaut (reprises de l'ancien classifier.py) utilisées uniquement
 # pour peupler la base la toute première fois
@@ -528,6 +528,23 @@ def seed_classifier_defaults():
 
     conn.commit()
     conn.close()
+
+
+def get_default_rules() -> dict:
+    """Renvoie les règles par défaut / recommandées (modèle 2-classes), pour affichage dans l'UI"""
+    return {name: dict(params) for name, params in _DEFAULT_RULES.items()}
+
+
+def get_default_weights() -> dict:
+    """Renvoie les poids par défaut / recommandés (modèle 3-classes), pour affichage dans l'UI"""
+    return dict(_DEFAULT_WEIGHTS)
+
+
+def get_default_thresholds(model_type: str):
+    """Renvoie le(s) seuil(s) par défaut / recommandé(s) pour 'rules' ou 'weights'"""
+    if model_type == "rules":
+        return _DEFAULT_RULES_THRESHOLD
+    return list(_DEFAULT_WEIGHTS_THRESHOLDS)
 
 
 def get_classifier_rules() -> dict:
