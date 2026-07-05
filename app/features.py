@@ -112,7 +112,8 @@ def extract_features(file_path: str) -> dict:
     edge_img = gray.filter(ImageFilter.FIND_EDGES)
     stat_edge = ImageStat.Stat(edge_img)
     features["edge_density"] = round(stat_edge.mean[0] / 255.0, 4)
-    features['edge_density_opencv'] = np.sum(cv2.Canny(np.array(gray), 50, 150)>0)
+    # on force le passage en int pour éviter les problèmes de JSON avec numpy.int64 et stockage dans la base de données
+    features['edge_density_opencv'] = int(np.sum(cv2.Canny(np.array(gray), 50, 150)>0))
 
     return features
 
@@ -145,7 +146,7 @@ def features_summary(features: dict) -> str:
         f"Contraste     : {features['contraste_maximal']} / 255\n"
         f"Contraste global : {features['contraste_global']}\n"
         f"Saturation    : {features['saturation']}\n"
-        f"Densité bords : {features['edge_density']}"
+        f"Densité bords : {features['edge_density']}\n"
         f"Densité bords (OpenCV) : {features['edge_density_opencv']}"
     )
 
@@ -169,8 +170,8 @@ if __name__ == "__main__":
     print(features_summary(features))
 
     # Sauvegarde JSON dans le même dossier que l'image
-    # json_out = path.rsplit(".", 1)[0] + "_features.json"
-    # enregistrement_json(features, json_out)
+    json_out = path.rsplit(".", 1)[0] + "_features.json"
+    #enregistrement_json(features, json_out)
 
     # Affiche les histogrammes
     show_histo(features)
