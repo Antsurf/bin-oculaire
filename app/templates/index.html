@@ -3,18 +3,18 @@
 {% block content %}
 <form action="/index" method="POST" enctype="multipart/form-data" id="bin-input">
     <label for="imageInput" class="image-clicker">
-        <img src="{{ url_for('static', filename='/imgPlaceholder.png') }}?v=1" alt="Nouvelle image" id="imgPlaceholder" style="width: auto; height: 500px; cursor: pointer;">
+        <img src="{{ url_for('static', filename='/imgPlaceholder.png') }}?v=1" alt="Nouvelle image" id="imgPlaceholder" style="width: auto; height: 500px; cursor: pointer; max-width: 100%;">
     </label>
     <input type="file" id="imageInput" name="mon_image" accept="image/*" style="display: none;">
 
-    <div div style="display: flex; gap: 20px;">
+    <div class="bin-input-row" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
         <input type="text" id="address" name="mon_adresse" placeholder="{{ _('Tapez une adresse...') }}" list="address-list" autocomplete="off" required>    
         <datalist id="address-list"></datalist>
 
         <input type="hidden" id="lat" name="lat">
         <input type="hidden" id="lon" name="lon">
 
-        <fieldset style="border: none; display: flex; align-items: center; gap: 10px;">
+        <fieldset style="border: none; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
             <legend style="font-size: 14px;">{{ _('Type de classification :') }}</legend>
             <label><input type="radio" name="nb_classes" value="2" checked> {{ _('Propre / Sale') }}</label>
             <label><input type="radio" name="nb_classes" value="3"> {{ _('Propre / Sale / Débordante') }}</label>

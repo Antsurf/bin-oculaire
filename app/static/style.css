@@ -21,8 +21,10 @@ nav {
     justify-content: flex-end;
     padding: 0 4% 1.5% 4%;
     gap: 5%;
+    row-gap: 10px;
     display: flex;
-    height: 80px;
+    flex-wrap: wrap;
+    min-height: 80px;
     }
 
 nav img
@@ -143,18 +145,6 @@ nav a.active {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.card-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease; 
-}
-
 .img-case:hover .card-overlay {
     opacity: 1;
 }
@@ -211,6 +201,8 @@ a.img-case {
     color: #ffffff;
     box-sizing: border-box;
     z-index: 2;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .card-label {
@@ -219,13 +211,6 @@ a.img-case {
     font-size: 0.95rem;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
-
-.card-meta {
-    margin: 4px 0 0 0;
-    font-size: 0.8rem;
-    opacity: 0.85;
-}
-
 
 .card-meta {
     margin: 4px 0 0 0;
@@ -335,6 +320,7 @@ a.img-case {
     margin-top: 3%;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 3%;
 }
 
@@ -346,6 +332,17 @@ a.img-case {
 .chart-bar{
     width: 42%;
 
+}
+
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 320px;
+}
+
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 
@@ -598,4 +595,129 @@ a.img-case {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+/* --- Tablette --- */
+@media (max-width: 992px) {
+
+    .charts {
+        gap: 15px;
+    }
+
+    .chart-bar,
+    .chart-pie {
+        width: 45%;
+    }
+
+    .infoModel {
+        width: 45%;
+        margin-left: 0;
+    }
+
+    #infoIm,
+    #infoSize {
+        width: 45%;
+    }
+
+    .gallery-container {
+        grid-template-columns: repeat(3, 1fr);
+        height: auto;
+        grid-auto-rows: 220px;
+    }
+
+    #bin-input {
+        width: 95%;
+    }
+}
+
+/* --- Mobile --- */
+@media (max-width: 600px) {
+
+    nav {
+        justify-content: center;
+        border-radius: 0 0 20px 20px;
+        padding: 70px 4% 12px 4%;
+    }
+
+    nav img {
+        left: 50%;
+        transform: translateX(-50%);
+        top: 10px;
+        width: 3.5em;
+    }
+
+    nav a {
+        font-size: 110%;
+    }
+
+    .lang-switcher {
+        margin: 10px 0 0 0;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .chart-bar,
+    .chart-pie {
+        width: 100%;
+    }
+
+    .chart-wrapper {
+        height: 260px;
+    }
+
+    .infoModel {
+        width: 100%;
+    }
+
+    .infoModel .info {
+        width: 100%;
+    }
+
+    #infoIm,
+    #infoSize {
+        width: 100%;
+    }
+
+    #infoIm p,
+    #infoSize p {
+        font-size: 1.8em;
+    }
+
+    .gallery-container {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 180px;
+    }
+
+    #bin-input {
+        width: 100%;
+    }
+
+    .bin-input-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px !important;
+    }
+
+    #address {
+        width: 100%;
+    }
+
+    #imgPlaceholder {
+        height: 300px !important;
+        width: 100% !important;
+        object-fit: contain;
+    }
+
+    .result-layout {
+        gap: 15px;
+    }
+
+    .result-col,
+    .result-col-wide {
+        min-width: 100%;
+    }
 }

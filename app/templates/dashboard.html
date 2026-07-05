@@ -5,45 +5,46 @@
     <h1>{{ _('Dashboard') }}</h1>
 </div>
 
-<body>
-  <div id="infoDash">
-    <div class="infoModel">
-      <div class="info">
-        <p> {{ _('Précision du modèle binaire :') }} </p>
-        <h2> 67,5 % </h2>
-      </div>
-      <div class="info">
-        <p> {{ _('Précision du modèle tri-classe :') }} </p>
-        <h2> 50 % </h2>
-      </div>
+<div id="infoDash">
+  <div class="infoModel">
+    <div class="info">
+      <p> {{ _('Précision du modèle binaire :') }} </p>
+      <h2> 67,5 % </h2>
     </div>
-    <div id="infoSize">
-      <h4> {{ _("Taille totale des images stockées :") }} </h4>
-      <p>{{ taille_totale }}</p>
-    </div>
-    <div id="infoIm">
-      <h4> {{ _("Nombre d'images annotées dans la base de données :") }} </h4>
+    <div class="info">
+      <p> {{ _('Précision du modèle tri-classe :') }} </p>
+      <h2> 50 % </h2>
     </div>
   </div>
+  <div id="infoSize">
+    <h4> {{ _("Taille totale des images stockées :") }} </h4>
+    <p>{{ taille_totale }}</p>
+  </div>
+  <div id="infoIm">
+    <h4> {{ _("Nombre d'images annotées dans la base de données :") }} </h4>
+  </div>
+</div>
 
-  <div class="charts">
-    <div class="chart-bar">
-      <h3 style="text-align: center;"> {{ _('Visualisation géographique des poubelles') }} </h3>
+<div class="charts">
+  <div class="chart-bar">
+    <h3 style="text-align: center;"> {{ _('Visualisation géographique des poubelles') }} </h3>
+    <div class="chart-wrapper">
       <canvas id="Chart2"></canvas>
     </div>
-    <div class="chart-pie">
-      <h3 style="text-align: center;"> {{ _('Répartition des poubelles') }} </h3>
+  </div>
+  <div class="chart-pie">
+    <h3 style="text-align: center;"> {{ _('Répartition des poubelles') }} </h3>
+    <div class="chart-wrapper">
       <canvas id="Chart1"></canvas>
     </div>
-    <div class="chart-pie">
-      <h3 style="text-align: center;"> {{ _('Visualisation Annotations') }} </h3>
+  </div>
+  <div class="chart-pie">
+    <h3 style="text-align: center;"> {{ _('Visualisation Annotations') }} </h3>
+    <div class="chart-wrapper">
       <canvas id="Chart3"></canvas>
     </div>
-
   </div>
-
-
-</body>
+</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -57,6 +58,12 @@
 
   document.getElementById("infoIm").appendChild(p);
 
+
+  // Options communes pour que les canvas suivent la taille de leur conteneur
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false
+  };
 
   // console.log("hello", nbImages);
   const ctx = document.getElementById('Chart1');
@@ -74,7 +81,7 @@
       }],
 
     },
-
+    options: commonOptions,
   });
 
   const ctx2 = document.getElementById('Chart2');
@@ -95,6 +102,8 @@
 
     },
     options: {
+        responsive: true,
+        maintainAspectRatio: false,
         scales: {
             x: {
               ticks: {
@@ -135,7 +144,7 @@
       }],
 
     },
-
+    options: commonOptions,
   });
 
 </script>
