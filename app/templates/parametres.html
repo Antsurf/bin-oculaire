@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="title-page">
+    <h1>{{ _('Paramètres du classifier') }}</h1>
+</div>
+
+<div class="parametres-wrapper">
+    <p class="parametres-intro">
+        {{_('Modifiez ici les règles et poids utilisés par le classifier automatique. La valeur
+        <strong>« recommandé »</strong> affichée à côté de chaque champ correspond à la valeur par défaut
+        calculée initialement ; vous pouvez vous en servir de référence avant de faire vos propres réglages.')}}'
+    </p>
+
+    <form action="{{ url_for('save_parametres') }}" method="POST">
+
+        <!-- MODELE 2 CLASSES : PROPRE / SALE -->
+        <div class="result-card parametres-section">
+            <h3>{{ _('Modèle 2 classes (Propre / Sale) — règles') }}</h3>
+
+            <div class="parametres-table-wrapper">
+                <table class="parametres-table">
+                    <thead>
+                        <tr>
+                            <th>{{ _('Feature') }}</th>
+                            <th>{{ _('Signe') }}</th>
+                            <th>{{ _('Seuil') }}</th>
+                            <th>{{ _('Score') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rules_rows %}
+                        <tr>
+                            <td class="feature-name">{{ row.feature }}</td>
+                            <td>
+                                <select name="rule_sign_{{ row.feature }}">
+                                    <option value=">" {% if row.sign=='>' %}selected{% endif %}>&gt;</option>
+                                    <option value="<" {% if row.sign=='<' %}selected{% endif %}>&lt;</option>
+                                </select>
+                                <span class="recommended-hint">{{ _('recommandé') }}: {{ row.rec_sign }}</span>
+                            </td>
+                            <td>
+                                <input type="number" step="any" name="rule_threshold_{{ row.feature }}" value="{{ row.threshold }}">
+                                <span class="recommended-hint">{{ _('recommandé') }}: {{ row.rec_threshold }}</span>
+                            </td>
+                            <td>
+                                <input type="number" step="any" name="rule_score_{{ row.feature }}" value="{{ row.score }}">
+                                <span class="recommended-hint">{{ _('recommandé') }}: {{ row.rec_score }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="parametres-threshold">
+                <label for="rules_threshold">{{ _('Seuil de décision (score total) :') }}</label>
+                <input type="number" step="any" id="rules_threshold" name="rules_threshold" value="{{ rules_threshold }}">
+                <span class="recommended-hint">{{ _('recommandé') }}: {{ default_rules_threshold }}</span>
+            </div>
+        </div>
+
+        <!-- MODELE 3 CLASSES : PROPRE / SALE / DEBORDANTE -->
+        <div class="result-card parametres-section">
+            <h3>{{ _('Modèle 3 classes (Propre / Sale / Débordante) — poids') }}</h3>
+
+            <div class="parametres-table-wrapper">
+                <table class="parametres-table">
+                    <thead>
+                        <tr>
+                            <th>{{ _('Feature') }}</th>
+                            <th>{{ _('Poids') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in weights_rows %}
+                        <tr>
+                            <td class="feature-name">{{ row.feature }}</td>
+                            <td>
+                                <input type="number" step="any" name="weight_{{ row.feature }}" value="{{ row.weight }}">
+                                <span class="recommended-hint">{{ _('recommandé') }}: {{ row.rec_weight }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="parametres-threshold">
+                <label for="weights_threshold_0">{{ _('Seuil 1 (Propre / Sale) :') }}</label>
+                <input type="number" step="any" id="weights_threshold_0" name="weights_threshold_0" value="{{ weights_thresholds[0] }}">
+                <span class="recommended-hint">{{ _('recommandé') }}: {{ default_weights_thresholds[0] }}</span>
+            </div>
+            <div class="parametres-threshold">
+                <label for="weights_threshold_1">{{ _('Seuil 2 (Sale / Débordante) :') }}</label>
+                <input type="number" step="any" id="weights_threshold_1" name="weights_threshold_1" value="{{ weights_thresholds[1] }}">
+                <span class="recommended-hint">{{ _('recommandé') }}: {{ default_weights_thresholds[1] }}</span>
+            </div>
+        </div>
+
+        <div class="parametres-actions">
+            <button type="submit" id="post-button">{{ _('Enregistrer les paramètres') }}</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

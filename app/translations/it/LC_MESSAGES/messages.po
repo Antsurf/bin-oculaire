@@ -1,0 +1,339 @@
+# Italian translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-07-05 17:55+0200\n"
+"PO-Revision-Date: 2026-07-05 17:42+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: it\n"
+"Language-Team: it <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: app.py:124 templates/carte.html:22 templates/result.html:76
+msgid "Propre"
+msgstr "Pulito"
+
+#: app.py:124 templates/carte.html:23 templates/result.html:77
+msgid "Sale"
+msgstr "Sporco"
+
+#: app.py:124 templates/carte.html:24
+msgid "Débordante"
+msgstr "Traboccante"
+
+#: app.py:126
+msgid "Bien classé"
+msgstr "Ben classificato"
+
+#: app.py:126
+msgid "Mal classé"
+msgstr "Mal classificato"
+
+#: templates/base.html:12
+msgid "Accueil"
+msgstr "Home"
+
+#: templates/base.html:13
+msgid "Carte"
+msgstr "Mappa"
+
+#: templates/base.html:14 templates/dashboard.html:5
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/base.html:15
+msgid "Galerie"
+msgstr "Galleria"
+
+#: templates/base.html:16
+msgid "Paramètres"
+msgstr "Impostazioni"
+
+#: templates/carte.html:19
+msgid "Carte des zones à risque de débordemment"
+msgstr "Mappa delle zone a rischio di traboccamento"
+
+#: templates/carte.html:25
+msgid "Inconnu"
+msgstr "Sconosciuto"
+
+#: templates/carte.html:72
+msgid "Adresse"
+msgstr "Indirizzo"
+
+#: templates/carte.html:73
+msgid "État"
+msgstr "Stato"
+
+#: templates/carte.html:74
+msgid "Date"
+msgstr "Data"
+
+#: templates/carte.html:75
+msgid "Voir le détail"
+msgstr "Visualizza dettagli"
+
+#: templates/dashboard.html:12
+msgid "Précision du modèle binaire :"
+msgstr "Precisione del modello binario:"
+
+#: templates/dashboard.html:16
+msgid "Précision du modèle tri-classe :"
+msgstr "Precisione del modello a tre classi:"
+
+#: templates/dashboard.html:21
+msgid "Nombre d'images annotées dans la base de données :"
+msgstr "Numero di immagini annotate nel database:"
+
+#: templates/dashboard.html:27
+msgid "Visualisation géographique des poubelles"
+msgstr "Visualizzazione geografica dei cassonetti"
+
+#: templates/dashboard.html:31
+msgid "Répartition des poubelles"
+msgstr "Distribuzione dei cassonetti"
+
+#: templates/dashboard.html:35
+msgid "Visualisation Annotations"
+msgstr "Visualizzazione delle annotazioni"
+
+#: templates/dashboard.html:86
+msgid "Nombre de poubelles par adresse"
+msgstr "Numero di cassonetti per indirizzo"
+
+#: templates/gallery.html:4
+msgid "Galerie des images"
+msgstr "Galleria di immagini"
+
+#: templates/gallery.html:12
+msgid "Label:"
+msgstr "Etiqueta:"
+
+#: templates/gallery.html:12
+msgid "Non classifié"
+msgstr "Non classificato"
+
+#: templates/gallery.html:13
+msgid "Luminosité:"
+msgstr "Luminosità:"
+
+#: templates/gallery.html:13 templates/gallery.html:14
+#: templates/gallery.html:15 templates/gallery.html:16
+#: templates/gallery.html:17
+msgid "Inconnue"
+msgstr "Sconosciuta"
+
+#: templates/gallery.html:14
+msgid "Date:"
+msgstr "Data:"
+
+#: templates/gallery.html:15
+msgid "Latitude:"
+msgstr "Latitudine:"
+
+#: templates/gallery.html:16
+msgid "Longitude:"
+msgstr "Longitudine:"
+
+#: templates/gallery.html:17
+msgid "Adresse:"
+msgstr "Indirizzo:"
+
+#: templates/gallery.html:24
+msgid "Page"
+msgstr "Pagina"
+
+#: templates/gallery.html:24
+msgid "sur"
+msgstr "di"
+
+#: templates/index.html:11
+msgid "Tapez une adresse..."
+msgstr "Digita un indirizzo..."
+
+#: templates/index.html:18
+msgid "Type de classification :"
+msgstr "Tipo di classificazione:"
+
+#: templates/index.html:19
+msgid "Propre / Sale"
+msgstr "Pulito / Sporco"
+
+#: templates/index.html:20
+msgid "Propre / Sale / Débordante"
+msgstr "Pulito / Sporco / Traboccante"
+
+#: templates/index.html:23
+msgid "Importer l'image"
+msgstr "Carica immagine"
+
+#: templates/parametres.html:5
+msgid "Paramètres du classifier"
+msgstr "Impostazioni del classificatore"
+
+#: templates/parametres.html:10
+msgid ""
+"Modifiez ici les règles et poids utilisés par le classifier automatique. "
+"La valeur\n"
+"        <strong>« recommandé »</strong> affichée à côté de chaque champ "
+"correspond à la valeur par défaut\n"
+"        calculée initialement ; vous pouvez vous en servir de référence "
+"avant de faire vos propres réglages."
+msgstr ""
+"Modifica qui le regole e i pesi utilizzati dal classificatore automatico."
+" Il valore\n"
+"        <strong>«raccomandato»</strong> visualizzato accanto a ciascun "
+"campo corrisponde al valore predefinito\n"
+"        calcolato inizialmente; puoi usarlo come riferimento prima di "
+"effettuare le tue regolazioni."
+
+#: templates/parametres.html:19
+msgid "Modèle 2 classes (Propre / Sale) — règles"
+msgstr "Modello a 2 classi (Pulito / Sporco) — regole"
+
+#: templates/parametres.html:25 templates/parametres.html:71
+msgid "Feature"
+msgstr "Caratteristica"
+
+#: templates/parametres.html:26
+msgid "Signe"
+msgstr "Segno"
+
+#: templates/parametres.html:27
+msgid "Seuil"
+msgstr "Soglia"
+
+#: templates/parametres.html:28
+msgid "Score"
+msgstr "Punteggio"
+
+#: templates/parametres.html:40 templates/parametres.html:44
+#: templates/parametres.html:48 templates/parametres.html:59
+#: templates/parametres.html:81 templates/parametres.html:92
+#: templates/parametres.html:97
+msgid "recommandé"
+msgstr "raccomandato"
+
+#: templates/parametres.html:57
+msgid "Seuil de décision (score total) :"
+msgstr "Soglia di decisione (punteggio totale):"
+
+#: templates/parametres.html:65
+msgid "Modèle 3 classes (Propre / Sale / Débordante) — poids"
+msgstr "Modello a 3 classi (Pulito / Sporco / Traboccante) — pesi"
+
+#: templates/parametres.html:72
+msgid "Poids"
+msgstr "Peso"
+
+#: templates/parametres.html:90
+msgid "Seuil 1 (Propre / Sale) :"
+msgstr "Soglia 1 (Pulito / Sporco):"
+
+#: templates/parametres.html:95
+msgid "Seuil 2 (Sale / Débordante) :"
+msgstr "Soglia 2 (Sporco / Traboccante):"
+
+#: templates/parametres.html:102
+msgid "Enregistrer les paramètres"
+msgstr "Salva impostazioni"
+
+#: templates/result.html:19
+msgid "Informations de Base"
+msgstr "Informazioni di base"
+
+#: templates/result.html:20
+msgid "Date d'upload"
+msgstr "Data di caricamento"
+
+#: templates/result.html:21
+msgid "Lieu"
+msgstr "Luogo"
+
+#: templates/result.html:23
+msgid "Classification"
+msgstr "Classificazione"
+
+#: templates/result.html:25
+msgid "Confiance de la prédiction"
+msgstr "Fiducia della predizione"
+
+#: templates/result.html:26
+msgid "Taille fichier"
+msgstr "Dimensione del file"
+
+#: templates/result.html:27
+msgid "Dimensions"
+msgstr "Dimensioni"
+
+#: templates/result.html:49
+msgid "Métriques d'Image"
+msgstr "Metriche dell'immagine"
+
+#: templates/result.html:51
+msgid "Luminosité"
+msgstr "Luminosità"
+
+#: templates/result.html:52
+msgid "Contraste Max"
+msgstr "Contrasto massimo"
+
+#: templates/result.html:53
+msgid "Saturation"
+msgstr "Saturazione"
+
+#: templates/result.html:54
+msgid "Densité contours"
+msgstr "Densità dei contorni"
+
+#: templates/result.html:59
+msgid "Contexte"
+msgstr "Contesto"
+
+#: templates/result.html:60
+msgid "Indicateurs temps-réel via AJAX"
+msgstr "Indicatori in tempo reale via AJAX"
+
+#: templates/result.html:62
+msgid "Météo"
+msgstr "Meteo"
+
+#: templates/result.html:63
+msgid "Jour de marché"
+msgstr "Giorno di mercato"
+
+#: templates/result.html:64
+msgid "Travaux BTP"
+msgstr "Lavori edili"
+
+#: templates/result.html:71
+msgid "Annotation manuelle"
+msgstr "Annotazione manuale"
+
+#: templates/result.html:72
+msgid ""
+"Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider "
+"à améliorer le modèle."
+msgstr ""
+"Dicci se il cassonetto è davvero sporco o pieno, per aiutarci a "
+"migliorare il modello."
+
+#: templates/result.html:75
+msgid "Non annoté"
+msgstr "Non annotato"
+
+#: templates/result.html:78
+msgid "Pleine / débordante"
+msgstr "Pieno / traboccante"
+
+#: templates/result.html:80
+msgid "Enregistrer"
+msgstr "Salva"

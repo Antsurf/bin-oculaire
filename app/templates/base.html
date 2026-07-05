@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <nav>
+        <img src="../static/logo.svg" alt="Logo">
+        <a href="{{ url_for('upload_file') }}" class="{% if request.endpoint == 'upload_file' %}active{% endif %}">{{ _('Accueil') }}</a>
+        <a href="{{ url_for('carte') }}" class="{% if request.endpoint == 'carte' %}active{% endif %}">{{ _('Carte') }}</a>
+        <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">{{ _('Dashboard') }}</a>
+        <a href="{{ url_for('gallery') }}" class="{% if request.endpoint == 'gallery' %}active{% endif %}">{{ _('Galerie') }}</a>
+        <a href="{{ url_for('parametres') }}" class="{% if request.endpoint in ['parametres', 'save_parametres'] %}active{% endif %}">{{ _('Paramètres') }}</a>
+
+        <div class="lang-switcher">
+            {% for code, label in config.LANGUAGES.items() %}
+            <a href="{{ url_for('set_language', lang_code=code) }}"
+               class="{% if get_locale() == code %}active{% endif %}">{{ code|upper }}</a>{% if not loop.last %} / {% endif %}
+            {% endfor %}
+        </div>
+    </nav>
+    <main class="main-content">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+            <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>

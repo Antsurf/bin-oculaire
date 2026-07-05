@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Injection de Chart.js pour les graphiques dynamiques-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="result-wrapper">
+
+    <a href="{{ url_for('gallery') }}" class="btn-back">← Retour à la galerie</a>
+
+    <div class="result-layout">
+
+        <!-- Colonne Gauche: Image et Méta de base -->
+        <div class="result-col">
+            <h1 style="margin-top: 0; display: block;">Image #{{ image['id'] if image else 'X' }}</h1>
+            <img src="{{ url_for('static', filename='uploads/' + image['file_name']) if image else '' }}"
+                class="result-image" alt="Image analysée">
+
+            <div class="info-box">
+                <h3>{{ _('Informations de Base') }}</h3>
+                <p><strong>{{ _('Date d\'upload') }} :</strong> {{ image['upload_date'] if image else '' }}</p>
+                <p><strong>{{ _('Lieu') }} :</strong> {{ image['localisation_nom'] | default('Non spécifié') if image else '' }}
+                </p>
+                <p><strong>{{ _('Classification') }} :</strong> <span class="badge badge-warning">{{ image['auto_label'] |
+                        default('En attente') if image else '' }}</span></p>
+                <p><strong>{{ _('Confiance de la prédiction') }} :</strong> {{ image['confidence'] if image and image['confidence'] is not none else 'Inconnue' }}</p>
+                <p><strong>{{ _('Taille fichier') }} :</strong> {{ image['file_size'] if image else '' }} Ko</p>
+                <p><strong>{{ _('Dimensions') }} :</strong> {{ image['width'] if image else '' }} x {{ image['height'] if image
+                    else '' }} px</p>
+            </div>
+        </div>
+
+        <!-- Colonne Droite: Tableaux de bord Avancés -->
+        <div class="result-col-wide">
+
+            <!-- Graphe Dynamique -->
+            <div class="result-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 id="chart-title">Histogramme RGB</h3>
+                    <div>
+                        <button onclick="changeChart('prev')">←</button>
+                        <button onclick="changeChart('next')">→</button>
+                    </div>
+                </div>
+                <canvas id="mainChart" height="100"></canvas>
+            </div>
+            <!-- Contexte -->
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="info-box info-box-blue" style="flex: 1; margin-top: 0;">
+                    <h3>{{ _('Métriques d\'Image') }}</h3>
+                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                        <li><strong>{{ _('Luminosité') }} :</strong> {{ image['luminosite'] if image else '' }}</li>
+                        <li><strong>{{ _('Contraste Max') }} :</strong> {{ image['contraste_maximal'] if image else '' }}</li>
+                        <li><strong>{{ _('Saturation') }} :</strong> {{ image['saturation'] if image else '' }}</li>
+                        <li><strong>{{ _('Densité contours') }} :</strong> {{ image['edge_density'] if image else '' }}</li>
+                    </ul>
+                </div>
+
+                <div class="info-box info-box-yellow" style="flex: 1; margin-top: 0;">
+                    <h3>{{ _('Contexte') }}</h3>
+                    <p style="font-size: 13px; color: #555;"><i>{{ _('Indicateurs temps-réel via AJAX') }}</i></p>
+                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                        <li><strong>{{ _('Météo') }} :</strong> <span id="meteo-value">Chargement...</span></li>
+                        <li><strong>{{ _('Jour de marché') }} :</strong> <span id="marche-value">Chargement...</span></li>
+                        <li><strong>{{ _('Travaux BTP') }} :</strong> <span id="btp-value">Chargement...</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Annotation manuelle : placée sous les stats, une fois que l'utilisateur les a consultées -->
+            <div class="info-box">
+                <h3>{{ _('Annotation manuelle') }}</h3>
+                <p style="font-size: 13px; color: #555;">{{ _('Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider à améliorer le modèle.') }}</p>
+                <form action="{{ url_for('save_annotation', image_id=image['id']) if image else '#' }}" method="POST">
+                    <select name="annotation">
+                        <option value="" {% if not image or not image['annotation'] %}selected{% endif %}>{{ _('Non annoté') }}</option>
+                        <option value="propre" {% if image and image['annotation'] == 'propre' %}selected{% endif %}>{{ _('Propre') }}</option>
+                        <option value="sale" {% if image and image['annotation'] == 'sale' %}selected{% endif %}>{{ _('Sale') }}</option>
+                        <option value="pleine" {% if image and image['annotation'] == 'pleine' %}selected{% endif %}>{{ _('Pleine / débordante') }}</option>
+                    </select>
+                    <button type="submit">{{ _('Enregistrer') }}</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Sécurisation du transfert de données Jinja vers JavaScript -->
+<script id="chart-data" type="application/json">
+    {
+        "rgb": {{ hist_rgb | safe }},
+        "lum": {{ hist_lum | safe }}
+    }
+</script>
+
+<script>
+    const data = JSON.parse(document.getElementById('chart-data').textContent);
+    let currentView = 'rgb';
+    let myChart = null;
+
+    function renderChart(type) {
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        if (myChart) myChart.destroy();
+
+        let chartData = {
+            labels: Array.from({ length: 256 }, (_, i) => i),
+            datasets: []
+        };
+
+        if (type === 'rgb') {
+            document.getElementById('chart-title').innerText = "Histogramme RGB";
+            chartData.datasets = [
+                { label: 'Rouge', data: data.rgb.red, borderColor: 'red' },
+                { label: 'Vert', data: data.rgb.green, borderColor: 'green' },
+                { label: 'Bleu', data: data.rgb.blue, borderColor: 'blue' }
+            ];
+        } else {
+            document.getElementById('chart-title').innerText = "Histogramme Luminance";
+            chartData.datasets = [{ label: 'Luminance', data: data.lum, borderColor: 'gray' }];
+        }
+
+        myChart = new Chart(ctx, { type: 'line', data: chartData });
+    }
+
+    function changeChart(dir) {
+        currentView = (currentView === 'rgb') ? 'lum' : 'rgb';
+        renderChart(currentView);
+    }
+
+    // Initialisation
+    renderChart('rgb');
+</script>
+
+<script>
+    // REQUÊTE AJAX POUR LE CONTEXTE
+    const lat = "{{ image['latitude'] if image else '' }}";
+    const lon = "{{ image['longitude'] if image else '' }}";
+
+    if (lat && lat !== "None" && !lat.includes('{' + '{')) {
+        fetch(`/api/context?lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('meteo-value').innerText = data.meteo;
+                document.getElementById('marche-value').innerText = data.jour_marche;
+                document.getElementById('btp-value').innerText = data.chantiers_btp + " déclarés autour";
+            })
+            .catch(error => {
+                console.error('Erreur AJAX:', error);
+                document.getElementById('meteo-value').innerText = "Erreur réseau";
+                document.getElementById('marche-value').innerText = "Erreur réseau";
+                document.getElementById('btp-value').innerText = "Erreur réseau";
+            });
+    } else {
+        document.getElementById('meteo-value').innerText = "Coordonnées indisponibles";
+        document.getElementById('marche-value').innerText = "Coordonnées indisponibles";
+        document.getElementById('btp-value').innerText = "Coordonnées indisponibles";
+    }
+</script>
+{% endblock %}

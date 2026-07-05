@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Carte des zones à risque</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+
+</head>
+<body>
+    <div id="map-container">
+        <div class="title-page">
+            <h1>{{ _('Carte des zones à risque de débordemment') }}</h1>
+        </div>
+        <div id="map-legend" style="margin: 10px 0; display: flex; gap: 20px; align-items: center;">
+            <span><span style="display:inline-block;width:12px;height:12px;background:green;border-radius:50%;margin-right:6px;"></span>{{ _('Propre') }}</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:orange;border-radius:50%;margin-right:6px;"></span>{{ _('Sale') }}</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:red;border-radius:50%;margin-right:6px;"></span>{{ _('Débordante') }}</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:gray;border-radius:50%;margin-right:6px;"></span>{{ _('Inconnu') }}</span>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        // Initialisation de la carte
+        const map = L.map('map').setView([48.8566, 2.3522], 13);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Création du groupe de cluster
+        const markers = L.markerClusterGroup(); 
+
+        // Couleurs associées à chaque état de classification
+        const couleursEtat = {
+            "propre": "green",
+            "sale": "orange",
+            "debordante": "red",
+            "inconnu": "gray"
+        };
+
+        function creerMarqueurColore(feature, latlng) {
+            const etat = feature.properties.etat;
+            const couleur = couleursEtat[etat] || "gray";
+            return L.circleMarker(latlng, {
+                radius: 8,
+                fillColor: couleur,
+                color: "#333",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.85
+            });
+        }
+
+        async function chargerZonesRisque() {
+            try {
+                const response = await fetch('/api/agglomeration/geojson');
+                const geojsonData = await response.json();
+
+                // Création de la couche GeoJSON
+                const geoJsonLayer = L.geoJSON(geojsonData, {
+                    pointToLayer: creerMarqueurColore,
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup(
+                            "<strong>{{ _('Adresse') }}:</strong> " + feature.properties.adresse +
+                            "<br><strong>{{ _('État') }}:</strong> " + feature.properties.etat +
+                            "<br><strong>{{ _('Date') }}:</strong> " + feature.properties.date +
+                            "<br><a href='/result/" + feature.properties.image_id + "'>{{ _('Voir le détail') }} →</a>"
+                        );
+                    }
+                });
+
+                // On ajoute la couche au cluster, puis le cluster à la carte
+                markers.addLayer(geoJsonLayer); 
+                map.addLayer(markers);
+            } catch (error) {
+                console.error("Erreur lors du chargement :", error);
+            }
+        }
+
+        chargerZonesRisque();
+    </script>
+</body>
+{% endblock %}
