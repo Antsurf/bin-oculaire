@@ -1,6 +1,6 @@
 # Solution_Factory_Data
 =======  
-Solution Factory Project : Efrei, 2025  
+Solution Factory Project : Efrei, 2025 - 2026
 Projet filière Data   
 Auteur : Ahmed Ghazi BLAIECH  
 
@@ -37,6 +37,15 @@ Une plateforme web capable de :
 ## Impact
 - Reduction de l'empreinte écologique de l'homme et le risque des dépôts sauvages par une action préventive efficace et une meilleure gestion des points de collecte officiels 
 
+# Le projet au global :  
+
+## Lancer le projet : 
+Pour faire run le projet, il faut s'assurer d'avoir toutes les librairies nécessaires. Pour cela il suffit de run la commande suivante : <br>
+``` pip install -r requirements.txt ```
+
+Une fois que cela est fait, on peut ouvrir le fichier app/app.py, et lancer le programme ou bien directement run la commande : <br>
+``` python app/app.py ``` ou ``` python app.py``` en fonction d'où vous vous situez sur dans la structure du projet présente ci-dessous.
+
 ## Structure du projet :
 
 app/
@@ -53,6 +62,7 @@ app/
     ├── index.html      <- upload avec drag & drop  
     ├── result.html     <- features + règles + annotation manuelle  
     ├── gallery.html    <- grille de toutes les images  
+    ├── carte.html      <- onglet pour afficher la cartographie
     └── dashboard.html  <- stats + 3 graphiques matplotlib  
   
 
@@ -187,7 +197,6 @@ Compétences attendues :
 - Intégration de module de vérification de la conformité des données stockées dans une base,  
 - Développement d’un tableau de bord avancé avec des indicateurs en temps réel, via des technologies telles que WebSocket ou AJAX, Ces indicateurs incluent notamment la localisation, la population, les jours de marché, les déclarations de travaux BTP, la météo, le jour de la semaine et la date d’acquisition des images, afin de cartographier dynamiquement les zones à risque de débordement.
 - Optimisation de performance (compression image, gestion mémoire interne, gestion asynchrone de l'upload et de l'extraction de features pour ne pas bloquer l'interface, pagination pour les listes d'images, optimisation des requêtes BDD, etc.),  
-- Optimisation des performances : compression des images, gestion de la mémoire interne, gestion asynchrone de l’upload et de l’extraction des caractéristiques pour ne pas bloquer l’interface, pagination des listes d’images, optimisation des requêtes vers la BDD,  
 - Version multilingue de la plateforme.
 
 ## Trame d’évaluation technique
