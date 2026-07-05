@@ -8,19 +8,19 @@
     <input type="file" id="imageInput" name="mon_image" accept="image/*" style="display: none;">
 
     <div div style="display: flex; gap: 20px;">
-        <input type="text" id="address" name="mon_adresse" placeholder="Tapez une adresse..." list="address-list" autocomplete="off">
+        <input type="text" id="address" name="mon_adresse" placeholder="{{ _('Tapez une adresse...') }}" list="address-list" autocomplete="off">
         <datalist id="address-list"></datalist>
 
         <input type="hidden" id="lat" name="lat">
         <input type="hidden" id="lon" name="lon">
 
         <fieldset style="border: none; display: flex; align-items: center; gap: 10px;">
-            <legend style="font-size: 14px;">Type de classification :</legend>
-            <label><input type="radio" name="nb_classes" value="2" checked> Propre / Sale</label>
-            <label><input type="radio" name="nb_classes" value="3"> Propre / Sale / Débordante</label>
+            <legend style="font-size: 14px;">{{ _('Type de classification :') }}</legend>
+            <label><input type="radio" name="nb_classes" value="2" checked> {{ _('Propre / Sale') }}</label>
+            <label><input type="radio" name="nb_classes" value="3"> {{ _('Propre / Sale / Débordante') }}</label>
         </fieldset>
 
-        <button type="submit" id="post-button">Importer l'image</button>
+        <button type="submit" id="post-button">{{ _("Importer l'image") }}</button>
     </div>
 </form>
 <script>

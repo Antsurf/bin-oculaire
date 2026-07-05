@@ -16,13 +16,13 @@
 <body>
     <div id="map-container">
         <div class="title-page">
-            <h1>Carte des zones à risque de débordemment</h1>
+            <h1>{{ _('Carte des zones à risque de débordemment') }}</h1>
         </div>
         <div id="map-legend" style="margin: 10px 0; display: flex; gap: 20px; align-items: center;">
-            <span><span style="display:inline-block;width:12px;height:12px;background:green;border-radius:50%;margin-right:6px;"></span>Propre</span>
-            <span><span style="display:inline-block;width:12px;height:12px;background:orange;border-radius:50%;margin-right:6px;"></span>Sale</span>
-            <span><span style="display:inline-block;width:12px;height:12px;background:red;border-radius:50%;margin-right:6px;"></span>Débordante</span>
-            <span><span style="display:inline-block;width:12px;height:12px;background:gray;border-radius:50%;margin-right:6px;"></span>Inconnu</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:green;border-radius:50%;margin-right:6px;"></span>{{ _('Propre') }}</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:orange;border-radius:50%;margin-right:6px;"></span>{{ _('Sale') }}</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:red;border-radius:50%;margin-right:6px;"></span>{{ _('Débordante') }}</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:gray;border-radius:50%;margin-right:6px;"></span>{{ _('Inconnu') }}</span>
         </div>
         <div id="map"></div>
     </div>
@@ -69,10 +69,10 @@
                     pointToLayer: creerMarqueurColore,
                     onEachFeature: (feature, layer) => {
                         layer.bindPopup(
-                            "<strong>Adresse:</strong> " + feature.properties.adresse +
-                            "<br><strong>État:</strong> " + feature.properties.etat +
-                            "<br><strong>Date:</strong> " + feature.properties.date +
-                            "<br><a href='/result/" + feature.properties.image_id + "'>Voir le détail →</a>"
+                            "<strong>{{ _('Adresse') }}:</strong> " + feature.properties.adresse +
+                            "<br><strong>{{ _('État') }}:</strong> " + feature.properties.etat +
+                            "<br><strong>{{ _('Date') }}:</strong> " + feature.properties.date +
+                            "<br><a href='/result/" + feature.properties.image_id + "'>{{ _('Voir le détail') }} →</a>"
                         );
                     }
                 });

@@ -1,10 +1,11 @@
-from flask import Flask, request, render_template, flash, redirect, url_for, jsonify
+from flask import Flask, request, render_template, flash, redirect, url_for, jsonify, session
 from werkzeug.utils import secure_filename
 import os
 from markupsafe import escape
 import uuid
 from datetime import datetime
 import requests as http_requests
+from flask_babel import Babel, gettext as _
 
 import database as db
 import features as ft
@@ -19,11 +20,45 @@ UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app = Flask(__name__)
 
-# c'est pratique pour éviter de faire du js avec des alert() pour afficher les messages d'erreur ou de succès
-app.secret_key = "poubelle-app-secret-key-dev"  # nécessaire pour flash() 
-
+# évite d'utiliser alert() pour les messages flash, on utilisera plutôt des div bootstrap
+app.secret_key = "poubelle-app-secret-key-dev"  # nécessaire pour flash() et la session (langue) ; à changer en prod
 # On l'applique à la configuration Flask
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Configuration multilingue (français par défaut, anglais disponible)
+app.config['LANGUAGES'] = {'fr': 'Français', 'en': 'English', 'es': 'Español', 'de': 'Deutsch', 'it': 'Italiano'}
+app.config['BABEL_DEFAULT_LOCALE'] = 'fr'
+app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations'
+
+
+def get_locale():
+    """
+    Détermine la langue à utiliser pour la requête en cours :
+    1. la langue explicitement choisie par l'utilisateur (stockée en session),
+    2. sinon la langue préférée envoyée par le navigateur (Accept-Language),
+    3. sinon la langue par défaut (français).
+    """
+    if 'lang' in session and session['lang'] in app.config['LANGUAGES']:
+        return session['lang']
+    return request.accept_languages.best_match(app.config['LANGUAGES'].keys()) or app.config['BABEL_DEFAULT_LOCALE']
+
+
+babel = Babel(app, locale_selector=get_locale)
+
+
+@app.route('/lang/<lang_code>')
+def set_language(lang_code):
+    """Change la langue de l'interface et revient sur la page précédente"""
+    if lang_code in app.config['LANGUAGES']:
+        session['lang'] = lang_code
+    return redirect(request.referrer or url_for('upload_file'))
+
+
+@app.context_processor
+def inject_locale():
+    """Rend get_locale() disponible dans tous les templates (ex: <html lang="{{ get_locale() }}">)"""
+    return dict(get_locale=get_locale)
+
 
 # On s'assure qu'il existe
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -86,9 +121,9 @@ def dashboard():
 
     nb_images = db.get_total_images_count()
     nb_poubelles_sales, nb_poubelles_propres, nb_poubelles_deb = db.get_classified_count()
-    labels1 = ["Propre", "Sale", "Débordante"]
+    labels1 = [_("Propre"), _("Sale"), _("Débordante")]
     labels2 = list(adresses_count.keys())
-    labels3 = ["Bien classé", "Mal classé"]
+    labels3 = [_("Bien classé"), _("Mal classé")]
     values1 = [nb_poubelles_propres, nb_poubelles_sales, nb_poubelles_deb]
     values2 = list(adresses_count.values())
     values3 = [nb_good_class, total_images_annotees - nb_good_class]
@@ -136,6 +171,14 @@ def result(image_id):
 # ROUTE POUR ENREGISTRER L'ANNOTATION MANUELLE DE L'UTILISATEUR (poubelle réellement sale/pleine ou non)
 @app.route('/result/<int:image_id>/annotation', methods=['POST'])
 def save_annotation(image_id):
+    """
+    On est obligé de faire ça car c'est du html css 
+    et pas du javascript, 
+    donc on ne peut pas faire un fetch() 
+    pour envoyer l'annotation à l'API. 
+    On fait donc un POST classique vers cette route,
+    qui va ensuite rediriger vers la page result.html de l'image concernée.
+    """
     annotation = request.form.get('annotation')
     if annotation == '':
         annotation = None
@@ -412,18 +455,27 @@ def api_context():
         r = http_requests.post(
             "https://overpass-api.de/api/interpreter",
             data=overpass_query,
-            timeout=10
+            timeout=10,
+            headers={"User-Agent": "bin-oculaire-app/1.0 (contact: dev@example.com)"}
         )
+        # Overpass (serveur public partagé) est souvent surchargé et répond
+        # alors avec un code d'erreur (429/504) et un corps vide ou non-JSON.
+        # r.json() plante dans ce cas avec "Expecting value: line 1 column 1"
+        # sans dire pourquoi -> on vérifie le status avant de parser.
+        r.raise_for_status()
         data = r.json()
         if data.get("elements"):
             # Un marché existe à proximité
-            # Tu peux affiner avec les horaires OSM si disponibles
             jour_marche = f"Oui ({len(data['elements'])} marché(s) à proximité)"
         else:
             jour_marche = "Aucun marché à proximité"
-    except Exception as e:
-        print(f"Erreur marchés: {e}")
-        jour_marche = "Indisponible"
+    except http_requests.exceptions.RequestException as e:
+        print(f"Erreur réseau/HTTP marchés (status={getattr(e.response, 'status_code', '?')}): {e}")
+        jour_marche = "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
+    except ValueError as e:
+        # ValueError = JSONDecodeError ici : la réponse n'était pas du JSON
+        print(f"Erreur JSON marchés (status={r.status_code}, début réponse={r.text[:200]!r}): {e}")
+        jour_marche = "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
 
     # chantier
     try:
@@ -438,12 +490,16 @@ def api_context():
         r = http_requests.post(
             "https://overpass-api.de/api/interpreter",
             data=overpass_query,
-            timeout=10
+            timeout=10,
+            headers={"User-Agent": "bin-oculaire-app/1.0 (contact: dev@example.com)"}
         )
+        r.raise_for_status()
         data = r.json()
         chantiers_btp = data.get("elements", [{}])[0].get("tags", {}).get("total", 0)
-    except Exception as e:
-        print(f"Erreur chantiers: {e}")
+    except http_requests.exceptions.RequestException as e:
+        print(f"Erreur réseau/HTTP chantiers (status={getattr(e.response, 'status_code', '?')}): {e}")
+    except ValueError as e:
+        print(f"Erreur JSON chantiers (status={r.status_code}, début réponse={r.text[:200]!r}): {e}")
 
     return jsonify({
         "meteo": meteo,

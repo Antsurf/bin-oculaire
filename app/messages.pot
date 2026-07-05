@@ -1,0 +1,332 @@
+# Translations template for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-07-05 17:55+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: app.py:124 templates/carte.html:22 templates/result.html:76
+msgid "Propre"
+msgstr ""
+
+#: app.py:124 templates/carte.html:23 templates/result.html:77
+msgid "Sale"
+msgstr ""
+
+#: app.py:124 templates/carte.html:24
+msgid "Débordante"
+msgstr ""
+
+#: app.py:126
+msgid "Bien classé"
+msgstr ""
+
+#: app.py:126
+msgid "Mal classé"
+msgstr ""
+
+#: templates/base.html:12
+msgid "Accueil"
+msgstr ""
+
+#: templates/base.html:13
+msgid "Carte"
+msgstr ""
+
+#: templates/base.html:14 templates/dashboard.html:5
+msgid "Dashboard"
+msgstr ""
+
+#: templates/base.html:15
+msgid "Galerie"
+msgstr ""
+
+#: templates/base.html:16
+msgid "Paramètres"
+msgstr ""
+
+#: templates/carte.html:19
+msgid "Carte des zones à risque de débordemment"
+msgstr ""
+
+#: templates/carte.html:25
+msgid "Inconnu"
+msgstr ""
+
+#: templates/carte.html:72
+msgid "Adresse"
+msgstr ""
+
+#: templates/carte.html:73
+msgid "État"
+msgstr ""
+
+#: templates/carte.html:74
+msgid "Date"
+msgstr ""
+
+#: templates/carte.html:75
+msgid "Voir le détail"
+msgstr ""
+
+#: templates/dashboard.html:12
+msgid "Précision du modèle binaire :"
+msgstr ""
+
+#: templates/dashboard.html:16
+msgid "Précision du modèle tri-classe :"
+msgstr ""
+
+#: templates/dashboard.html:21
+msgid "Nombre d'images annotées dans la base de données :"
+msgstr ""
+
+#: templates/dashboard.html:27
+msgid "Visualisation géographique des poubelles"
+msgstr ""
+
+#: templates/dashboard.html:31
+msgid "Répartition des poubelles"
+msgstr ""
+
+#: templates/dashboard.html:35
+msgid "Visualisation Annotations"
+msgstr ""
+
+#: templates/dashboard.html:86
+msgid "Nombre de poubelles par adresse"
+msgstr ""
+
+#: templates/gallery.html:4
+msgid "Galerie des images"
+msgstr ""
+
+#: templates/gallery.html:12
+msgid "Label:"
+msgstr ""
+
+#: templates/gallery.html:12
+msgid "Non classifié"
+msgstr ""
+
+#: templates/gallery.html:13
+msgid "Luminosité:"
+msgstr ""
+
+#: templates/gallery.html:13 templates/gallery.html:14
+#: templates/gallery.html:15 templates/gallery.html:16
+#: templates/gallery.html:17
+msgid "Inconnue"
+msgstr ""
+
+#: templates/gallery.html:14
+msgid "Date:"
+msgstr ""
+
+#: templates/gallery.html:15
+msgid "Latitude:"
+msgstr ""
+
+#: templates/gallery.html:16
+msgid "Longitude:"
+msgstr ""
+
+#: templates/gallery.html:17
+msgid "Adresse:"
+msgstr ""
+
+#: templates/gallery.html:24
+msgid "Page"
+msgstr ""
+
+#: templates/gallery.html:24
+msgid "sur"
+msgstr ""
+
+#: templates/index.html:11
+msgid "Tapez une adresse..."
+msgstr ""
+
+#: templates/index.html:18
+msgid "Type de classification :"
+msgstr ""
+
+#: templates/index.html:19
+msgid "Propre / Sale"
+msgstr ""
+
+#: templates/index.html:20
+msgid "Propre / Sale / Débordante"
+msgstr ""
+
+#: templates/index.html:23
+msgid "Importer l'image"
+msgstr ""
+
+#: templates/parametres.html:5
+msgid "Paramètres du classifier"
+msgstr ""
+
+#: templates/parametres.html:10
+msgid ""
+"Modifiez ici les règles et poids utilisés par le classifier automatique. "
+"La valeur\n"
+"        <strong>« recommandé »</strong> affichée à côté de chaque champ "
+"correspond à la valeur par défaut\n"
+"        calculée initialement ; vous pouvez vous en servir de référence "
+"avant de faire vos propres réglages."
+msgstr ""
+
+#: templates/parametres.html:19
+msgid "Modèle 2 classes (Propre / Sale) — règles"
+msgstr ""
+
+#: templates/parametres.html:25 templates/parametres.html:71
+msgid "Feature"
+msgstr ""
+
+#: templates/parametres.html:26
+msgid "Signe"
+msgstr ""
+
+#: templates/parametres.html:27
+msgid "Seuil"
+msgstr ""
+
+#: templates/parametres.html:28
+msgid "Score"
+msgstr ""
+
+#: templates/parametres.html:40 templates/parametres.html:44
+#: templates/parametres.html:48 templates/parametres.html:59
+#: templates/parametres.html:81 templates/parametres.html:92
+#: templates/parametres.html:97
+msgid "recommandé"
+msgstr ""
+
+#: templates/parametres.html:57
+msgid "Seuil de décision (score total) :"
+msgstr ""
+
+#: templates/parametres.html:65
+msgid "Modèle 3 classes (Propre / Sale / Débordante) — poids"
+msgstr ""
+
+#: templates/parametres.html:72
+msgid "Poids"
+msgstr ""
+
+#: templates/parametres.html:90
+msgid "Seuil 1 (Propre / Sale) :"
+msgstr ""
+
+#: templates/parametres.html:95
+msgid "Seuil 2 (Sale / Débordante) :"
+msgstr ""
+
+#: templates/parametres.html:102
+msgid "Enregistrer les paramètres"
+msgstr ""
+
+#: templates/result.html:19
+msgid "Informations de Base"
+msgstr ""
+
+#: templates/result.html:20
+msgid "Date d'upload"
+msgstr ""
+
+#: templates/result.html:21
+msgid "Lieu"
+msgstr ""
+
+#: templates/result.html:23
+msgid "Classification"
+msgstr ""
+
+#: templates/result.html:25
+msgid "Confiance de la prédiction"
+msgstr ""
+
+#: templates/result.html:26
+msgid "Taille fichier"
+msgstr ""
+
+#: templates/result.html:27
+msgid "Dimensions"
+msgstr ""
+
+#: templates/result.html:49
+msgid "Métriques d'Image"
+msgstr ""
+
+#: templates/result.html:51
+msgid "Luminosité"
+msgstr ""
+
+#: templates/result.html:52
+msgid "Contraste Max"
+msgstr ""
+
+#: templates/result.html:53
+msgid "Saturation"
+msgstr ""
+
+#: templates/result.html:54
+msgid "Densité contours"
+msgstr ""
+
+#: templates/result.html:59
+msgid "Contexte"
+msgstr ""
+
+#: templates/result.html:60
+msgid "Indicateurs temps-réel via AJAX"
+msgstr ""
+
+#: templates/result.html:62
+msgid "Météo"
+msgstr ""
+
+#: templates/result.html:63
+msgid "Jour de marché"
+msgstr ""
+
+#: templates/result.html:64
+msgid "Travaux BTP"
+msgstr ""
+
+#: templates/result.html:71
+msgid "Annotation manuelle"
+msgstr ""
+
+#: templates/result.html:72
+msgid ""
+"Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider "
+"à améliorer le modèle."
+msgstr ""
+
+#: templates/result.html:75
+msgid "Non annoté"
+msgstr ""
+
+#: templates/result.html:78
+msgid "Pleine / débordante"
+msgstr ""
+
+#: templates/result.html:80
+msgid "Enregistrer"
+msgstr ""
+
