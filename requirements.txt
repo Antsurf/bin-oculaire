@@ -1,7 +1,7 @@
 Flask==3.0.3
 Pillow==10.4.0
 matplotlib==3.9.0
-numpy==1.26.4
+numpy==2.6.4
 pandas
 joblib
 scikit-learn
