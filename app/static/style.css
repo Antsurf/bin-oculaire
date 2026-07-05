@@ -13,24 +13,25 @@ body {
 
 nav {
     background-image: linear-gradient(to right, #2D4613, #6D7E5A);
-    border-radius: 0 0 40px 40px;
+    border-radius: 0;
     position: relative;
     left: 0;
     width: 100%;
-    align-items: flex-end;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: space-between;
     padding: 0 4% 1.5% 4%;
     gap: 5%;
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     height: 80px;
     }
 
 nav img
  {
-    position: absolute;
     left: 4%;
     top: 4px;
-    width: 5em;
+    width: 5rem;
     height: auto;
 }
 
@@ -348,22 +349,24 @@ a.img-case {
 
 }
 
-
 .infoModel{
+    font-size: 1.25em;
+    color:#FFFFFF;
+    justify-content: flex;
+    flex-wrap: wrap;
     display: grid;
     padding : 1%;
-    margin-left: 3%;
-    text-align : left;
-    width: 20%;
-    border : solid 1px;
+    width: 100%;
     border-radius : 13px;
-    background-color: rgba(125, 34, 34, 0.5);
+    text-align : center;
+    background-color: rgba(92, 120, 83, 0.5);
 }
 
 .infoModel .info{
+    width: 100%;
+    text-align :center;
     display: flex;
     align-items: center;
-
 }
 
 .infoModel h2{
@@ -373,11 +376,17 @@ a.img-case {
     text-align: center;
 }
 
+.info {
+    text-align: center;
+}
+
 #infoDash{
+    width: 100%;
     display: flex;
+    flex-wrap: wrap;
     margin-top: 3%;
     justify-content: center;
-    gap: 18%;
+    gap: 10%;
 }
 
 #infoIm{
@@ -542,4 +551,51 @@ a.img-case {
 .parametres-actions #post-button {
     padding: 10px 25px;
     font-size: 1rem;
+}
+
+.links {
+    display: flex; 
+    gap: 5rem;
+}
+
+@media (max-width: 600px) {
+    nav {
+        display: flex;
+        flex-direction: column; 
+        align-items: center;   
+        height: auto;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .img-container {
+        margin-top: 10px;
+        width: 100%;
+        text-align: center; 
+    }
+
+    nav img {
+        width: 50px; 
+        height: auto;
+    }
+
+    .links {
+        display: flex;
+        flex-wrap: wrap;        
+        justify-content: center; 
+        gap: 0px;              
+        width: 100%;
+    }
+
+    .links a {
+        font-size: 0.8em;
+        text-align: center;
+        padding-inline:10px;
+        padding-top: 5px;
+        padding-bottom : 5px;
+        box-sizing: border-box; 
+    }
+
+    .lang-switcher {
+        margin: 10px 0;
+    }
 }
