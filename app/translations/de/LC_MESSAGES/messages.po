@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-07-05 17:55+0200\n"
+"POT-Creation-Date: 2026-07-05 18:55+0200\n"
 "PO-Revision-Date: 2026-07-05 17:42+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -17,15 +17,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: app.py:124 templates/carte.html:22 templates/result.html:76
+#: app.py:124 templates/carte.html:22 templates/gallery.html:8\n"
+#: templates/result.html:7 templates/result.html:81
 msgid "Propre"
 msgstr "Sauber"
 
-#: app.py:124 templates/carte.html:23 templates/result.html:77
+#: app.py:124 templates/carte.html:23 templates/gallery.html:9\n"
+#: templates/result.html:8 templates/result.html:82
 msgid "Sale"
 msgstr "Schmutzig"
 
-#: app.py:124 templates/carte.html:24
+#: app.py:124 templates/carte.html:24 templates/gallery.html:10\n"
+#: templates/result.html:9
 msgid "Débordante"
 msgstr "Überlaufend"
 
@@ -36,6 +39,62 @@ msgstr "Richtig klassifiziert"
 #: app.py:126
 msgid "Mal classé"
 msgstr "Falsch klassifiziert"
+
+#: app.py:406
+msgid "Coordonnées manquantes"
+msgstr "Koordinaten fehlen"
+
+#: app.py:408
+msgid "Indisponible"
+msgstr "Nicht verfügbar"
+
+#: app.py:409
+msgid "Non"
+msgstr "Nein"
+
+#: app.py:429
+msgid "Ciel dégagé"
+msgstr "Klarer Himmel"
+
+#: app.py:431
+msgid "Nuageux"
+msgstr "Bewölkt"
+
+#: app.py:433
+msgid "Pluie"
+msgstr "Regen"
+
+#: app.py:435
+msgid "Neige"
+msgstr "Schnee"
+
+#: app.py:437
+msgid "Averses"
+msgstr "Schauer"
+
+#: app.py:439
+msgid "Orage"
+msgstr "Gewitter"
+
+#: app.py:441
+#, python-format
+msgid "Code %(code)s"
+msgstr "Code %(code)s"
+
+#: app.py:471
+#, python-format
+msgid "Oui (%(num)d marché à proximité)"
+msgid_plural "Oui (%(num)d marchés à proximité)"
+msgstr[0] "Ja (%(num)d Markt in der Nähe)"
+msgstr[1] "Ja (%(num)d Märkte in der Nähe)"
+
+#: app.py:477
+msgid "Aucun marché à proximité"
+msgstr "Kein Markt in der Nähe"
+
+#: app.py:480 app.py:484
+msgid "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
+msgstr "Nicht verfügbar (Overpass-Server überlastet, versuchen Sie es später erneut)"
 
 #: templates/base.html:12
 msgid "Accueil"
@@ -113,45 +172,45 @@ msgstr "Anzahl der Mülltonnen pro Adresse"
 msgid "Galerie des images"
 msgstr "Bildergalerie"
 
-#: templates/gallery.html:12
+#: templates/gallery.html:18
 msgid "Label:"
 msgstr "Label:"
 
-#: templates/gallery.html:12
+#: templates/gallery.html:18
 msgid "Non classifié"
 msgstr "Nicht klassifiziert"
 
-#: templates/gallery.html:13
+#: templates/gallery.html:19
 msgid "Luminosité:"
 msgstr "Helligkeit:"
 
-#: templates/gallery.html:13 templates/gallery.html:14
-#: templates/gallery.html:15 templates/gallery.html:16
-#: templates/gallery.html:17
+#: templates/gallery.html:19 templates/gallery.html:20\n"
+#: templates/gallery.html:21 templates/gallery.html:22\n"
+#: templates/gallery.html:23 templates/result.html:30
 msgid "Inconnue"
 msgstr "Unbekannt"
 
-#: templates/gallery.html:14
+#: templates/gallery.html:20
 msgid "Date:"
 msgstr "Datum:"
 
-#: templates/gallery.html:15
+#: templates/gallery.html:21
 msgid "Latitude:"
 msgstr "Breitengrad:"
 
-#: templates/gallery.html:16
+#: templates/gallery.html:22
 msgid "Longitude:"
 msgstr "Längengrad:"
 
-#: templates/gallery.html:17
+#: templates/gallery.html:23
 msgid "Adresse:"
 msgstr "Adresse:"
 
-#: templates/gallery.html:24
+#: templates/gallery.html:30
 msgid "Page"
 msgstr "Seite"
 
-#: templates/gallery.html:24
+#: templates/gallery.html:30
 msgid "sur"
 msgstr "von"
 
@@ -182,18 +241,24 @@ msgstr "Klassifikator-Einstellungen"
 #: templates/parametres.html:10
 msgid ""
 "Modifiez ici les règles et poids utilisés par le classifier automatique. "
-"La valeur\n"
-"        <strong>« recommandé »</strong> affichée à côté de chaque champ "
-"correspond à la valeur par défaut\n"
-"        calculée initialement ; vous pouvez vous en servir de référence "
-"avant de faire vos propres réglages."
+"La valeur"
 msgstr ""
 "Ändern Sie hier die vom automatischen Klassifikator verwendeten Regeln "
-"und Gewichtungen. Der\n"
-"        neben jedem Feld angezeigte <strong>„empfohlene“</strong> Wert "
-"entspricht dem ursprünglich berekneten Standardwert;\n"
-"        Sie können ihn als Referenz verwenden, bevor Sie Ihre eigenen "
-"Anpassungen vornehmen."
+"und Gewichtungen. Der"
+
+#: templates/parametres.html:11
+msgid "« recommandé »"
+msgstr "„empfohlene“"
+
+#: templates/parametres.html:12
+msgid ""
+"affichée à côté de chaque champ correspond à la valeur par défaut "
+"calculée initialement ; vous pouvez vous en servir de référence avant de "
+"faire vos propres réglages."
+msgstr ""
+"Wert, der neben jedem Feld angezeigt wird, entspricht dem ursprünglich "
+"berechneten Standardwert; Sie können ihn als Referenz verwenden, bevor "
+"Sie Ihre eigenen Anpassungen vornehmen."
 
 #: templates/parametres.html:19
 msgid "Modèle 2 classes (Propre / Sale) — règles"
@@ -215,9 +280,9 @@ msgstr "Schwellenwert"
 msgid "Score"
 msgstr "Score"
 
-#: templates/parametres.html:40 templates/parametres.html:44
-#: templates/parametres.html:48 templates/parametres.html:59
-#: templates/parametres.html:81 templates/parametres.html:92
+#: templates/parametres.html:40 templates/parametres.html:44\n"
+#: templates/parametres.html:48 templates/parametres.html:59\n"
+#: templates/parametres.html:81 templates/parametres.html:92\n"
 #: templates/parametres.html:97
 msgid "recommandé"
 msgstr "empfohlen"
@@ -246,79 +311,107 @@ msgstr "Schwellenwert 2 (Schmutzig / Überlaufend):"
 msgid "Enregistrer les paramètres"
 msgstr "Einstellungen speichern"
 
-#: templates/result.html:19
+#: templates/result.html:14
+msgid "Retour à la galerie"
+msgstr "Zurück zur Galerie"
+
+#: templates/result.html:20
+msgid "Image"
+msgstr "Bild"
+
+#: templates/result.html:22
+msgid "Image analysée"
+msgstr "Analysiertes Bild"
+
+#: templates/result.html:25
 msgid "Informations de Base"
 msgstr "Basisinformationen"
 
-#: templates/result.html:20
+#: templates/result.html:26
 msgid "Date d'upload"
 msgstr "Upload-Datum"
 
-#: templates/result.html:21
+#: templates/result.html:27
 msgid "Lieu"
 msgstr "Ort"
 
-#: templates/result.html:23
+#: templates/result.html:27
+msgid "Non spécifié"
+msgstr "Nicht angegeben"
+
+#: templates/result.html:29
 msgid "Classification"
 msgstr "Klassifizierung"
 
-#: templates/result.html:25
+#: templates/result.html:29
+msgid "En attente"
+msgstr "Ausstehend"
+
+#: templates/result.html:30
 msgid "Confiance de la prédiction"
 msgstr "Konfidenz der Vorhersage"
 
-#: templates/result.html:26
+#: templates/result.html:31
 msgid "Taille fichier"
 msgstr "Dateigröße"
 
-#: templates/result.html:27
+#: templates/result.html:32
 msgid "Dimensions"
 msgstr "Abmessungen"
 
-#: templates/result.html:49
+#: templates/result.html:43 templates/result.html:117
+msgid "Histogramme RGB"
+msgstr "RGB-Histogramm"
+
+#: templates/result.html:54
 msgid "Métriques d'Image"
 msgstr "Bildmetriken"
 
-#: templates/result.html:51
+#: templates/result.html:56
 msgid "Luminosité"
 msgstr "Helligkeit"
 
-#: templates/result.html:52
+#: templates/result.html:57
 msgid "Contraste Max"
 msgstr "Maximaler Kontrast"
 
-#: templates/result.html:53
+#: templates/result.html:58
 msgid "Saturation"
 msgstr "Sättigung"
 
-#: templates/result.html:54
+#: templates/result.html:59
 msgid "Densité contours"
 msgstr "Kantenliniendichte"
 
-#: templates/result.html:59
+#: templates/result.html:64
 msgid "Contexte"
 msgstr "Kontext"
 
-#: templates/result.html:60
+#: templates/result.html:65
 msgid "Indicateurs temps-réel via AJAX"
 msgstr "Echtzeit-Indikatoren via AJAX"
 
-#: templates/result.html:62
+#: templates/result.html:67
 msgid "Météo"
 msgstr "Wetter"
 
-#: templates/result.html:63
+#: templates/result.html:67 templates/result.html:68 templates/result.html:69
+msgid "Chargement..."
+msgstr "Laden..."
+
+#: templates/result.html:68
 msgid "Jour de marché"
 msgstr "Markttag"
 
-#: templates/result.html:64
+#: templates/result.html:69
 msgid "Travaux BTP"
 msgstr "Bauarbeiten"
 
-#: templates/result.html:71
+#: templates/result.html:76
 msgid "Annotation manuelle"
 msgstr "Manuelle Annotation"
 
-#: templates/result.html:72
+#: templates/result.html:77
 msgid ""
 "Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider "
 "à améliorer le modèle."
@@ -326,15 +419,48 @@ msgstr ""
 "Teilen Sie uns mit, ob die Mülltonne tatsächlich schmutzig oder voll ist,"
 " um uns bei der Verbesserung des Modells zu helfen."
 
-#: templates/result.html:75
+#: templates/result.html:80
 msgid "Non annoté"
 msgstr "Nicht annotiert"
 
-#: templates/result.html:78
+#: templates/result.html:83
 msgid "Pleine / débordante"
 msgstr "Voll / Überlaufend"
 
-#: templates/result.html:80
+#: templates/result.html:85
 msgid "Enregistrer"
 msgstr "Speichern"
 
+#: templates/result.html:119
+msgid "Rouge"
+msgstr "Rot"
+
+#: templates/result.html:120
+msgid "Vert"
+msgstr "Grün"
+
+#: templates/result.html:121
+msgid "Bleu"
+msgstr "Blau"
+
+#: templates/result.html:124
+msgid "Histogramme Luminance"
+msgstr "Luminanz-Histogramm"
+
+#: templates/result.html:125
+msgid "Luminance"
+msgstr "Luminanz"
+
+#: templates/result.html:151
+msgid "déclarés autour"
+msgstr "im Umkreis gemeldet"
+
+#: templates/result.html:155 templates/result.html:156
+#: templates/result.html:157
+msgid "Erreur réseau"
+msgstr "Netzwerkfehler"
+
+#: templates/result.html:160 templates/result.html:161
+#: templates/result.html:162
+msgid "Coordonnées indisponibles"
+msgstr "Koordinaten nicht verfügbar"

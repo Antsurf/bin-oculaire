@@ -1,10 +1,29 @@
 #imports
+import os
 import numpy as np
 import pandas as pd
 import ast
 import joblib
 
 import database as db
+
+# Chemin absolu vers le scaler, ancré au dossier du module (peu importe le
+# répertoire depuis lequel l'app est lancée)
+_SCALER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'scaler_for_data.save')
+_scaler_cache = None
+
+
+def _get_scaler():
+    """
+    Charge le scaler une seule fois puis le garde en mémoire (cache module-level).
+    Avant, joblib.load() était appelé à CHAQUE classification (donc à chaque upload
+    d'image), ce qui rechargeait/désérialisait le fichier .save depuis le disque à
+    chaque fois : c'était la cause principale de la lenteur à l'upload.
+    """
+    global _scaler_cache
+    if _scaler_cache is None:
+        _scaler_cache = joblib.load(_SCALER_PATH)
+    return _scaler_cache
 
 
 def get_whites_from_hist(hist):
@@ -18,32 +37,37 @@ def get_whites_from_hist(hist):
 
 def get_features(features_dict):
 
-    features_dict['max_r'] = max(ast.literal_eval(features_dict['hist_rgb'])['red'])
-    features_dict['max_g'] = max(ast.literal_eval(features_dict['hist_rgb'])['green'])
-    features_dict['max_b'] = max(ast.literal_eval(features_dict['hist_rgb'])['blue'])
+    # On ne parse le JSON qu'une seule fois (avant, ast.literal_eval était
+    # rappelé ~10 fois sur la même chaîne, en pure perte de temps)
+    hist_rgb = ast.literal_eval(features_dict['hist_rgb'])
+    hist_luminance = ast.literal_eval(features_dict['hist_luminance'])
 
-    features_dict['min_r'] = min(ast.literal_eval(features_dict['hist_rgb'])['red'])
-    features_dict['min_g'] = min(ast.literal_eval(features_dict['hist_rgb'])['green'])
-    features_dict['min_b'] = min(ast.literal_eval(features_dict['hist_rgb'])['blue'])
+    features_dict['max_r'] = max(hist_rgb['red'])
+    features_dict['max_g'] = max(hist_rgb['green'])
+    features_dict['max_b'] = max(hist_rgb['blue'])
 
-    features_dict['index_max_r'] = ast.literal_eval(features_dict['hist_rgb'])['red'].index(features_dict['max_r'])
-    features_dict['index_max_g'] = ast.literal_eval(features_dict['hist_rgb'])['green'].index(features_dict['max_g'])
-    features_dict['index_max_b'] = ast.literal_eval(features_dict['hist_rgb'])['blue'].index(features_dict['max_b'])
+    features_dict['min_r'] = min(hist_rgb['red'])
+    features_dict['min_g'] = min(hist_rgb['green'])
+    features_dict['min_b'] = min(hist_rgb['blue'])
 
-    features_dict['index_min_r'] = ast.literal_eval(features_dict['hist_rgb'])['red'].index(features_dict['min_r'])
-    features_dict['index_min_g'] = ast.literal_eval(features_dict['hist_rgb'])['green'].index(features_dict['min_g'])
-    features_dict['index_min_b'] = ast.literal_eval(features_dict['hist_rgb'])['blue'].index(features_dict['min_b'])
+    features_dict['index_max_r'] = hist_rgb['red'].index(features_dict['max_r'])
+    features_dict['index_max_g'] = hist_rgb['green'].index(features_dict['max_g'])
+    features_dict['index_max_b'] = hist_rgb['blue'].index(features_dict['max_b'])
 
-    features_dict['max_lum'] = max(ast.literal_eval(features_dict['hist_luminance']))
-    features_dict['min_lum'] = min(ast.literal_eval(features_dict['hist_luminance']))
+    features_dict['index_min_r'] = hist_rgb['red'].index(features_dict['min_r'])
+    features_dict['index_min_g'] = hist_rgb['green'].index(features_dict['min_g'])
+    features_dict['index_min_b'] = hist_rgb['blue'].index(features_dict['min_b'])
 
-    features_dict['index_max_lum'] = ast.literal_eval(features_dict['hist_luminance']).index(features_dict['max_lum'])
-    features_dict['index_min_lum'] = ast.literal_eval(features_dict['hist_luminance']).index(features_dict['min_lum'])
+    features_dict['max_lum'] = max(hist_luminance)
+    features_dict['min_lum'] = min(hist_luminance)
+
+    features_dict['index_max_lum'] = hist_luminance.index(features_dict['max_lum'])
+    features_dict['index_min_lum'] = hist_luminance.index(features_dict['min_lum'])
 
     features_dict['sum_avg'] = features_dict['mean_r'] + features_dict['mean_g'] + features_dict['mean_b']
     features_dict['sum_diff_avg'] = abs(features_dict['mean_r'] - features_dict['mean_g']) + abs(features_dict['mean_r'] - features_dict['mean_b']) + abs(features_dict['mean_b'] - features_dict['mean_g'])
 
-    features_dict['quantity_of_whites'] = get_whites_from_hist(ast.literal_eval(features_dict['hist_rgb']))
+    features_dict['quantity_of_whites'] = get_whites_from_hist(hist_rgb)
 
     return features_dict
 
@@ -57,7 +81,7 @@ def scale_features(features):
         values.append(features[col])
     values = np.array(values)
     values = values.reshape(1, -1)
-    min_max_scaler = joblib.load('app/scaler_for_data.save')
+    min_max_scaler = _get_scaler()
     scaled_values = min_max_scaler.transform(values)
     scaled_values = scaled_values.reshape(-1)
 

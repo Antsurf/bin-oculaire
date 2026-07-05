@@ -3,26 +3,31 @@
 <!-- Injection de Chart.js pour les graphiques dynamiques-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+{% set label_translations = {
+    'propre': _('Propre'),
+    'sale': _('Sale'),
+    'debordante': _('Débordante')
+} %}
+
 <div class="result-wrapper">
 
-    <a href="{{ url_for('gallery') }}" class="btn-back">← Retour à la galerie</a>
+    <a href="{{ url_for('gallery') }}" class="btn-back">← {{ _('Retour à la galerie') }}</a>
 
     <div class="result-layout">
 
         <!-- Colonne Gauche: Image et Méta de base -->
         <div class="result-col">
-            <h1 style="margin-top: 0; display: block;">Image #{{ image['id'] if image else 'X' }}</h1>
+            <h1 style="margin-top: 0; display: block;">{{ _('Image') }} #{{ image['id'] if image else 'X' }}</h1>
             <img src="{{ url_for('static', filename='uploads/' + image['file_name']) if image else '' }}"
-                class="result-image" alt="Image analysée">
+                class="result-image" alt="{{ _('Image analysée') }}">
 
             <div class="info-box">
                 <h3>{{ _('Informations de Base') }}</h3>
                 <p><strong>{{ _('Date d\'upload') }} :</strong> {{ image['upload_date'] if image else '' }}</p>
-                <p><strong>{{ _('Lieu') }} :</strong> {{ image['localisation_nom'] | default('Non spécifié') if image else '' }}
+                <p><strong>{{ _('Lieu') }} :</strong> {{ image['localisation_nom'] | default(_('Non spécifié')) if image else '' }}
                 </p>
-                <p><strong>{{ _('Classification') }} :</strong> <span class="badge badge-warning">{{ image['auto_label'] |
-                        default('En attente') if image else '' }}</span></p>
-                <p><strong>{{ _('Confiance de la prédiction') }} :</strong> {{ image['confidence'] if image and image['confidence'] is not none else 'Inconnue' }}</p>
+                <p><strong>{{ _('Classification') }} :</strong> <span class="badge badge-warning">{{ label_translations.get(image['auto_label'], _('En attente')) if image else '' }}</span></p>
+                <p><strong>{{ _('Confiance de la prédiction') }} :</strong> {{ image['confidence'] if image and image['confidence'] is not none else _('Inconnue') }}</p>
                 <p><strong>{{ _('Taille fichier') }} :</strong> {{ image['file_size'] if image else '' }} Ko</p>
                 <p><strong>{{ _('Dimensions') }} :</strong> {{ image['width'] if image else '' }} x {{ image['height'] if image
                     else '' }} px</p>
@@ -35,7 +40,7 @@
             <!-- Graphe Dynamique -->
             <div class="result-card">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 id="chart-title">Histogramme RGB</h3>
+                    <h3 id="chart-title">{{ _('Histogramme RGB') }}</h3>
                     <div>
                         <button onclick="changeChart('prev')">←</button>
                         <button onclick="changeChart('next')">→</button>
@@ -59,9 +64,9 @@
                     <h3>{{ _('Contexte') }}</h3>
                     <p style="font-size: 13px; color: #555;"><i>{{ _('Indicateurs temps-réel via AJAX') }}</i></p>
                     <ul style="list-style: none; padding: 0; line-height: 1.8;">
-                        <li><strong>{{ _('Météo') }} :</strong> <span id="meteo-value">Chargement...</span></li>
-                        <li><strong>{{ _('Jour de marché') }} :</strong> <span id="marche-value">Chargement...</span></li>
-                        <li><strong>{{ _('Travaux BTP') }} :</strong> <span id="btp-value">Chargement...</span></li>
+                        <li><strong>{{ _('Météo') }} :</strong> <span id="meteo-value">{{ _('Chargement...') }}</span></li>
+                        <li><strong>{{ _('Jour de marché') }} :</strong> <span id="marche-value">{{ _('Chargement...') }}</span></li>
+                        <li><strong>{{ _('Travaux BTP') }} :</strong> <span id="btp-value">{{ _('Chargement...') }}</span></li>
                     </ul>
                 </div>
             </div>
@@ -109,15 +114,15 @@
         };
 
         if (type === 'rgb') {
-            document.getElementById('chart-title').innerText = "Histogramme RGB";
+            document.getElementById('chart-title').innerText = "{{ _('Histogramme RGB') }}";
             chartData.datasets = [
-                { label: 'Rouge', data: data.rgb.red, borderColor: 'red' },
-                { label: 'Vert', data: data.rgb.green, borderColor: 'green' },
-                { label: 'Bleu', data: data.rgb.blue, borderColor: 'blue' }
+                { label: '{{ _("Rouge") }}', data: data.rgb.red, borderColor: 'red' },
+                { label: '{{ _("Vert") }}', data: data.rgb.green, borderColor: 'green' },
+                { label: '{{ _("Bleu") }}', data: data.rgb.blue, borderColor: 'blue' }
             ];
         } else {
-            document.getElementById('chart-title').innerText = "Histogramme Luminance";
-            chartData.datasets = [{ label: 'Luminance', data: data.lum, borderColor: 'gray' }];
+            document.getElementById('chart-title').innerText = "{{ _('Histogramme Luminance') }}";
+            chartData.datasets = [{ label: '{{ _("Luminance") }}', data: data.lum, borderColor: 'gray' }];
         }
 
         myChart = new Chart(ctx, { type: 'line', data: chartData });
@@ -143,18 +148,18 @@
             .then(data => {
                 document.getElementById('meteo-value').innerText = data.meteo;
                 document.getElementById('marche-value').innerText = data.jour_marche;
-                document.getElementById('btp-value').innerText = data.chantiers_btp + " déclarés autour";
+                document.getElementById('btp-value').innerText = data.chantiers_btp + " {{ _('déclarés autour') }}";
             })
             .catch(error => {
                 console.error('Erreur AJAX:', error);
-                document.getElementById('meteo-value').innerText = "Erreur réseau";
-                document.getElementById('marche-value').innerText = "Erreur réseau";
-                document.getElementById('btp-value').innerText = "Erreur réseau";
+                document.getElementById('meteo-value').innerText = "{{ _('Erreur réseau') }}";
+                document.getElementById('marche-value').innerText = "{{ _('Erreur réseau') }}";
+                document.getElementById('btp-value').innerText = "{{ _('Erreur réseau') }}";
             });
     } else {
-        document.getElementById('meteo-value').innerText = "Coordonnées indisponibles";
-        document.getElementById('marche-value').innerText = "Coordonnées indisponibles";
-        document.getElementById('btp-value').innerText = "Coordonnées indisponibles";
+        document.getElementById('meteo-value').innerText = "{{ _('Coordonnées indisponibles') }}";
+        document.getElementById('marche-value').innerText = "{{ _('Coordonnées indisponibles') }}";
+        document.getElementById('btp-value').innerText = "{{ _('Coordonnées indisponibles') }}";
     }
 </script>
 {% endblock %}

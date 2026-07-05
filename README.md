@@ -46,6 +46,41 @@ Pour faire run le projet, il faut s'assurer d'avoir toutes les librairies néces
 Une fois que cela est fait, on peut ouvrir le fichier app/app.py, et lancer le programme ou bien directement run la commande : <br>
 ``` python app/app.py ``` ou ``` python app.py``` en fonction d'où vous vous situez sur dans la structure du projet présente ci-dessous.
 
+## Lancer / mettre à jour les traductions (Babel) :
+
+Le projet est multilingue grâce à **Flask-Babel** (français par défaut, anglais disponible, espagnol/allemand/italien configurables). Les textes traduisibles sont marqués dans le code avec `_('mon texte')` (dans les templates `.html` et dans `app.py`).
+
+**1. Installer la dépendance** (déjà dans `requirements.txt`) :
+```
+pip install Flask-Babel
+````
+
+**2. Extraire les textes traduisibles du projet** (génère/actualise `messages.pot`, le catalogue "source") :
+````
+pybabel extract -F babel.cfg -o messages.pot .
+````
+À relancer à chaque fois qu'on ajoute ou modifie un `_('...')` dans le code.
+
+**3a. Créer une nouvelle langue** (à faire une seule fois par langue, ex: l'espagnol) :
+````
+pybabel init -i messages.pot -d translations -l es
+````
+Ça crée `translations/es/LC_MESSAGES/messages.po`, à remplir à la main (ou avec un outil comme Poedit) : chaque `msgid` (texte français) doit avoir son `msgstr` (traduction).
+
+**3b. Mettre à jour une langue existante** après un `pybabel extract` (ajoute les nouvelles chaînes sans écraser les traductions déjà faites) :
+````
+pybabel update -i messages.pot -d translations
+````
+
+**4. Compiler les traductions** (génère les `.mo` binaires réellement utilisés par Flask-Babel à l'exécution — **obligatoire après chaque modification d'un `.po`**) :
+````
+pybabel compile -d translations
+````
+
+**5. Relancer le serveur Flask** pour que les traductions compilées soient prises en compte.
+
+Le sélecteur de langue (FR / EN / ES / DE / IT) est disponible dans la barre de navigation ; le choix est mémorisé en session (`/lang/<code>`).
+
 ## Structure du projet :
 
 app/

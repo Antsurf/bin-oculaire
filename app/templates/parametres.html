@@ -7,9 +7,9 @@
 
 <div class="parametres-wrapper">
     <p class="parametres-intro">
-        {{_('Modifiez ici les règles et poids utilisés par le classifier automatique. La valeur
-        <strong>« recommandé »</strong> affichée à côté de chaque champ correspond à la valeur par défaut
-        calculée initialement ; vous pouvez vous en servir de référence avant de faire vos propres réglages.')}}'
+        {{ _('Modifiez ici les règles et poids utilisés par le classifier automatique. La valeur') }}
+        <strong>{{ _('« recommandé »') }}</strong>
+        {{ _("affichée à côté de chaque champ correspond à la valeur par défaut calculée initialement ; vous pouvez vous en servir de référence avant de faire vos propres réglages.") }}
     </p>
 
     <form action="{{ url_for('save_parametres') }}" method="POST">

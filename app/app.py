@@ -5,7 +5,7 @@ from markupsafe import escape
 import uuid
 from datetime import datetime
 import requests as http_requests
-from flask_babel import Babel, gettext as _
+from flask_babel import Babel, gettext as _, ngettext
 
 import database as db
 import features as ft
@@ -403,10 +403,10 @@ def api_context():
     lon = request.args.get('lon')
 
     if not lat or not lon:
-        return jsonify({"error": "Coordonnées manquantes"}), 400
+        return jsonify({"error": _("Coordonnées manquantes")}), 400
 
-    meteo = "Indisponible"
-    jour_marche = "Non"
+    meteo = _("Indisponible")
+    jour_marche = _("Non")
     chantiers_btp = 0
 
     # open-météo pas de clé API
@@ -426,19 +426,19 @@ def api_context():
 
         # Traduction basique des weather codes WMO
         if code == 0:
-            desc = "Ciel dégagé"
+            desc = _("Ciel dégagé")
         elif code in [1, 2, 3]:
-            desc = "Nuageux"
+            desc = _("Nuageux")
         elif code in range(51, 68):
-            desc = "Pluie"
+            desc = _("Pluie")
         elif code in range(71, 78):
-            desc = "Neige"
+            desc = _("Neige")
         elif code in range(80, 83):
-            desc = "Averses"
+            desc = _("Averses")
         elif code in range(95, 100):
-            desc = "Orage"
+            desc = _("Orage")
         else:
-            desc = f"Code {code}"
+            desc = _("Code %(code)s", code=code)
 
         meteo = f"{desc}, {temp}°C"
     except Exception as e:
@@ -465,17 +465,23 @@ def api_context():
         r.raise_for_status()
         data = r.json()
         if data.get("elements"):
-            # Un marché existe à proximité
-            jour_marche = f"Oui ({len(data['elements'])} marché(s) à proximité)"
+            # Un marché existe à proximité (ngettext gère le singulier/pluriel de "marché(s)")
+            nb_marches = len(data["elements"])
+            jour_marche = ngettext(
+                "Oui (%(num)d marché à proximité)",
+                "Oui (%(num)d marchés à proximité)",
+                nb_marches,
+                num=nb_marches
+            )
         else:
-            jour_marche = "Aucun marché à proximité"
+            jour_marche = _("Aucun marché à proximité")
     except http_requests.exceptions.RequestException as e:
         print(f"Erreur réseau/HTTP marchés (status={getattr(e.response, 'status_code', '?')}): {e}")
-        jour_marche = "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
+        jour_marche = _("Indisponible (serveur Overpass surchargé, réessayez plus tard)")
     except ValueError as e:
         # ValueError = JSONDecodeError ici : la réponse n'était pas du JSON
         print(f"Erreur JSON marchés (status={r.status_code}, début réponse={r.text[:200]!r}): {e}")
-        jour_marche = "Indisponible (serveur Overpass surchargé, réessayez plus tard)"
+        jour_marche = _("Indisponible (serveur Overpass surchargé, réessayez plus tard)")
 
     # chantier
     try:

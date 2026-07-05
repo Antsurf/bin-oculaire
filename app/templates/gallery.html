@@ -4,12 +4,18 @@
     <h1>{{ _('Galerie des images') }}</h1>
 </div>
 
+{% set label_translations = {
+    'propre': _('Propre'),
+    'sale': _('Sale'),
+    'debordante': _('Débordante')
+} %}
+
 <div class="gallery-container">
     {% for img in images %}
     <a href="{{ url_for('result', image_id=img['id']) }}" class="img-case">
         <img src="{{ url_for('static', filename='uploads/' + img['file_name']) }}" alt="{{ img['auto_label'] }}">
         <div class="card-overlay">
-            <p class="card-label">{{ _('Label:') }} {{ _(img['auto_label']) if img['auto_label'] else _("Non classifié") }}</p>
+            <p class="card-label">{{ _('Label:') }} {{ label_translations.get(img['auto_label'], _("Non classifié")) }}</p>
             <p class="card-meta">{{ _('Luminosité:') }} {{ img['luminosite'] if img['luminosite'] is not none else _("Inconnue") }}</p>
             <p class="card-meta">{{ _('Date:') }} {{ img['upload_date'] if img['upload_date'] else _("Inconnue") }}</p>
             <p class="card-meta">{{ _('Latitude:') }} {{ img['latitude'] if img['latitude'] is not none else _("Inconnue") }}</p>
