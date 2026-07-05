@@ -7,3 +7,4 @@ joblib
 scikit-learn
 requests
 opencv-python-headless
+flask-babel

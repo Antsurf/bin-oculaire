@@ -81,6 +81,8 @@ pybabel compile -d translations
 
 Le sélecteur de langue (FR / EN / ES / DE / IT) est disponible dans la barre de navigation ; le choix est mémorisé en session (`/lang/<code>`).
 
+### Si le pybabel ne fonctionne pas, on peut aussi faire ```python -m babel.messages.frontend [suite de la commande]```
+
 ## Structure du projet :
 
 app/
