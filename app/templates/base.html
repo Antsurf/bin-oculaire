@@ -13,8 +13,18 @@
         <a href="{{ url_for('carte') }}" class="{% if request.endpoint == 'carte' %}active{% endif %}">Carte</a>
         <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a>
         <a href="{{ url_for('gallery') }}" class="{% if request.endpoint == 'gallery' %}active{% endif %}">Galerie</a>
+        <a href="{{ url_for('parametres') }}" class="{% if request.endpoint in ['parametres', 'save_parametres'] %}active{% endif %}">Paramètres</a>
     </nav>
     <main class="main-content">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for message in messages %}
+            <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
         {% block content %}
         {% endblock %}
     </main>

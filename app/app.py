@@ -18,6 +18,7 @@ UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app = Flask(__name__)
+app.secret_key = "poubelle-app-secret-key-dev"  # nécessaire pour flash() ; à changer en prod
 # On l'applique à la configuration Flask
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -190,6 +191,98 @@ def upload_file():
     return render_template('index.html')
         
 
+# ROUTE VERS LES PARAMETRES DU CLASSIFIER (règles du modèle 2-classes, poids du modèle 3-classes)
+@app.route('/parametres', methods=['GET'])
+def parametres():
+    current_rules = db.get_classifier_rules()
+    default_rules = db.get_default_rules()
+    current_weights = db.get_classifier_weights()
+    default_weights = db.get_default_weights()
+
+    rules_threshold = db.get_classifier_thresholds('rules')
+    default_rules_threshold = db.get_default_thresholds('rules')
+    weights_thresholds = db.get_classifier_thresholds('weights')
+    default_weights_thresholds = db.get_default_thresholds('weights')
+
+    rules_rows = []
+    for feature in sorted(default_rules.keys()):
+        current = current_rules.get(feature, default_rules[feature])
+        rec = default_rules[feature]
+        rules_rows.append({
+            "feature": feature,
+            "sign": current["sign"],
+            "threshold": current["threshold"],
+            "score": current["score"],
+            "rec_sign": rec["sign"],
+            "rec_threshold": rec["threshold"],
+            "rec_score": rec["score"],
+        })
+
+    weights_rows = []
+    for feature in sorted(default_weights.keys()):
+        current_weight = current_weights.get(feature, default_weights[feature])
+        weights_rows.append({
+            "feature": feature,
+            "weight": current_weight,
+            "rec_weight": default_weights[feature],
+        })
+
+    return render_template(
+        'parametres.html',
+        rules_rows=rules_rows,
+        weights_rows=weights_rows,
+        rules_threshold=rules_threshold,
+        default_rules_threshold=default_rules_threshold,
+        weights_thresholds=weights_thresholds,
+        default_weights_thresholds=default_weights_thresholds,
+    )
+
+
+@app.route('/parametres', methods=['POST'])
+def save_parametres():
+    default_rules = db.get_default_rules()
+    for feature, rec in default_rules.items():
+        sign = request.form.get(f'rule_sign_{feature}', rec['sign'])
+        if sign not in ('>', '<'):
+            sign = rec['sign']
+
+        try:
+            threshold = float(request.form.get(f'rule_threshold_{feature}'))
+        except (TypeError, ValueError):
+            threshold = rec['threshold']
+
+        try:
+            score = float(request.form.get(f'rule_score_{feature}'))
+        except (TypeError, ValueError):
+            score = rec['score']
+
+        db.update_classifier_rule(feature, sign, threshold, score)
+
+    default_weights = db.get_default_weights()
+    for feature, rec_weight in default_weights.items():
+        try:
+            weight = float(request.form.get(f'weight_{feature}'))
+        except (TypeError, ValueError):
+            weight = rec_weight
+        db.update_classifier_weight(feature, weight)
+
+    try:
+        rules_threshold = float(request.form.get('rules_threshold'))
+        db.update_classifier_threshold('rules', 0, rules_threshold)
+    except (TypeError, ValueError):
+        pass
+
+    for i in range(2):
+        try:
+            value = float(request.form.get(f'weights_threshold_{i}'))
+            db.update_classifier_threshold('weights', i, value)
+        except (TypeError, ValueError):
+            pass
+
+    flash("Paramètres du classifier enregistrés avec succès.")
+    return redirect(url_for('parametres'))
+
+
 @app.route('/api/agglomeration/geojson', methods=['GET'])
 def get_zones_risque():
     """
@@ -197,16 +290,16 @@ def get_zones_risque():
     """
     conn = db.get_connection()
 
-    # Requête qui récupère les localisations et le dernier label associé
-    # (on prend le label le plus récent par localisation, au cas où plusieurs
-    # images existent pour le même emplacement)
+    # Requête qui récupère une ligne PAR IMAGE (et pas une par adresse) : ainsi,
+    # quand plusieurs poubelles existent à la même adresse, on a bien plusieurs
+    # marqueurs superposés que Leaflet regroupe avec un numéro cliquable
+    # (cluster), au lieu de n'afficher que la dernière image de l'adresse.
     rows = conn.execute("""
-        SELECT l.latitude, l.longitude, l.localisation_nom, c.auto_label
+        SELECT i.id AS image_id, i.upload_date, l.latitude, l.longitude, l.localisation_nom, c.auto_label
         FROM localisation l
         JOIN images i ON l.id_localisation = i.id_localisation
         LEFT JOIN images_classification c ON i.id = c.image_id
-        GROUP BY l.id_localisation
-        HAVING i.upload_date = MAX(i.upload_date)
+        ORDER BY i.upload_date DESC
     """).fetchall()
     conn.close()
 
@@ -228,6 +321,8 @@ def get_zones_risque():
             "properties": {
                 "adresse": row['localisation_nom'],
                 "etat": row['auto_label'] if row['auto_label'] else "inconnu",
+                "image_id": row['image_id'],
+                "date": row['upload_date'],
             }
         }
         geojson["features"].append(feature)

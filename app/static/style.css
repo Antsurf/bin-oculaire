@@ -396,3 +396,128 @@ a.img-case {
     text-decoration: none;
     color : orange;
 }
+
+/* --- Messages flash --- */
+.flash-messages {
+    max-width: 1200px;
+    margin: 15px auto 0 auto;
+    padding: 0 20px;
+}
+
+.flash-message {
+    background: #d9edcb;
+    border: 1px solid #a5c785;
+    color: #2D4613;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+/* --- Page Paramètres du classifier --- */
+.parametres-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.parametres-intro {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #CFE9E0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.parametres-section {
+    margin-bottom: 25px;
+}
+
+.parametres-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #2D4613;
+    border-bottom: 2px solid #CFE9E0;
+    padding-bottom: 8px;
+}
+
+.parametres-table-wrapper {
+    overflow-x: auto;
+}
+
+.parametres-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.parametres-table th {
+    text-align: left;
+    font-size: 0.85rem;
+    color: #715555;
+    padding: 6px 10px;
+    border-bottom: 2px solid #CFE9E0;
+}
+
+.parametres-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.parametres-table .feature-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+}
+
+.parametres-table input[type="number"],
+.parametres-table select {
+    width: 110px;
+    padding: 4px 6px;
+    border-radius: 5px;
+    border: 1px solid lightgray;
+}
+
+.recommended-hint {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 0.75rem;
+    font-style: italic;
+    color: rgb(151 150 150 / 0.89);
+    white-space: nowrap;
+}
+
+.parametres-threshold {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #CFE9E0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.parametres-threshold label {
+    font-weight: bold;
+    color: #2D4613;
+}
+
+.parametres-threshold input[type="number"] {
+    width: 110px;
+    padding: 4px 6px;
+    border-radius: 5px;
+    border: 1px solid lightgray;
+}
+
+.parametres-actions {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.parametres-actions #post-button {
+    padding: 10px 25px;
+    font-size: 1rem;
+}
