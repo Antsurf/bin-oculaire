@@ -30,16 +30,51 @@ def get_histograms(file_path:str) -> dict:
 
 def get_coords_from_address(address: str) -> tuple[float, float] | None:
     """
-    Appelle l'API Adresse et renvoie (lat, lon) ou None si erreur.
+    Géocodage direct (adresse -> lat/lon).
+    Appelle l'API de géocodage de la Géoplateforme (IGN) et renvoie (lat, lon) ou None si erreur.
+
+    NB: l'ancienne API api-adresse.data.gouv.fr est dépréciée (décommissionnement
+    prévu fin janvier 2026) au profit de cette nouvelle API, qui reprend le même
+    format de réponse GeoJSON.
     """
     try:
-        response = requests.get(f"https://api-adresse.data.gouv.fr/search/?q={address}&limit=1")
+        response = requests.get(
+            "https://data.geopf.fr/geocodage/search",
+            params={"q": address, "limit": 1},
+            timeout=5,
+        )
         data = response.json()
         if data['features']:
             coords = data['features'][0]['geometry']['coordinates']
-            return coords[1], coords[0] # (lat, lon)
+            return coords[1], coords[0]  # (lat, lon)
     except Exception as e:
-        print(f"Erreur API Gouv: {e}")
+        print(f"Erreur API géocodage (direct): {e}")
+    return None
+
+
+def get_address_from_coords(lat: float, lon: float) -> str | None:
+    """
+    Géocodage inverse (lat/lon -> adresse).
+    Appelle l'API de géocodage de la Géoplateforme (IGN) et renvoie le libellé
+    de l'adresse la plus proche des coordonnées données, ou None si aucune
+    adresse n'est trouvée / en cas d'erreur.
+
+    C'est ce qui manquait pour le cas des caméras (test_cas_reel.py) : elles
+    fournissent seulement lat/lon (pas de texte d'adresse), donc il faut
+    "remonter" jusqu'à une adresse à partir des coordonnées, plutôt que
+    l'inverse.
+    """
+    try:
+        response = requests.get(
+            "https://data.geopf.fr/geocodage/reverse",
+            params={"lon": lon, "lat": lat, "index": "address", "limit": 1},
+            timeout=5,
+        )
+        data = response.json()
+        if data['features']:
+            return data['features'][0]['properties']['label']
+    except Exception as e:
+        print(f"Erreur API géocodage (reverse): {e}")
     return None
 
 def extract_features(file_path: str) -> dict:

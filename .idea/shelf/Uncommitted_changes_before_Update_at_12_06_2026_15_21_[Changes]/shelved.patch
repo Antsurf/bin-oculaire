@@ -1,0 +1,635 @@
+Index: app/features.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\"\"\"\r\nfeatures.py — Extraction de caractéristiques visuelles sans ML.\r\n\r\nToutes les features sont calculées avec Pillow + la bibliothèque standard.\r\nAucun modèle de machine learning n'est utilisé.\r\n\"\"\"\r\n\r\nimport os\r\nimport math\r\nfrom PIL import Image, ImageFilter, ImageStat\r\n\r\n\r\n# ─── Paramètres globaux ────────────────────────────────────────────────────────\r\n\r\n# Taille max pour le calcul des features (accélère le traitement sans perte significative)\r\nANALYSIS_SIZE = (512, 512)\r\n\r\n\r\n# ─── Fonction principale ───────────────────────────────────────────────────────\r\n\r\ndef extract_features(filepath: str) -> dict:\r\n    \"\"\"\r\n    Extrait toutes les caractéristiques visuelles d'une image.\r\n\r\n    Retourne un dict avec :\r\n      - file_size_kb  : taille du fichier en Ko\r\n      - width, height : dimensions originales en pixels\r\n      - mean_r/g/b    : moyenne des canaux Rouge, Vert, Bleu (0–255)\r\n      - brightness    : luminosité perçue (formule ITU-R BT.601)\r\n      - contrast      : écart-type des niveaux de gris (dispersion des pixels)\r\n      - saturation    : saturation moyenne HSV (0–255)\r\n      - edge_density  : densité de contours (% de pixels avec contour fort)\r\n    \"\"\"\r\n    features = {}\r\n\r\n    # ── 1. Taille du fichier ────────────────────────────────────────────────\r\n    features[\"file_size_kb\"] = round(os.path.getsize(filepath) / 1024, 2)\r\n\r\n    # ── 2. Dimensions originales ────────────────────────────────────────────\r\n    img = Image.open(filepath).convert(\"RGB\")\r\n    features[\"width\"], features[\"height\"] = img.size\r\n\r\n    # Redimensionne pour l'analyse (plus rapide, résultats cohérents)\r\n    img_small = img.copy()\r\n    img_small.thumbnail(ANALYSIS_SIZE, Image.LANCZOS)\r\n\r\n    # ── 3. Couleur moyenne (canaux R, G, B) ─────────────────────────────────\r\n    stat = ImageStat.Stat(img_small)\r\n    features[\"mean_r\"] = round(stat.mean[0], 2)\r\n    features[\"mean_g\"] = round(stat.mean[1], 2)\r\n    features[\"mean_b\"] = round(stat.mean[2], 2)\r\n\r\n    # ── 4. Luminosité perçue ─────────────────────────────────────────────────\r\n    # Formule ITU-R BT.601 : l'œil est plus sensible au vert qu'au rouge ou bleu\r\n    # Valeur entre 0 (noir pur) et 255 (blanc pur)\r\n    features[\"brightness\"] = round(\r\n        0.299 * features[\"mean_r\"] +\r\n        0.587 * features[\"mean_g\"] +\r\n        0.114 * features[\"mean_b\"],\r\n        2\r\n    )\r\n\r\n    # ── 5. Contraste : écart-type sur le canal de luminosité ─────────────────\r\n    # Un contraste élevé = image avec beaucoup de zones claires ET sombres\r\n    # (typique d'une poubelle pleine avec déchets débordants et ombres)\r\n    gray = img_small.convert(\"L\")\r\n    stat_gray = ImageStat.Stat(gray)\r\n    features[\"contrast\"] = round(stat_gray.stddev[0], 2)\r\n\r\n    # ── 6. Saturation moyenne ─────────────────────────────────────────────────\r\n    # Convertit en HSV et récupère le canal S (saturation)\r\n    # Une saturation faible = image terne/grisâtre (poubelle vide souvent plus neutre)\r\n    img_hsv = img_small.convert(\"HSV\")\r\n    stat_hsv = ImageStat.Stat(img_hsv)\r\n    features[\"saturation\"] = round(stat_hsv.mean[1], 2)\r\n\r\n    # ── 7. Densité de contours ────────────────────────────────────────────────\r\n    # Applique un filtre de détection de bords (Pillow FIND_EDGES)\r\n    # puis calcule le % de pixels \"actifs\" (contour détecté)\r\n    # Une densité élevée = beaucoup de bords = image complexe/chargée\r\n    edge_img = gray.filter(ImageFilter.FIND_EDGES)\r\n    stat_edge = ImageStat.Stat(edge_img)\r\n    # Normalise par 255 pour obtenir une valeur entre 0 et 1\r\n    features[\"edge_density\"] = round(stat_edge.mean[0] / 255.0, 4)\r\n\r\n    return features\r\n\r\n\r\n# ─── Utilitaire de diagnostic ──────────────────────────────────────────────────\r\n\r\ndef features_summary(features: dict) -> str:\r\n    \"\"\"Retourne un résumé lisible des features extraites (pour debug/affichage).\"\"\"\r\n    return (\r\n        f\"Taille: {features['file_size_kb']} Ko | \"\r\n        f\"Dimensions: {features['width']}×{features['height']}px | \"\r\n        f\"Luminosité: {features['brightness']:.1f} | \"\r\n        f\"Contraste: {features['contrast']:.1f} | \"\r\n        f\"Saturation: {features['saturation']:.1f} | \"\r\n        f\"Contours: {features['edge_density']:.3f}\"\r\n    )
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/features.py b/app/features.py
+--- a/app/features.py	(revision 3d5addac95830faca7dda2a6e8722987a7939866)
++++ b/app/features.py	(date 1781258022625)
+@@ -1,100 +1,2 @@
+-"""
+-features.py — Extraction de caractéristiques visuelles sans ML.
+-
+-Toutes les features sont calculées avec Pillow + la bibliothèque standard.
+-Aucun modèle de machine learning n'est utilisé.
+-"""
+-
+-import os
+-import math
+ from PIL import Image, ImageFilter, ImageStat
+-
+-
+-# ─── Paramètres globaux ────────────────────────────────────────────────────────
+-
+-# Taille max pour le calcul des features (accélère le traitement sans perte significative)
+-ANALYSIS_SIZE = (512, 512)
+-
+-
+-# ─── Fonction principale ───────────────────────────────────────────────────────
+-
+-def extract_features(filepath: str) -> dict:
+-    """
+-    Extrait toutes les caractéristiques visuelles d'une image.
+-
+-    Retourne un dict avec :
+-      - file_size_kb  : taille du fichier en Ko
+-      - width, height : dimensions originales en pixels
+-      - mean_r/g/b    : moyenne des canaux Rouge, Vert, Bleu (0–255)
+-      - brightness    : luminosité perçue (formule ITU-R BT.601)
+-      - contrast      : écart-type des niveaux de gris (dispersion des pixels)
+-      - saturation    : saturation moyenne HSV (0–255)
+-      - edge_density  : densité de contours (% de pixels avec contour fort)
+-    """
+-    features = {}
+-
+-    # ── 1. Taille du fichier ────────────────────────────────────────────────
+-    features["file_size_kb"] = round(os.path.getsize(filepath) / 1024, 2)
+-
+-    # ── 2. Dimensions originales ────────────────────────────────────────────
+-    img = Image.open(filepath).convert("RGB")
+-    features["width"], features["height"] = img.size
+-
+-    # Redimensionne pour l'analyse (plus rapide, résultats cohérents)
+-    img_small = img.copy()
+-    img_small.thumbnail(ANALYSIS_SIZE, Image.LANCZOS)
+-
+-    # ── 3. Couleur moyenne (canaux R, G, B) ─────────────────────────────────
+-    stat = ImageStat.Stat(img_small)
+-    features["mean_r"] = round(stat.mean[0], 2)
+-    features["mean_g"] = round(stat.mean[1], 2)
+-    features["mean_b"] = round(stat.mean[2], 2)
+-
+-    # ── 4. Luminosité perçue ─────────────────────────────────────────────────
+-    # Formule ITU-R BT.601 : l'œil est plus sensible au vert qu'au rouge ou bleu
+-    # Valeur entre 0 (noir pur) et 255 (blanc pur)
+-    features["brightness"] = round(
+-        0.299 * features["mean_r"] +
+-        0.587 * features["mean_g"] +
+-        0.114 * features["mean_b"],
+-        2
+-    )
+-
+-    # ── 5. Contraste : écart-type sur le canal de luminosité ─────────────────
+-    # Un contraste élevé = image avec beaucoup de zones claires ET sombres
+-    # (typique d'une poubelle pleine avec déchets débordants et ombres)
+-    gray = img_small.convert("L")
+-    stat_gray = ImageStat.Stat(gray)
+-    features["contrast"] = round(stat_gray.stddev[0], 2)
+-
+-    # ── 6. Saturation moyenne ─────────────────────────────────────────────────
+-    # Convertit en HSV et récupère le canal S (saturation)
+-    # Une saturation faible = image terne/grisâtre (poubelle vide souvent plus neutre)
+-    img_hsv = img_small.convert("HSV")
+-    stat_hsv = ImageStat.Stat(img_hsv)
+-    features["saturation"] = round(stat_hsv.mean[1], 2)
+-
+-    # ── 7. Densité de contours ────────────────────────────────────────────────
+-    # Applique un filtre de détection de bords (Pillow FIND_EDGES)
+-    # puis calcule le % de pixels "actifs" (contour détecté)
+-    # Une densité élevée = beaucoup de bords = image complexe/chargée
+-    edge_img = gray.filter(ImageFilter.FIND_EDGES)
+-    stat_edge = ImageStat.Stat(edge_img)
+-    # Normalise par 255 pour obtenir une valeur entre 0 et 1
+-    features["edge_density"] = round(stat_edge.mean[0] / 255.0, 4)
+-
+-    return features
+-
+-
+-# ─── Utilitaire de diagnostic ──────────────────────────────────────────────────
+-
+-def features_summary(features: dict) -> str:
+-    """Retourne un résumé lisible des features extraites (pour debug/affichage)."""
+-    return (
+-        f"Taille: {features['file_size_kb']} Ko | "
+-        f"Dimensions: {features['width']}×{features['height']}px | "
+-        f"Luminosité: {features['brightness']:.1f} | "
+-        f"Contraste: {features['contrast']:.1f} | "
+-        f"Saturation: {features['saturation']:.1f} | "
+-        f"Contours: {features['edge_density']:.3f}"
+-    )
+\ No newline at end of file
++import os
+\ No newline at end of file
+Index: app/app.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/app.py b/app/app.py
+--- a/app/app.py	(revision 3d5addac95830faca7dda2a6e8722987a7939866)
++++ b/app/app.py	(date 1781257501209)
+@@ -1,0 +1,210 @@
++import os
++import uuid
++from datetime import datetime
++
++from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
++
++from database import init_db, insert_image, get_image, get_all_images, update_annotation, get_stats
++from features import extract_features
++from classifier import classify, get_thresholds
++
++app = Flask(__name__)
++app.secret_key = "wdp-secret-key"
++
++UPLOAD_FOLDER = os.path.join("static", "uploads")
++ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
++MAX_SIZE_BYTES = 10 * 1024 * 1024  # 10 Mo
++
++app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
++os.makedirs(UPLOAD_FOLDER, exist_ok=True)
++
++# Initialise la BDD au démarrage
++init_db()
++
++
++def allowed_file(filename):
++    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
++
++
++# ─── Page d'accueil / Upload ───────────────────────────────────────────────────
++
++@app.route("/")
++def index():
++    return render_template("index.html")
++
++
++@app.route("/upload", methods=["POST"])
++def upload():
++    if "image" not in request.files:
++        flash("Aucun fichier reçu.", "error")
++        return redirect(url_for("index"))
++
++    file = request.files["image"]
++
++    if file.filename == "":
++        flash("Aucun fichier sélectionné.", "error")
++        return redirect(url_for("index"))
++
++    if not allowed_file(file.filename):
++        flash("Format non supporté. Utilisez JPG, PNG ou WEBP.", "error")
++        return redirect(url_for("index"))
++
++    # Vérifie la taille
++    file.seek(0, 2)
++    size = file.tell()
++    file.seek(0)
++    if size > MAX_SIZE_BYTES:
++        flash("Fichier trop lourd (max 10 Mo).", "error")
++        return redirect(url_for("index"))
++
++    # Sauvegarde avec nom unique
++    ext = file.filename.rsplit(".", 1)[1].lower()
++    unique_name = f"{uuid.uuid4().hex}.{ext}"
++    filepath = os.path.join(UPLOAD_FOLDER, unique_name)
++    file.save(filepath)
++
++    # Extraction des features
++    try:
++        features = extract_features(filepath)
++    except Exception as e:
++        os.remove(filepath)
++        flash(f"Erreur lors de l'analyse de l'image : {e}", "error")
++        return redirect(url_for("index"))
++
++    # Classification automatique
++    auto_label, confidence, reasons = classify(features)
++
++    # Récupère les métadonnées du formulaire
++    def to_float(val):
++        try:
++            return float(val) if val else None
++        except ValueError:
++            return None
++
++    data = {
++        "filename":      file.filename,
++        "filepath":      filepath,
++        "upload_date":   datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
++        "latitude":      to_float(request.form.get("latitude")),
++        "longitude":     to_float(request.form.get("longitude")),
++        "location_name": request.form.get("location_name") or None,
++        "auto_label":    auto_label,
++        "confidence":    confidence,
++        **features
++    }
++
++    image_id = insert_image(data)
++    return redirect(url_for("result", image_id=image_id, reasons=",".join(reasons)))
++
++
++# ─── Page résultat ─────────────────────────────────────────────────────────────
++
++@app.route("/result/<int:image_id>")
++def result(image_id):
++    image = get_image(image_id)
++    if not image:
++        flash("Image introuvable.", "error")
++        return redirect(url_for("index"))
++
++    reasons_raw = request.args.get("reasons", "")
++    reasons = [r for r in reasons_raw.split(",") if r] if reasons_raw else []
++
++    thresholds = get_thresholds()
++    return render_template("result.html", image=image, reasons=reasons, thresholds=thresholds)
++
++
++# ─── Annotation manuelle ───────────────────────────────────────────────────────
++
++@app.route("/annotate/<int:image_id>/<annotation>", methods=["POST"])
++def annotate(image_id, annotation):
++    if annotation not in ("pleine", "vide"):
++        return jsonify({"error": "Annotation invalide"}), 400
++    update_annotation(image_id, annotation)
++    return jsonify({"success": True, "annotation": annotation})
++
++
++# ─── Galerie ───────────────────────────────────────────────────────────────────
++
++@app.route("/gallery")
++def gallery():
++    images = get_all_images(limit=100)
++    return render_template("gallery.html", images=images)
++
++
++# ─── Dashboard ─────────────────────────────────────────────────────────────────
++
++@app.route("/dashboard")
++def dashboard():
++    stats = get_stats()
++    images = get_all_images(limit=200)
++
++    # Prépare les données pour les graphiques matplotlib
++    import matplotlib
++    matplotlib.use("Agg")
++    import matplotlib.pyplot as plt
++    import io, base64
++
++    charts = {}
++
++    # Graphique 1 : Répartition des annotations
++    if stats["annotated"] > 0:
++        fig, ax = plt.subplots(figsize=(4, 4))
++        labels = []
++        sizes  = []
++        colors = []
++        if stats["pleines"] > 0:
++            labels.append("Pleine"); sizes.append(stats["pleines"]); colors.append("#d62839")
++        if stats["vides"] > 0:
++            labels.append("Vide");   sizes.append(stats["vides"]);   colors.append("#2d6a4f")
++        ax.pie(sizes, labels=labels, colors=colors, autopct="%1.0f%%",
++               startangle=90, textprops={"fontsize": 12})
++        ax.set_title("Annotations manuelles", fontsize=13, pad=10)
++        fig.patch.set_alpha(0)
++        charts["pie"] = fig_to_base64(fig)
++        plt.close(fig)
++
++    # Graphique 2 : Luminosité des images
++    brightness_vals = [img["brightness"] for img in images if img["brightness"] is not None]
++    if brightness_vals:
++        fig, ax = plt.subplots(figsize=(5, 3))
++        ax.hist(brightness_vals, bins=15, color="#52b788", edgecolor="white")
++        ax.set_xlabel("Luminosité")
++        ax.set_ylabel("Nb d'images")
++        ax.set_title("Distribution de la luminosité")
++        ax.axvline(x=100, color="#d62839", linestyle="--", alpha=0.7, label="Seuil bas (100)")
++        ax.axvline(x=180, color="#f4a261", linestyle="--", alpha=0.7, label="Seuil haut (180)")
++        ax.legend(fontsize=8)
++        fig.patch.set_alpha(0)
++        plt.tight_layout()
++        charts["brightness"] = fig_to_base64(fig)
++        plt.close(fig)
++
++    # Graphique 3 : Labels automatiques
++    auto_labels = [img["auto_label"] for img in images if img["auto_label"]]
++    if auto_labels:
++        pleines = auto_labels.count("pleine")
++        vides   = auto_labels.count("vide")
++        fig, ax = plt.subplots(figsize=(4, 3))
++        ax.bar(["Pleine", "Vide"], [pleines, vides], color=["#d62839", "#2d6a4f"])
++        ax.set_title("Classification automatique")
++        ax.set_ylabel("Nb d'images")
++        for i, v in enumerate([pleines, vides]):
++            ax.text(i, v + 0.1, str(v), ha="center", fontweight="bold")
++        fig.patch.set_alpha(0)
++        plt.tight_layout()
++        charts["auto"] = fig_to_base64(fig)
++        plt.close(fig)
++
++    return render_template("dashboard.html", stats=stats, charts=charts, images=images)
++
++
++def fig_to_base64(fig) -> str:
++    """Convertit une figure matplotlib en base64 pour l'afficher en HTML."""
++    buf = io.BytesIO()
++    fig.savefig(buf, format="png", bbox_inches="tight", transparent=True, dpi=110)
++    buf.seek(0)
++    return base64.b64encode(buf.read()).decode("utf-8")
++
++
++if __name__ == "__main__":
++    app.run(debug=True)
+\ No newline at end of file
+Index: app/classifier.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/classifier.py b/app/classifier.py
+--- a/app/classifier.py	(revision 3d5addac95830faca7dda2a6e8722987a7939866)
++++ b/app/classifier.py	(date 1781257497355)
+@@ -1,0 +1,125 @@
++"""
++classifier.py — Classification par règles conditionnelles (sans ML).
++
++Principe : chaque règle attribue des "points" à la classe 'pleine'.
++Le total détermine le label final et le niveau de confiance.
++
++Avantages de cette approche par score :
++  - Plus robuste qu'un simple if/else unique
++  - Chaque règle est indépendante et justifiable
++  - Facile à ajuster en modifiant les seuils
++"""
++
++# ─── Seuils de classification ──────────────────────────────────────────────────
++# Ces valeurs sont calibrées empiriquement.
++# Règle : si brightness < SEUIL → image sombre → potentiellement pleine (déchets sombres)
++SEUIL_BRIGHTNESS_BAS    = 100   # en dessous = sombre
++SEUIL_BRIGHTNESS_HAUT   = 180   # au dessus = très clair (poubelle souvent vide)
++
++SEUIL_CONTRASTE_ELEVE   = 55    # contraste fort = image complexe/chargée
++SEUIL_CONTRASTE_FAIBLE  = 30    # contraste faible = image uniforme (poubelle vide)
++
++SEUIL_SATURATION_ELEVE  = 40    # saturation élevée = présence de déchets colorés
++SEUIL_SATURATION_FAIBLE = 15    # saturation très faible = image neutre (vide)
++
++SEUIL_EDGE_ELEVE        = 0.06  # beaucoup de contours = image chargée
++SEUIL_EDGE_FAIBLE       = 0.02  # peu de contours = surface uniforme (vide)
++
++SEUIL_TAILLE_GRANDE     = 500   # Ko : fichier lourd souvent = image plus détaillée/chargée
++
++# Score minimum pour décider
++SCORE_PLEINE_CERTAIN    = 3     # ≥ 3 points → "pleine" certain
++SCORE_PLEINE_INCERTAIN  = 1     # 1-2 points → incertain
++
++
++def classify(features: dict) -> tuple[str, str, list[str]]:
++    """
++    Applique les règles conditionnelles et retourne (label, confiance, explications).
++
++    Retour :
++      - label       : 'pleine' | 'vide'
++      - confidence  : 'certain' | 'incertain'
++      - reasons     : liste des règles déclenchées (pour affichage)
++    """
++    score = 0        # score positif = vote pour 'pleine'
++    reasons = []
++
++    brightness  = features.get("brightness", 128)
++    contrast    = features.get("contrast", 0)
++    saturation  = features.get("saturation", 0)
++    edge_density = features.get("edge_density", 0)
++    file_size_kb = features.get("file_size_kb", 0)
++
++    # ── Règle 1 : Luminosité faible → image sombre → probable pleine ──────────
++    if brightness < SEUIL_BRIGHTNESS_BAS:
++        score += 2
++        reasons.append(f"Image sombre (luminosité {brightness:.0f} < {SEUIL_BRIGHTNESS_BAS})")
++    elif brightness > SEUIL_BRIGHTNESS_HAUT:
++        score -= 1
++        reasons.append(f"Image très claire (luminosité {brightness:.0f} > {SEUIL_BRIGHTNESS_HAUT}) → tendance vide")
++
++    # ── Règle 2 : Contraste élevé → image complexe → probable pleine ─────────
++    if contrast > SEUIL_CONTRASTE_ELEVE:
++        score += 1
++        reasons.append(f"Contraste élevé ({contrast:.1f} > {SEUIL_CONTRASTE_ELEVE})")
++    elif contrast < SEUIL_CONTRASTE_FAIBLE:
++        score -= 1
++        reasons.append(f"Contraste faible ({contrast:.1f} < {SEUIL_CONTRASTE_FAIBLE}) → tendance vide")
++
++    # ── Règle 3 : Saturation élevée → déchets colorés visibles ───────────────
++    if saturation > SEUIL_SATURATION_ELEVE:
++        score += 1
++        reasons.append(f"Saturation élevée ({saturation:.1f} > {SEUIL_SATURATION_ELEVE}) → déchets colorés")
++    elif saturation < SEUIL_SATURATION_FAIBLE:
++        score -= 1
++        reasons.append(f"Saturation faible ({saturation:.1f} < {SEUIL_SATURATION_FAIBLE}) → tendance vide")
++
++    # ── Règle 4 : Densité de contours élevée → image chargée ─────────────────
++    if edge_density > SEUIL_EDGE_ELEVE:
++        score += 1
++        reasons.append(f"Beaucoup de contours ({edge_density:.3f} > {SEUIL_EDGE_ELEVE}) → image complexe")
++    elif edge_density < SEUIL_EDGE_FAIBLE:
++        score -= 1
++        reasons.append(f"Peu de contours ({edge_density:.3f} < {SEUIL_EDGE_FAIBLE}) → surface uniforme")
++
++    # ── Règle 5 : Taille de fichier grande ───────────────────────────────────
++    if file_size_kb > SEUIL_TAILLE_GRANDE:
++        score += 1
++        reasons.append(f"Fichier lourd ({file_size_kb:.0f} Ko > {SEUIL_TAILLE_GRANDE} Ko)")
++
++    # ── Décision finale ───────────────────────────────────────────────────────
++    if score >= SCORE_PLEINE_CERTAIN:
++        label      = "pleine"
++        confidence = "certain"
++    elif score >= SCORE_PLEINE_INCERTAIN:
++        label      = "pleine"
++        confidence = "incertain"
++    elif score <= -2:
++        label      = "vide"
++        confidence = "certain"
++    elif score < 0:
++        label      = "vide"
++        confidence = "incertain"
++    else:
++        label      = "vide"
++        confidence = "incertain"
++
++    if not reasons:
++        reasons.append("Aucune règle déclenchée — valeurs dans les plages neutres")
++
++    return label, confidence, reasons
++
++
++def get_thresholds() -> dict:
++    """Retourne les seuils actuels (utile pour les afficher dans l'interface)."""
++    return {
++        "brightness_bas":   SEUIL_BRIGHTNESS_BAS,
++        "brightness_haut":  SEUIL_BRIGHTNESS_HAUT,
++        "contraste_eleve":  SEUIL_CONTRASTE_ELEVE,
++        "contraste_faible": SEUIL_CONTRASTE_FAIBLE,
++        "saturation_eleve": SEUIL_SATURATION_ELEVE,
++        "saturation_faible":SEUIL_SATURATION_FAIBLE,
++        "edge_eleve":       SEUIL_EDGE_ELEVE,
++        "edge_faible":      SEUIL_EDGE_FAIBLE,
++        "taille_grande_kb": SEUIL_TAILLE_GRANDE,
++    }
+\ No newline at end of file
+Index: app/requirements.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/requirements.txt b/app/requirements.txt
+--- a/app/requirements.txt	(revision 3d5addac95830faca7dda2a6e8722987a7939866)
++++ b/app/requirements.txt	(date 1781257502526)
+@@ -1,0 +1,4 @@
++flask==3.0.3
++pillow==10.4.0
++matplotlib==3.9.0
++numpy==1.26.4
+\ No newline at end of file
+Index: app/database.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/database.py b/app/database.py
+--- a/app/database.py	(revision 3d5addac95830faca7dda2a6e8722987a7939866)
++++ b/app/database.py	(date 1781257495387)
+@@ -1,0 +1,142 @@
++import sqlite3
++import os
++
++DB_PATH = "wdp.db"
++
++
++def get_connection():
++    """Retourne une connexion SQLite avec Row factory pour accès par nom de colonne."""
++    conn = sqlite3.connect(DB_PATH)
++    conn.row_factory = sqlite3.Row
++    return conn
++
++
++def init_db():
++    """Crée la table images si elle n'existe pas encore."""
++    conn = get_connection()
++    conn.execute("""
++        CREATE TABLE IF NOT EXISTS images (
++            id              INTEGER PRIMARY KEY AUTOINCREMENT,
++            filename        TEXT    NOT NULL,
++            filepath        TEXT    NOT NULL,
++            upload_date     TEXT    NOT NULL,
++            annotation      TEXT    DEFAULT NULL,      -- 'pleine' | 'vide' | NULL
++            auto_label      TEXT    DEFAULT NULL,      -- label calculé par les règles
++            confidence      TEXT    DEFAULT NULL,      -- 'certain' | 'incertain'
++
++            -- Localisation
++            latitude        REAL    DEFAULT NULL,
++            longitude       REAL    DEFAULT NULL,
++            location_name   TEXT    DEFAULT NULL,
++
++            -- Features basiques
++            file_size_kb    REAL    DEFAULT NULL,
++            width           INTEGER DEFAULT NULL,
++            height          INTEGER DEFAULT NULL,
++            mean_r          REAL    DEFAULT NULL,
++            mean_g          REAL    DEFAULT NULL,
++            mean_b          REAL    DEFAULT NULL,
++            brightness      REAL    DEFAULT NULL,
++
++            -- Features avancées
++            contrast        REAL    DEFAULT NULL,
++            saturation      REAL    DEFAULT NULL,
++            edge_density    REAL    DEFAULT NULL
++        )
++    """)
++    conn.commit()
++    conn.close()
++
++
++def insert_image(data: dict) -> int:
++    """Insère une nouvelle image et retourne son id."""
++    conn = get_connection()
++    cur = conn.execute("""
++        INSERT INTO images (
++            filename, filepath, upload_date,
++            latitude, longitude, location_name,
++            file_size_kb, width, height,
++            mean_r, mean_g, mean_b, brightness,
++            contrast, saturation, edge_density,
++            auto_label, confidence
++        ) VALUES (
++            :filename, :filepath, :upload_date,
++            :latitude, :longitude, :location_name,
++            :file_size_kb, :width, :height,
++            :mean_r, :mean_g, :mean_b, :brightness,
++            :contrast, :saturation, :edge_density,
++            :auto_label, :confidence
++        )
++    """, data)
++    conn.commit()
++    image_id = cur.lastrowid
++    conn.close()
++    return image_id
++
++
++def get_image(image_id: int):
++    """Retourne une image par son id."""
++    conn = get_connection()
++    row = conn.execute("SELECT * FROM images WHERE id = ?", (image_id,)).fetchone()
++    conn.close()
++    return row
++
++
++def get_all_images(limit: int = 100):
++    """Retourne toutes les images, les plus récentes en premier."""
++    conn = get_connection()
++    rows = conn.execute(
++        "SELECT * FROM images ORDER BY id DESC LIMIT ?", (limit,)
++    ).fetchall()
++    conn.close()
++    return rows
++
++
++def update_annotation(image_id: int, annotation: str):
++    """Met à jour l'annotation manuelle d'une image."""
++    conn = get_connection()
++    conn.execute(
++        "UPDATE images SET annotation = ? WHERE id = ?",
++        (annotation, image_id)
++    )
++    conn.commit()
++    conn.close()
++
++
++def get_stats():
++    """Retourne des statistiques globales pour le dashboard."""
++    conn = get_connection()
++    stats = {}
++
++    stats["total"] = conn.execute("SELECT COUNT(*) FROM images").fetchone()[0]
++    stats["annotated"] = conn.execute(
++        "SELECT COUNT(*) FROM images WHERE annotation IS NOT NULL"
++    ).fetchone()[0]
++    stats["pleines"] = conn.execute(
++        "SELECT COUNT(*) FROM images WHERE annotation = 'pleine'"
++    ).fetchone()[0]
++    stats["vides"] = conn.execute(
++        "SELECT COUNT(*) FROM images WHERE annotation = 'vide'"
++    ).fetchone()[0]
++    stats["auto_pleines"] = conn.execute(
++        "SELECT COUNT(*) FROM images WHERE auto_label = 'pleine'"
++    ).fetchone()[0]
++    stats["auto_vides"] = conn.execute(
++        "SELECT COUNT(*) FROM images WHERE auto_label = 'vide'"
++    ).fetchone()[0]
++
++    # Moyennes des features
++    row = conn.execute("""
++        SELECT
++            AVG(brightness), AVG(contrast), AVG(file_size_kb),
++            AVG(saturation), AVG(edge_density)
++        FROM images
++    """).fetchone()
++    stats["avg_brightness"] = round(row[0], 1) if row[0] else 0
++    stats["avg_contrast"]   = round(row[1], 1) if row[1] else 0
++    stats["avg_size_kb"]    = round(row[2], 1) if row[2] else 0
++    stats["avg_saturation"] = round(row[3], 1) if row[3] else 0
++    stats["avg_edge"]       = round(row[4], 4) if row[4] else 0
++
++    conn.close()
++    return stats
+\ No newline at end of file

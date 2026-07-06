@@ -232,9 +232,6 @@ def upload_file():
                 images_features = ft.extract_features(chemin_final)
 
                 adresse = request.form.get('mon_adresse', '').strip() #pour éviter les faux espaces
-                if not adresse:
-                        flash(_("L'adresse est obligatoire."))
-                        return redirect(request.url)
                 # on regarde si on a des coordonnées 
                 """
                 Petite remarque, quand on vérifie que la personne rentre une adresse via 
@@ -242,13 +239,26 @@ def upload_file():
                 cependant, si l'utilisateur écrit simplement une adresse sans en sélectionner une
                 ces valeurs sont vides. Donc on doit utiliser l'appel d'api qu'on a codé 
                 dans features.py 
+
+                Cas des caméras (test_cas_reel.py) : elles envoient directement lat/lon
+                mais pas de vraie adresse (juste un texte de substitution). Dans ce cas
+                on fait l'inverse : on résout l'adresse à partir des coordonnées via le
+                géocodage inverse, plutôt que de faire confiance au texte du formulaire.
                 """
                 lat_str = request.form.get('lat')
                 lon_str = request.form.get('lon')
 
                 if lat_str and lon_str:
                     lat, lon = float(lat_str), float(lon_str)
+                    adresse_resolue = ft.get_address_from_coords(lat, lon)
+                    if adresse_resolue:
+                        adresse = adresse_resolue
+                    elif not adresse:
+                        adresse = _("Adresse inconnue")
                 else:
+                    if not adresse:
+                        flash(_("L'adresse est obligatoire."))
+                        return redirect(request.url)
                     lat, lon = ft.get_coords_from_address(adresse)
                 id_localisation = db.get_localisation(lat, lon)
 
@@ -384,7 +394,7 @@ def get_zones_risque():
     # marqueurs superposés que Leaflet regroupe avec un numéro cliquable
     # (cluster), au lieu de n'afficher que la dernière image de l'adresse.
     rows = conn.execute("""
-        SELECT i.id AS image_id, i.upload_date, l.latitude, l.longitude, l.localisation_nom, c.auto_label
+        SELECT i.id AS image_id, i.upload_date, l.latitude, l.longitude, l.localisation_nom, c.auto_label, c.annotation
         FROM localisation l
         JOIN images i ON l.id_localisation = i.id_localisation
         LEFT JOIN images_classification c ON i.id = c.image_id
@@ -401,6 +411,20 @@ def get_zones_risque():
     }
     
     for row in rows:
+        label = row['auto_label']
+        annotation = row['annotation']
+        if annotation == "pleine":
+            annotation = "debordante"  # même mapping que sur le dashboard
+
+        # Si l'utilisateur a annoté l'image ET que son annotation diffère de la
+        # classification automatique, on donne priorité à l'annotation pour la
+        # couleur du point. Si elle est identique, ou si l'image n'est pas
+        # annotée, on garde la classification automatique (ou "inconnu").
+        if annotation is not None and annotation != label:
+            etat = annotation
+        else:
+            etat = label if label else "inconnu"
+
         feature = {
             "type": "Feature",
             "geometry": {
@@ -409,7 +433,7 @@ def get_zones_risque():
             },
             "properties": {
                 "adresse": row['localisation_nom'],
-                "etat": row['auto_label'] if row['auto_label'] else "inconnu",
+                "etat": etat,
                 "image_id": row['image_id'],
                 "date": row['upload_date'],
             }

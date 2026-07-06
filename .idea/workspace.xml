@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="763273c4-eeb5-4cc6-a081-dd4280c5ca49" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/app/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/features.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/features.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/app/requirements.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Antsurf&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Antsurf/bin-oculaire.git&quot;,
+    &quot;accountId&quot;: &quot;e5c087f8-c08d-4a8e-a3f0-edcd063662f2&quot;
+  }
+}</component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0102378214333203" />
+      <entry key="MS500" value="1.488751443092522" />
+      <entry key="S2" value="2.9615000302064334" />
+      <entry key="S5" value="3.9538112880248493" />
+      <entry key="S10" value="4.429322040769959" />
+      <entry key="S30" value="5.73195321775555" />
+      <entry key="S60" value="10.090844847879476" />
+      <entry key="M2" value="18.68073778029872" />
+      <entry key="M5" value="31.016312403596988" />
+      <entry key="M10" value="37.56888722490721" />
+      <entry key="M15" value="40.14446570823808" />
+      <entry key="M30" value="42.94749810692344" />
+      <entry key="H1" value="44.44110343123584" />
+      <entry key="H2" value="45.21219961725919" />
+      <entry key="H4" value="45.603987431289795" />
+      <entry key="D1" value="45.93370242802266" />
+      <entry key="W1" value="45.99052165467407" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="7.017481225454286E-98" />
+      <entry key="S2" value="5.14689507582842E-25" />
+      <entry key="S5" value="1.9258307902463018E-10" />
+      <entry key="S10" value="1.3877430562774598E-5" />
+      <entry key="S30" value="0.02403088071342414" />
+      <entry key="S60" value="0.15501896888259886" />
+      <entry key="M2" value="0.3937244834685783" />
+      <entry key="M5" value="0.6887743550317433" />
+      <entry key="M10" value="0.8299243068086046" />
+      <entry key="M15" value="0.883132070532364" />
+      <entry key="M30" value="0.939751068385859" />
+      <entry key="H1" value="0.9694075863050889" />
+      <entry key="H2" value="0.984584981758857" />
+      <entry key="H4" value="0.9922625568663048" />
+      <entry key="D1" value="0.998706248875689" />
+      <entry key="W1" value="0.9998150758516043" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.5913411592125316" />
+      <entry key="MS500" value="1.3647364261487056" />
+      <entry key="S2" value="2.8974946661150427" />
+      <entry key="S5" value="3.919272907338988" />
+      <entry key="S10" value="4.409971010617658" />
+      <entry key="S30" value="5.744550615769771" />
+      <entry key="S60" value="10.219620849664182" />
+      <entry key="M2" value="19.030225163078" />
+      <entry key="M5" value="31.665073559154948" />
+      <entry key="M10" value="38.37227921008194" />
+      <entry key="M15" value="41.00814517781108" />
+      <entry key="M30" value="43.876547723173275" />
+      <entry key="H1" value="45.404897518578366" />
+      <entry key="H2" value="46.19390963698745" />
+      <entry key="H4" value="46.59479512949196" />
+      <entry key="D1" value="46.93216375889098" />
+      <entry key="W1" value="46.990301682077266" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3F2PsVJSoCbRyNW2SBbqM2T92GZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Features&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Antoine/Downloads/bin-oculaire&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-PY-261.24374.152" />
+        <option value="bundled-python-sdk-c59985aa861c-c2ffad84badb-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-261.24374.152" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="763273c4-eeb5-4cc6-a081-dd4280c5ca49" name="Changes" comment="" />
+      <created>1781270403368</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1781270403368</updated>
+      <workItem from="1781270412370" duration="2020000" />
+      <workItem from="1781540411434" duration="33000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
