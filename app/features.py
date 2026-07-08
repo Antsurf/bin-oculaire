@@ -20,7 +20,7 @@ def get_histograms(file_path:str) -> dict:
         "red":   r_histo,
         "green": g_histo,
         "blue":  b_histo,
-    })
+    }) 
 
     gray = img.convert("L")
     histo_dic["luminance"] = json.dumps(gray.histogram())
@@ -30,7 +30,7 @@ def get_histograms(file_path:str) -> dict:
 
 def get_coords_from_address(address: str) -> tuple[float, float] | None:
     """
-    Géocodage direct (adresse -> lat/lon).
+    Géocodage direct (adresse -> lat/lon). 
     Appelle l'API de géocodage de la Géoplateforme (IGN) et renvoie (lat, lon) ou None si erreur.
 
     NB: l'ancienne API api-adresse.data.gouv.fr est dépréciée (décommissionnement

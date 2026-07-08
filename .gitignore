@@ -7,6 +7,7 @@ venv/
 env/
 __pycache__/
 *.pyc
+.idea
 
 # Fichiers de configuration VS Code 
 .vscode/

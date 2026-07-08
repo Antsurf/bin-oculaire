@@ -44,7 +44,7 @@ addressInput.addEventListener('input', async () => {
     const data = await response.json();
 
     addressList.innerHTML = '';
-    data.features.forEach(feature => {
+    data.features.forEach(feature => { 
         const option = document.createElement('option');
         option.value = feature.properties.label;
 

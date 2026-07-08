@@ -243,7 +243,7 @@ def upload_file():
                 Cas des caméras (test_cas_reel.py) : elles envoient directement lat/lon
                 mais pas de vraie adresse (juste un texte de substitution). Dans ce cas
                 on fait l'inverse : on résout l'adresse à partir des coordonnées via le
-                géocodage inverse, plutôt que de faire confiance au texte du formulaire.
+                géocodage inverse, plutôt que de faire confiance au texte du formulaire. 
                 """
                 lat_str = request.form.get('lat')
                 lon_str = request.form.get('lon')
