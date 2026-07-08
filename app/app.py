@@ -589,7 +589,7 @@ def lauch_cas_reel():
             camera.class_ = db.get_image_details(camera.id)['auto_label']
     webbrowser.open_new_tab(cas_reel.get_routes(cameras))
     verifier_et_alerter_poubelles()
-    
+
 
     return render_template('carte.html')
 
@@ -636,7 +636,7 @@ def verifier_et_alerter_poubelles():
             cam.class_ = 'debordante'
             cameras_mock.append(cam)
             
-        # Utilisation de votre fonction existante de génération de lien Google Maps
+        # Utilisation de la fonction existante de génération de lien Google Maps
         lien_maps = cas_reel.get_routes(cameras_mock)
         
         # Envoi de la notification par e-mail
