@@ -1,5 +1,6 @@
 import webbrowser
-
+import os
+from dotenv import load_dotenv
 from flask import Flask, request, render_template, flash, redirect, url_for, jsonify, session
 from werkzeug.utils import secure_filename
 import os
@@ -8,7 +9,9 @@ import uuid
 from datetime import datetime
 import requests as http_requests
 from flask_babel import Babel, gettext as _, ngettext
-
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import database as db
 import features as ft
 import classifier as cl
@@ -287,7 +290,6 @@ def upload_file():
 
             classification, confidence = cl.classify(images_features, nb_of_classes=nb_classes)
             db.update_autolabel(img_id, classification, confidence)
-
             return redirect(url_for('result', image_id=img_id))
 
     return render_template('index.html')
@@ -586,9 +588,104 @@ def lauch_cas_reel():
             camera.id = response.url.split("/")[-1]
             camera.class_ = db.get_image_details(camera.id)['auto_label']
     webbrowser.open_new_tab(cas_reel.get_routes(cameras))
+    verifier_et_alerter_poubelles()
+
     return render_template('carte.html')
 
+def verifier_et_alerter_poubelles():
+    """
+    Vérifie s'il y a plus de 3 poubelles débordantes sur le réseau.
+    Si oui, génère l'itinéraire optimisé et envoie un e-mail d'alerte.
+    """
+    conn = db.get_connection()
+    rows = conn.execute("""
+        SELECT l.latitude, l.longitude, c.auto_label, c.annotation
+        FROM localisation l
+        JOIN images i ON l.id_localisation = i.id_localisation
+        LEFT JOIN images_classification c ON i.id = c.image_id
+    """).fetchall()
+    conn.close()
 
+    poubelles_debordantes = []
+    for row in rows:
+        label = row['auto_label']
+        annotation = row['annotation']
+        
+        # Harmonisation du statut (pleine -> debordante) comme fait dans l'application
+        if annotation == "pleine":
+            annotation = "debordante"
+            
+        # L'annotation manuelle prime sur la classification automatique
+        if annotation is not None:
+            etat = annotation
+        else:
+            etat = label if label else "inconnu"
+            
+        if etat == "debordante":
+            poubelles_debordantes.append(row)
+
+    # Si le nombre total est strictement supérieur à 3 (à partir de 4 poubelles)
+    if len(poubelles_debordantes) > 3:
+        # Création d'objets factices pour correspondre aux attributs attendus par cas_reel.get_routes() (.lat, .long, .class_)
+        cameras_mock = []
+        for p in poubelles_debordantes:
+            cam = cas_reel.camera()
+            cam.lat = p['latitude']
+            cam.long = p['longitude']
+            cam.class_ = 'debordante'
+            cameras_mock.append(cam)
+            
+        # Utilisation de votre fonction existante de génération de lien Google Maps
+        lien_maps = cas_reel.get_routes(cameras_mock)
+        
+        # Envoi de la notification par e-mail
+        envoyer_email_alerte(lien_maps)
+
+
+def envoyer_email_alerte(lien_maps):
+    
+    """ Gère l'authentification SMTP et l'envoi de l'e-mail d'alerte en utilisant le .env """
+    load_dotenv()
+    # Récupération sécurisée des variables du fichier .env
+    sender_email = os.getenv("EMAIL_USER")
+    receiver_email = os.getenv("RECEIVER_EMAIL")
+    password = os.getenv("EMAIL_PASSWORD")
+    smtp_server = os.getenv("SMTP_SERVER")
+    
+    smtp_port = int(os.getenv("SMTP_PORT", 587)) 
+
+    # Sécurité au cas où le fichier .env serait mal configuré
+    if not all([sender_email, receiver_email, password, smtp_server]):
+        print("Erreur : Les variables d'environnement pour l'e-mail ne sont pas toutes configurées.")
+        return
+
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Alerte : Plusieurs poubelles débordantes repérées !"
+    message["From"] = sender_email
+    message["To"] = receiver_email
+
+    text = f"Bonjour,\n\nPlus de 3 poubelles débordantes ont été repérées.\n\nVoici le lien Google Maps du trajet de collecte optimisé :\n{lien_maps}"
+    html = f"""\
+    <html>
+      <body>
+        <p>Bonjour,</p>
+        <p><strong>Plusieurs poubelles débordantes</strong> ont été repérées sur le réseau.</p>
+        <p><a href="{lien_maps}">Consulter l'itinéraire de collecte</a></p>
+      </body>
+    </html>
+    """
+    message.attach(MIMEText(text, "plain"))
+    message.attach(MIMEText(html, "html"))
+
+    try:
+        # Utilisation des variables d'environnement dynamiques
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+        print("E-mail d'alerte envoyé avec succès de manière sécurisée.")
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de l'e-mail : {e}")
 
 if __name__ == '__main__':
     print("--- Lancement du serveur sur http://127.0.0.1:5000 ---")
