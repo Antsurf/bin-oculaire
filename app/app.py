@@ -589,6 +589,7 @@ def lauch_cas_reel():
             camera.class_ = db.get_image_details(camera.id)['auto_label']
     webbrowser.open_new_tab(cas_reel.get_routes(cameras))
     verifier_et_alerter_poubelles()
+    
 
     return render_template('carte.html')
 
