@@ -59,7 +59,7 @@ def get_address_from_coords(lat: float, lon: float) -> str | None:
     de l'adresse la plus proche des coordonnées données, ou None si aucune
     adresse n'est trouvée / en cas d'erreur.
 
-    C'est ce qui manquait pour le cas des caméras (test_cas_reel.py) : elles
+    C'est ce qui manquait pour le cas des caméras (cas_reel.py) : elles
     fournissent seulement lat/lon (pas de texte d'adresse), donc il faut
     "remonter" jusqu'à une adresse à partir des coordonnées, plutôt que
     l'inverse.

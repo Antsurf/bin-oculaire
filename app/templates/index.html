@@ -23,6 +23,9 @@
         <button type="submit" id="post-button">{{ _("Importer l'image") }}</button>
     </div>
 </form>
+<form action="/cas_reel" method="POST" id="form-cas-reel">
+    <button type="submit" id="cas_reel">Lancer le cas reel</button>
+</form>
 <script>
 document.getElementById('imageInput').addEventListener('change', function(event) {
     const file = event.target.files[0]; // On récupère le fichier sélectionné
@@ -35,6 +38,7 @@ const addressInput = document.getElementById('address');
 const addressList = document.getElementById('address-list');
 const latInput = document.getElementById('lat');
 const lonInput = document.getElementById('lon');
+const cas_reel = document.getElementById('cas_reel')
 
 addressInput.addEventListener('input', async () => {
     const query = addressInput.value;

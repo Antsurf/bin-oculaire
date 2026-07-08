@@ -59,28 +59,6 @@ def upload_image_to_website(url_server, image_path, lat, lon):
 
 
 
-cameras = []
-for i in range(20):
-    cameras.append(camera())
-
-for i in range(len(cameras)):
-    if i < 10:
-        class_ = "clean"
-    else:
-        class_ = "dirty"
-    cameras[i].take_picture(f"Data/train/with_label/{class_}/train_{class_}_img_0{"0" if i<9 else ""}{i+1}.jpeg")
-for camera in cameras:
-    response = upload_image_to_website(
-        url_server="http://localhost:5000/index",
-        image_path=camera.img_path,
-        lat=camera.lat,
-        lon=camera.long,
-    )
-    if response:
-        camera.id = response.url.split("/")[-1]
-        camera.class_ = db.get_image_details(camera.id)['auto_label']
-        print(camera.class_)
-
 def get_routes(cameras):
     dirty_cameras = []
     for camera in cameras:
@@ -108,5 +86,3 @@ def get_routes(cameras):
         link+= f"&{key}={params[key]}"
 
     return link
-
-print(get_routes(cameras))

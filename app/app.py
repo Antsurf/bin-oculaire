@@ -1,3 +1,5 @@
+import webbrowser
+
 from flask import Flask, request, render_template, flash, redirect, url_for, jsonify, session
 from werkzeug.utils import secure_filename
 import os
@@ -10,6 +12,7 @@ from flask_babel import Babel, gettext as _, ngettext
 import database as db
 import features as ft
 import classifier as cl
+import cas_reel
 
 # BASE_DIR pointe vers le dossier où se trouve app.py
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -240,7 +243,7 @@ def upload_file():
                 ces valeurs sont vides. Donc on doit utiliser l'appel d'api qu'on a codé 
                 dans features.py 
 
-                Cas des caméras (test_cas_reel.py) : elles envoient directement lat/lon
+                Cas des caméras (cas_reel.py) : elles envoient directement lat/lon
                 mais pas de vraie adresse (juste un texte de substitution). Dans ce cas
                 on fait l'inverse : on résout l'adresse à partir des coordonnées via le
                 géocodage inverse, plutôt que de faire confiance au texte du formulaire. 
@@ -558,6 +561,34 @@ def api_context():
         "jour_marche": jour_marche,
         "chantiers_btp": chantiers_btp
     })
+
+@app.route('/cas_reel', methods=['POST'])
+def lauch_cas_reel():
+    cameras = []
+    for i in range(20):
+        cameras.append(cas_reel.camera())
+
+    for i in range(len(cameras)):
+        if i < 10:
+            class_ = "clean"
+        else:
+            class_ = "dirty"
+        cameras[i].take_picture(
+            f"../Data/train/with_label/{class_}/train_{class_}_img_0{"0" if i < 9 else ""}{i + 1}.jpeg")
+    for camera in cameras:
+        response = cas_reel.upload_image_to_website(
+            url_server="http://localhost:5000/index",
+            image_path=camera.img_path,
+            lat=camera.lat,
+            lon=camera.long,
+        )
+        if response:
+            camera.id = response.url.split("/")[-1]
+            camera.class_ = db.get_image_details(camera.id)['auto_label']
+    webbrowser.open_new_tab(cas_reel.get_routes(cameras))
+    return render_template('carte.html')
+
+
 
 if __name__ == '__main__':
     print("--- Lancement du serveur sur http://127.0.0.1:5000 ---")

@@ -118,7 +118,7 @@ nav a.active {
     color: rgb(151 150 150 / 0.89);
 }
 
-#post-button {
+#post-button, #cas_reel {
     background-color: #715555;
     border-radius: 10px;
     border: none;
@@ -126,9 +126,17 @@ nav a.active {
     padding: 5px 15px 5px 15px;
 }
 
-#post-button:hover {
+#post-button:hover, #cas_reel:hover {
     background-color: #8a6e6e;
     transition: transform 0.2s;
+}
+
+#cas_reel {
+    margin-left: 45%;
+}
+
+#form-cas-reel{
+    margin-top : 20px;
 }
 
 .img-case p {
