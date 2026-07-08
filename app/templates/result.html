@@ -4,9 +4,9 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 {% set label_translations = {
-    'propre': _('Propre'),
-    'sale': _('Sale'),
-    'debordante': _('Débordante')
+'propre': _('Propre'),
+'sale': _('Sale'),
+'debordante': _('Débordante')
 } %}
 
 <div class="result-wrapper">
@@ -15,7 +15,6 @@
 
     <div class="result-layout">
 
-        <!-- Colonne Gauche: Image et Méta de base -->
         <div class="result-col">
             <h1 style="margin-top: 0; display: block;">{{ _('Image') }} #{{ image['id'] if image else 'X' }}</h1>
             <img src="{{ url_for('static', filename='uploads/' + image['file_name']) if image else '' }}"
@@ -24,23 +23,71 @@
             <div class="info-box">
                 <h3>{{ _('Informations de Base') }}</h3>
                 <p><strong>{{ _('Date d\'upload') }} :</strong> {{ image['upload_date'] if image else '' }}</p>
-                <p><strong>{{ _('Lieu') }} :</strong> {{ image['localisation_nom'] | default(_('Non spécifié')) if image else '' }}
+                <p><strong>{{ _('Lieu') }} :</strong> {{ image['localisation_nom'] | default(_('Non spécifié')) if image
+                    else '' }}
                 </p>
-                <p><strong>{{ _('Classification') }} :</strong> <span class="badge badge-warning">{{ label_translations.get(image['auto_label'], _('En attente')) if image else '' }}</span></p>
-                <p><strong>{{ _('Confiance de la prédiction') }} :</strong> {{ image['confidence'] if image and image['confidence'] is not none else _('Inconnue') }}</p>
+                <p><strong>{{ _('Classification') }} :</strong> <span class="badge badge-warning">{{
+                        label_translations.get(image['auto_label'], _('En attente')) if image else '' }}</span></p>
+                <p><strong>{{ _('Confiance de la prédiction') }} :</strong> {{ image['confidence'] if image and
+                    image['confidence'] is not none else _('Inconnue') }}</p>
                 <p><strong>{{ _('Taille fichier') }} :</strong> {{ image['file_size'] if image else '' }} Ko</p>
-                <p><strong>{{ _('Dimensions') }} :</strong> {{ image['width'] if image else '' }} x {{ image['height'] if image
+                <p><strong>{{ _('Dimensions') }} :</strong> {{ image['width'] if image else '' }} x {{ image['height']
+                    if image
                     else '' }} px</p>
             </div>
         </div>
 
-        <!-- Colonne Droite: Tableaux de bord Avancés -->
         <div class="result-col-wide">
 
-            <!-- Graphe Dynamique -->
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                
+                <div class="info-box info-box-yellow" style="flex: 1; margin-top: 0;">
+                    <h3>{{ _('Contexte') }}</h3>
+                    <p style="font-size: 13px; color: #555;"><i>{{ _('Indicateurs temps-réel via AJAX') }}</i></p>
+                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                        <li><strong>{{ _('Météo') }} :</strong> <span id="meteo-value">{{ _('Chargement...') }}</span></li>
+                        <li><strong>{{ _('Jour de marché') }} :</strong> <span id="marche-value">{{ _('Chargement...')
+                                }}</span></li>
+                        <li><strong>{{ _('Travaux BTP') }} :</strong> <span id="btp-value">{{ _('Chargement...') }}</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="info-box info-box-blue" style="flex: 1; margin-top: 0;">
+                    <h3>{{ _('Métriques d\'Image') }}</h3>
+                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                        <li><strong>{{ _('Luminosité') }} :</strong> {{ image['luminosite'] if image else '' }}</li>
+                        <li><strong>{{ _('Contraste Max') }} :</strong> {{ image['contraste_maximal'] if image else ''
+                            }}</li>
+                        <li><strong>{{ _('Saturation') }} :</strong> {{ image['saturation'] if image else '' }}</li>
+                        <li><strong>{{ _('Densité contours') }} :</strong> {{ image['edge_density'] if image else '' }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-box" style="margin-top: 0;">
+                <h3>{{ _('Annotation manuelle') }}</h3>
+                <p style="font-size: 13px; color: #555;">{{ _('Dites-nous si la poubelle est réellement sale ou pleine,
+                    pour nous aider à améliorer le modèle.') }}</p>
+                <form action="{{ url_for('save_annotation', image_id=image['id']) if image else '#' }}" method="POST">
+                    <select name="annotation">
+                        <option value="" {% if not image or not image['annotation'] %}selected{% endif %}>{{ _('Non
+                            annoté') }}</option>
+                        <option value="propre" {% if image and image['annotation']=='propre' %}selected{% endif %}>{{
+                            _('Propre') }}</option>
+                        <option value="sale" {% if image and image['annotation']=='sale' %}selected{% endif %}>{{
+                            _('Sale') }}</option>
+                        <option value="pleine" {% if image and image['annotation']=='pleine' %}selected{% endif %}>{{
+                            _('Pleine / débordante') }}</option>
+                    </select>
+                    <button type="submit">{{ _('Enregistrer') }}</button>
+                </form>
+            </div>
+
             <div class="result-card">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 id="chart-title">{{ _('Histogramme RGB') }}</h3>
+                    <h3 id="chart-title" style="margin-top: 0; margin-bottom: 10px; font-size: 1.2rem; color: #2D4613; border-bottom: 2px solid #CFE9E0; padding-bottom: 5px;">{{ _('Histogramme RGB') }}</h3>
                     <div>
                         <button onclick="changeChart('prev')">←</button>
                         <button onclick="changeChart('next')">→</button>
@@ -48,44 +95,7 @@
                 </div>
                 <canvas id="mainChart" height="100"></canvas>
             </div>
-            <!-- Contexte -->
-            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                <div class="info-box info-box-blue" style="flex: 1; margin-top: 0;">
-                    <h3>{{ _('Métriques d\'Image') }}</h3>
-                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
-                        <li><strong>{{ _('Luminosité') }} :</strong> {{ image['luminosite'] if image else '' }}</li>
-                        <li><strong>{{ _('Contraste Max') }} :</strong> {{ image['contraste_maximal'] if image else '' }}</li>
-                        <li><strong>{{ _('Saturation') }} :</strong> {{ image['saturation'] if image else '' }}</li>
-                        <li><strong>{{ _('Densité contours') }} :</strong> {{ image['edge_density'] if image else '' }}</li>
-                    </ul>
-                </div>
-
-                <div class="info-box info-box-yellow" style="flex: 1; margin-top: 0;">
-                    <h3>{{ _('Contexte') }}</h3>
-                    <p style="font-size: 13px; color: #555;"><i>{{ _('Indicateurs temps-réel via AJAX') }}</i></p>
-                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
-                        <li><strong>{{ _('Météo') }} :</strong> <span id="meteo-value">{{ _('Chargement...') }}</span></li>
-                        <li><strong>{{ _('Jour de marché') }} :</strong> <span id="marche-value">{{ _('Chargement...') }}</span></li>
-                        <li><strong>{{ _('Travaux BTP') }} :</strong> <span id="btp-value">{{ _('Chargement...') }}</span></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Annotation manuelle : placée sous les stats, une fois que l'utilisateur les a consultées -->
-            <div class="info-box">
-                <h3>{{ _('Annotation manuelle') }}</h3>
-                <p style="font-size: 13px; color: #555;">{{ _('Dites-nous si la poubelle est réellement sale ou pleine, pour nous aider à améliorer le modèle.') }}</p>
-                <form action="{{ url_for('save_annotation', image_id=image['id']) if image else '#' }}" method="POST">
-                    <select name="annotation">
-                        <option value="" {% if not image or not image['annotation'] %}selected{% endif %}>{{ _('Non annoté') }}</option>
-                        <option value="propre" {% if image and image['annotation'] == 'propre' %}selected{% endif %}>{{ _('Propre') }}</option>
-                        <option value="sale" {% if image and image['annotation'] == 'sale' %}selected{% endif %}>{{ _('Sale') }}</option>
-                        <option value="pleine" {% if image and image['annotation'] == 'pleine' %}selected{% endif %}>{{ _('Pleine / débordante') }}</option>
-                    </select>
-                    <button type="submit">{{ _('Enregistrer') }}</button>
-                </form>
-            </div>
-
+            
         </div>
     </div>
 </div>
